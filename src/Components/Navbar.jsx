@@ -39,16 +39,24 @@ const Navbar = () => {
 
           {/* Mobile menu button */}
           <div className="lg:hidden">
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="flex items-center px-3 py-2 text-custom-cyan hover:text-cyan-600 transition-transform duration-300 transform active:scale-95"
-          >
-            <svg className="fill-current h-5 w-5" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-              <title>Menu</title>
-              <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"/>
-            </svg>
-          </button>
-        </div>
+  <button
+    onClick={() => setIsMenuOpen(!isMenuOpen)}
+    className="flex items-center px-3 py-2 text-custom-cyan hover:text-cyan-600 transition-transform duration-300 transform active:scale-95"
+  >
+    {isMenuOpen ? (
+      <svg className="fill-current h-5 w-5" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+        <title>Close</title>
+        <path d="M10 8.586l-4.95-4.95-1.414 1.414L8.586 10l-4.95 4.95 1.414 1.414L10 11.414l4.95 4.95 1.414-1.414L11.414 10l4.95-4.95-1.414-1.414L10 8.586z"/>
+      </svg>
+    ) : (
+      <svg className="fill-current h-5 w-5" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+        <title>Menu</title>
+        <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"/>
+      </svg>
+    )}
+  </button>
+</div>
+
         </div>
 
  
