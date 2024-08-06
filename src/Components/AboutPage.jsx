@@ -1,32 +1,77 @@
-import React from 'react';
-import { FaGraduationCap, FaLaptop, FaCertificate, FaClock, FaBriefcase, FaUsers, FaPiggyBank } from 'react-icons/fa';
+import React, { useEffect } from 'react';
+import { motion, useAnimation } from 'framer-motion';
+import { useInView } from 'react-intersection-observer';
+import { FaGraduationCap, FaLaptop, FaClock, FaBriefcase, FaUsers, FaPiggyBank } from 'react-icons/fa';
 
 const AboutPage = () => {
+  // Animation controls
+  const controlsAboutUs = useAnimation();
+  const controlsFeatures = useAnimation();
+  const controlsBenefits = useAnimation();
+
+  // Intersection Observers
+  const [refAboutUs, inViewAboutUs] = useInView({ triggerOnce: true, threshold: 0.2 });
+  const [refFeatures, inViewFeatures] = useInView({ triggerOnce: true, threshold: 0.2 });
+  const [refBenefits, inViewBenefits] = useInView({ triggerOnce: true, threshold: 0.2 });
+
+  // Trigger animations when in view
+  useEffect(() => {
+    if (inViewAboutUs) {
+      controlsAboutUs.start('visible');
+    }
+    if (inViewFeatures) {
+      controlsFeatures.start('visible');
+    }
+    if (inViewBenefits) {
+      controlsBenefits.start('visible');
+    }
+  }, [controlsAboutUs, inViewAboutUs, controlsFeatures, inViewFeatures, controlsBenefits, inViewBenefits]);
+
+  // Animation variants
+  const variants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 }
+  };
+
   return (
     <div className="font-roboto bg-gradient-to-b to-white">
       <div className="container mx-auto px-4 py-20">
         {/* About Us Section */}
-        <section className="mb-20">
-  <h2 className="text-4xl font-bold text-center mb-10 text-custom-cyan2">ABOUT US</h2>
+        <motion.section
+  ref={refAboutUs}
+  initial="hidden"
+  animate={controlsAboutUs}
+  variants={variants}
+  transition={{ duration: 0.6 }}
+  className="mb-10"
+>
+  <h2 className="text-3xl md:text-4xl font-bold text-center mb-6 md:mb-10 text-custom-cyan2">ABOUT US</h2>
   <div className="mx-auto bg-white rounded-lg overflow-hidden flex flex-col lg:flex-row">
     <div className="lg:w-1/3">
-      <img src="SignUpimage.png" alt="About Us" className="w-full h-full object-cover"/>
+      <img src="SignUpimage.png" alt="About Us" className="w-full h-full object-cover" />
     </div>
-    <div className="lg:w-2/3 p-8 lg:p-12 flex flex-col justify-center">
-      <h1 className="text-2xl lg:text-5xl font-semibold mb-6 text-custom-cyan">
+    <div className="lg:w-2/3 p-6 md:p-8 lg:p-12 flex flex-col justify-center">
+      <h1 className="text-xl md:text-2xl lg:text-4xl xl:text-5xl font-semibold mb-4 md:mb-6 text-custom-cyan">
         Providing The Best Opportunities To Students Around The Globe
       </h1>
-      <p className="text-gray-600 leading-relaxed">
+      <p className="text-gray-600 leading-relaxed text-sm md:text-base lg:text-lg">
         EduProps is a revolutionary e-learning platform dedicated to empowering students with the skills and knowledge they need to thrive in the digital age. Our mission is to make high-quality education accessible to everyone, everywhere, breaking down barriers and opening doors to new opportunities.
       </p>
     </div>
   </div>
-</section>
+</motion.section>
 
 
         {/* Features Section */}
-        <section className="mb-20">
-          <div className="bg-cyan-100  rounded-xl p-10">
+        <motion.section
+          ref={refFeatures}
+          initial="hidden"
+          animate={controlsFeatures}
+          variants={variants}
+          transition={{ duration: 0.6 }}
+          className="mb-20"
+        >
+          <div className="bg-cyan-100 rounded-xl p-10">
             <h2 className="text-4xl font-bold text-center mb-10 text-custom-cyan2">Features</h2>
             <p className="text-center mb-12 text-xl text-custom-cyan">
               We are continuously innovating to provide you with the best learning experience.
@@ -46,10 +91,17 @@ const AboutPage = () => {
               ))}
             </div>
           </div>
-        </section>
+        </motion.section>
 
         {/* Benefits Section */}
-        <section className="mb-20">
+        <motion.section
+          ref={refBenefits}
+          initial="hidden"
+          animate={controlsBenefits}
+          variants={variants}
+          transition={{ duration: 0.6 }}
+          className="mb-20"
+        >
           <h2 className="text-4xl font-bold text-center mb-10 text-custom-cyan2">Our Benefits</h2>
           <p className="text-center mb-12 text-xl text-custom-cyan">
             Join EduProps and unlock a world of opportunities.
@@ -68,7 +120,7 @@ const AboutPage = () => {
               </div>
             ))}
           </div>
-        </section>
+        </motion.section>
 
         {/* Call to Action */}
         <section className="text-center bg-custom-cyan text-white py-16 rounded-xl">

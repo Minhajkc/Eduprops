@@ -34,7 +34,7 @@ const LoginForm = () => {
 
   return (
     
-    <div className="mt-5 flex flex-col justify-center items-center min-h-screen p-4 lg:p-0 font-roboto">
+    <div className=" flex flex-col justify-center items-center min-h-screen p-4 lg:p-0 font-roboto">
       <div className="bg-white rounded-3xl shadow-2xl overflow-hidden w-full max-w-6xl lg:flex">
         {/* Left side */}
         <div className="w-full lg:w-1/2 bg-gradient-to-br from-custom-cyan2 to-cyan-600 p-8 flex flex-col justify-center items-center">

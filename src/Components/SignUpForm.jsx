@@ -43,14 +43,14 @@ const SignUpForm = () => {
   };
 
   return (
-    <div className="mt-5 flex flex-col justify-center min-h-screen items-center p-4 lg:p-0 font-roboto">
+    <div className=" flex flex-col justify-center min-h-screen items-center p-4 lg:p-0 font-roboto">
       <div className="bg-white rounded-3xl shadow-2xl overflow-hidden w-full max-w-6xl lg:flex">
         {/* Right side (Cyan section) */}
         <div className="w-full lg:w-1/2 bg-gradient-to-br from-custom-cyan2 to-cyan-600 p-8 flex flex-col justify-center items-center  lg:h-full ">
           <img src="Logoblack2.png" alt="Eduprops Logo" className="w-24 lg:w-36 mb-6 filter drop-shadow-md" />
           <h1 className="text-2xl lg:text-4xl font-bold text-white mb-6 text-center leading-tight">
             Welcome to Eduprops
-            <span className="block text-xl lg:text-3xl mt-2 font-normal">Your Gateway to Online Learning</span>
+            <span className="block text-xl lg:text-3xl font-normal">Your Gateway to Online Learning</span>
           </h1>
           <div className="w-full max-w-md">
             <div className="bg-white bg-opacity-20 backdrop-filter backdrop-blur-sm rounded-xl shadow-lg overflow-hidden">
@@ -60,8 +60,8 @@ const SignUpForm = () => {
         </div>
 
         {/* Left side (Form section) */}
-        <div className="w-full lg:w-1/2 p-8 lg:p-9 flex flex-col justify-center">
-          <h2 className="text-2xl font-bold mb-6 text-center lg:text-left">Create Your Account</h2>
+        <div className="w-full lg:w-1/2 p-8 lg:p-8 flex flex-col justify-center">
+          <h2 className="text-2xl font-bold mb-4 text-center lg:text-left">Create Your Account</h2>
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div className="flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-4">
               <div className="w-full lg:w-1/2">
