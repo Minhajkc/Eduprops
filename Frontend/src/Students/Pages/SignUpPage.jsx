@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
-import { toast, ToastContainer } from 'react-toastify';
 import { Spin } from 'antd';
 import 'react-toastify/dist/ReactToastify.css';
-import OtpModal from './OtpModal';
+import OtpModal from '../Components/Specific/OtpModal'
+import { registerStudent, handleGoogleAuth } from '../../Services/studentService';
+import GoogleAuthButton from '../Components/Common/TempGoogleAuthButton';
+import { showToastSuccess, showToastError, showToastWarning } from '../../utils/toastify'
 
 
-const SignUpForm = () => {
+const SignUpPage = () => {
   
   const [formData, setFormData] = useState({
     firstName: '',
@@ -28,7 +29,11 @@ const SignUpForm = () => {
     if (!formData.lastName) newErrors.lastName = 'Last Name is required';
     if (!formData.username) newErrors.username = 'Username is required';
     if (!formData.email) newErrors.email = 'Email is required';
-    if (!formData.password) newErrors.password = 'Password is required';
+    if (!formData.password) {
+      newErrors.password = 'Password is required';
+  } else if (formData.password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters long';
+  }
     if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
     if (!formData.terms) newErrors.terms = 'You must agree to the Terms & Conditions';
     setErrors(newErrors);
@@ -45,32 +50,34 @@ const SignUpForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (validate()) {
         setLoading(true); 
         try {
-            const response = await axios.post('http://localhost:3000/register', formData, {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
+            await registerStudent(formData);
             setLoading(false); 
-            toast.success('OTP sent to email!', {
-                position: 'top-center',
-                autoClose: 3000,
-                hideProgressBar: true,
-            });
             setShowModal(true); 
         } catch (error) {
             setLoading(false); 
-            const errorMessage = error.response?.data?.message || 'Error sending OTP.';
-            toast.error(errorMessage, {
-                position: 'top-center',
-                autoClose: 3000,
-                hideProgressBar: true,
-            });
         }
     }
 };
+
+const handleGoogleSuccess = async (response) => {
+  setLoading(true);
+  try {
+    await handleGoogleAuth(response);
+    setLoading(false);
+  } catch (error) {
+    setLoading(false);
+    showToastError(error);
+  }
+};
+
+const handleGoogleFailure = () => {
+  showToastError('Authentication failed !');
+};
+
 
 
 
@@ -190,24 +197,15 @@ const SignUpForm = () => {
             <p>Already have an account? <Link to="/signin" className="text-custom-cyan">Sign In</Link></p>
           </div>
           <div className="mt-4">
-            <button className="w-full p-3 border rounded-lg flex items-center justify-center">
-              <img src="/google-icon.png" alt="Google" className="w-6 h-6 mr-2" />
-              Sign up with Google
-            </button>
+         
+            <GoogleAuthButton
+        onSuccess={handleGoogleSuccess}
+        onFailure={handleGoogleFailure}
+      />
           </div>
         </div>
       </div>
-      <ToastContainer
-                position="top-center"
-                autoClose={3000}
-                hideProgressBar
-                newestOnTop={false}
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-            />
+    
 
 <OtpModal
                 isOpen={showModal}
@@ -218,4 +216,4 @@ const SignUpForm = () => {
   );
 };
 
-export default SignUpForm;
+export default SignUpPage;

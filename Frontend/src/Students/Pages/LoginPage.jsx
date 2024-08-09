@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
-import axios from 'axios'
 import { Link } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import {  showToastError, showToastWarning } from '../../utils/toastify';
+import { loginStudent } from '../../Services/studentService';
+import { Spin } from 'antd';
 
-const LoginForm = () => {
+
+
+const LoginPage = () => {
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -31,35 +35,17 @@ const LoginForm = () => {
     e.preventDefault();
 
     if (validate()) {
+      setLoading(true); 
         try {
-            const response = await axios.post('http://localhost:3000/login', formData, {
-                withCredentials: true,
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-
-            toast.success('Login successful!', {
-                position: 'top-center',
-                autoClose: 3000,
-                hideProgressBar: true,
-            });
-
+          await loginStudent(formData);
+          setLoading(false); 
         } catch (error) {
-            toast.error('Error logging in. Please try again.', {
-                position: 'top-center',
-                autoClose: 3000,
-                hideProgressBar: true,
-            });
+          setLoading(false);
         }
-    } else {
-        toast.warn('Form validation failed. Please check your inputs.', {
-            position: 'top-center',
-            autoClose: 3000,
-            hideProgressBar: true,
-        });
-    }
+    } 
 };
+
+
   return (
     
     <div className=" flex flex-col justify-center items-center min-h-screen p-4 lg:p-0 font-roboto">
@@ -118,9 +104,14 @@ const LoginForm = () => {
               <label htmlFor="terms">I agree to the Terms & Conditions</label>
             </div>
             {errors.terms && <p className="text-red-500 text-sm">{errors.terms}</p>}
-            <button type="submit" className="w-full bg-custom-cyan text-white p-3 rounded-lg hover:bg-cyan-500">
-              Login →
-            </button>
+            <button
+                    type="submit"
+                    className={`w-full bg-custom-cyan text-white p-3 rounded-lg hover:bg-cyan-500 flex items-center justify-center ${loading ? 'opacity-60' : ''}`}
+                    disabled={loading}
+                >
+                    {loading && <Spin className="mr-2" indicator={<div className="ant-spin-dot"><i></i><i></i><i></i><i></i></div>} />}
+                    {loading ? 'Processing...' : 'Login →'}
+                </button>
           </form>
           <div className="mt-4 text-center">
             <p>Don't have an account? <Link to="/signup" className="text-custom-cyan">Sign Up</Link></p>
@@ -137,4 +128,4 @@ const LoginForm = () => {
   );
 };
 
-export default LoginForm;
+export default LoginPage;

@@ -4,17 +4,16 @@ import { useInView } from 'react-intersection-observer';
 import { FaGraduationCap, FaLaptop, FaClock, FaBriefcase, FaUsers, FaPiggyBank } from 'react-icons/fa';
 
 const AboutPage = () => {
-  // Animation controls
+
   const controlsAboutUs = useAnimation();
   const controlsFeatures = useAnimation();
   const controlsBenefits = useAnimation();
 
-  // Intersection Observers
+
   const [refAboutUs, inViewAboutUs] = useInView({ triggerOnce: true, threshold: 0.2 });
   const [refFeatures, inViewFeatures] = useInView({ triggerOnce: true, threshold: 0.2 });
   const [refBenefits, inViewBenefits] = useInView({ triggerOnce: true, threshold: 0.2 });
 
-  // Trigger animations when in view
   useEffect(() => {
     if (inViewAboutUs) {
       controlsAboutUs.start('visible');
@@ -27,7 +26,6 @@ const AboutPage = () => {
     }
   }, [controlsAboutUs, inViewAboutUs, controlsFeatures, inViewFeatures, controlsBenefits, inViewBenefits]);
 
-  // Animation variants
   const variants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0 }
@@ -36,7 +34,7 @@ const AboutPage = () => {
   return (
     <div className="font-roboto bg-gradient-to-b to-white">
       <div className="container mx-auto px-4 py-20">
-        {/* About Us Section */}
+ 
         <motion.section
   ref={refAboutUs}
   initial="hidden"
