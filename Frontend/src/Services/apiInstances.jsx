@@ -10,7 +10,7 @@ const StudentInstance = axios.create({
 })
 
 const MentorInstance = axios.create({
-    baseURL: "http://localhost:3000/Mentor",
+    baseURL: "http://localhost:3000/Mentor/",
     headers: {
         "Content-Type": "application/json",
         },
@@ -20,7 +20,7 @@ const MentorInstance = axios.create({
 })
 
 const AdminInstance = axios.create({
-    baseURL: "http://localhost:3000/Admin",
+    baseURL: "http://localhost:3000/Admin/",
     headers: {
         "Content-Type": "application/json",
         },

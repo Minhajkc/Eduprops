@@ -1,19 +1,32 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Navbar from './Students/Components/Layout/Navbar';
 import './App.css';
 import AppRoutes from './AppRoutes';
 
-function App() {
+const App = () => {
   return (
     <Router>
-      <Navbar />
-      <AppRoutes />
+      <Routes>
+        <Route path="/*" element={<Layout />} />
+      </Routes>
       <ToastContainer />
     </Router>
   );
-}
+};
+
+const Layout = () => {
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith('/admin');
+
+  return (
+    <>
+      {!isAdminRoute && <Navbar />}
+      <AppRoutes />
+    </>
+  );
+};
 
 export default App;

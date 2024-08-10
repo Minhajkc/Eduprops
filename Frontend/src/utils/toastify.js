@@ -5,7 +5,9 @@ const toastOptions = {
     position: "top-center",
     autoClose: 3000,
     hideProgressBar: true,
- };
+    className: 'text-lg py-3 px-6 rounded-lg md:text-sm md:py-2 md:px-4 ',
+};
+
 
 export const showToastSuccess = (message) => {
   toast.success(message, toastOptions);

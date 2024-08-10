@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {  showToastError, showToastWarning } from '../../utils/toastify';
 import { loginStudent } from '../../Services/studentService';
+import { registerStudent, handleGoogleAuth } from '../../Services/studentService';
+import GoogleAuthButton from '../Components/Common/TempGoogleAuthButton';
 import { Spin } from 'antd';
 
 
@@ -44,7 +46,20 @@ const LoginPage = () => {
         }
     } 
 };
+const handleGoogleSuccess = async (response) => {
+  setLoading(true);
+  try {
+    await handleGoogleAuth(response);
+    setLoading(false);
+  } catch (error) {
+    setLoading(false);
+    showToastError(error);
+  }
+};
 
+const handleGoogleFailure = () => {
+  showToastError('Authentication failed !');
+};
 
   return (
     
@@ -117,10 +132,13 @@ const LoginPage = () => {
             <p>Don't have an account? <Link to="/signup" className="text-custom-cyan">Sign Up</Link></p>
           </div>
           <div className="mt-4">
-            <button className="w-full p-3 border rounded-lg flex items-center justify-center">
-              <img src="/google-icon.png" alt="Google" className="w-6 h-6 mr-2" />
-              Sign up with Google
-            </button>
+          <div className="mt-4">
+         
+         <GoogleAuthButton
+     onSuccess={handleGoogleSuccess}
+     onFailure={handleGoogleFailure}
+   />
+       </div>
           </div>
         </div>
       </div>
