@@ -1,14 +1,19 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
+import useAuth from '../Utils/auth'; // Update the path accordingly
 
-const PrivateRoute = ({ isAuthenticated, children }) => {
-    console.log('from pr route',isAuthenticated);
-    
-  if (!isAuthenticated) {
-    return <Navigate to="/admin/login" replace />;
-  }
-
-  return children;
-};
-
-export default PrivateRoute;
+const PrivateRoute = ({ children }) => {
+    const { isAuthenticated, loading } = useAuth();
+  
+    if (loading) {
+      return <div>Loading...</div>; 
+    }
+  
+    if (isAuthenticated === false) {
+      return <Navigate to="/admin/login" replace />;
+    }
+  
+    return children;
+  };
+  
+  export default PrivateRoute;;

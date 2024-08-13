@@ -6,13 +6,16 @@ import Navbar from './Students/Components/Layout/Navbar';
 import './App.css';
 import AppRoutes from './AppRoutes';
 
+
 const App = () => {
   return (
     <Router>
+        
       <Routes>
         <Route path="/*" element={<Layout />} />
       </Routes>
       <ToastContainer />
+
     </Router>
   );
 };

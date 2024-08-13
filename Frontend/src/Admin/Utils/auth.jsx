@@ -1,22 +1,21 @@
 import { useState, useEffect } from 'react';
-import { AdminInstance } from '../../Services/apiInstances'; 
+import { AdminInstance } from '../../Services/apiInstances';
 
 const useAuth = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(true); 
+  const [isAuthenticated, setIsAuthenticated] = useState(null); 
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await AdminInstance.get('checkAuth');
-        if (response.data.isAuthenticated) {
-          setIsAuthenticated(true);
-        } else {
-          setIsAuthenticated(false);
-        }
+        await AdminInstance.get('checkAuth');
+        setIsAuthenticated(true);  
       } catch (error) {
-        console.error('Error checking authentication:', error);
-        setIsAuthenticated(false);
+        if (error.response && error.response.status === 401) {
+          setIsAuthenticated(false); 
+        } else {
+          console.error('Error checking authentication:', error);
+        }
       } finally {
         setLoading(false); 
       }
@@ -25,7 +24,7 @@ const useAuth = () => {
     checkAuth();
   }, []);
 
-  return { isAuthenticated, loading }; 
+  return { isAuthenticated, loading };
 };
 
 export default useAuth;

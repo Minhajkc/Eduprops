@@ -8,7 +8,8 @@ import AboutPage from './Students/Pages/AboutPage';
 import HomePage from './Students/Pages/HomePage';
 import AdminLoginPage from './Admin/Pages/AdminLoginPage';
 import AdminHomePage from './Admin/Pages/AdminHomePage'; // Import the AdminHomePage
-import PrivateRoute from './Admin/Utils/PrivateRoute'; // Import PrivateRoute
+import PrivateRoute from './Admin/Utils/PrivateRoute';
+import StudentAuth from './Admin/Pages/StudentAuth'; // Import PrivateRoute
 import useAuth from './Admin/Utils/auth'; // Import the authentication hoo
 
 
@@ -17,7 +18,7 @@ const AppRoutes = () => {
     if (loading) {
       return <div>Loading...</div>; 
     }
-    
+ 
   
     return (
       <Routes>
@@ -93,6 +94,14 @@ const AppRoutes = () => {
               <AdminHomePage />
             </PrivateRoute>
           }
+        />
+        <Route
+        path='/admin/StudentsAuth'
+        element={
+            <PrivateRoute isAuthenticated={isAuthenticated}>   
+          <StudentAuth />
+          </PrivateRoute>
+        }
         />
         <Route path="/admin/login" element={<AdminLoginPage />} />
       </Routes>

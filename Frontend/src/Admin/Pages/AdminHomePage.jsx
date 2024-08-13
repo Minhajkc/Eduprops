@@ -1,11 +1,11 @@
 // src/Admin/Pages/AdminHomePage.js
 import React from 'react';
+import Sidebar from '../Components/Layout/Sidebar';
 
 const AdminHomePage = () => {
   return (
     <div>
-      <h1>Welcome to the Admin Home Page</h1>
-      {/* Add your admin page content here */}
+      <Sidebar/>
     </div>
   );
 };

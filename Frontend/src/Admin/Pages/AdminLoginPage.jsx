@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { AdminLogin } from '../../Services/adminService';
+import { useNavigate } from 'react-router-dom';
+import { AdminLogin } from '../../Services/adminService';;
 import { showToastSuccess, showToastError, showToastWarning } from '../../utils/toastify'
 
 
@@ -7,6 +8,7 @@ const AdminLoginPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({ username: '', password: '' });
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -32,7 +34,7 @@ const AdminLoginPage = () => {
 
     try {
       const formData = { username, password };
-      const response = await AdminLogin(formData);  
+      await AdminLogin(formData, navigate);
     } catch (error) {
       showToastError(error.message);
     }
