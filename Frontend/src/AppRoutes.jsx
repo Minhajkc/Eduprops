@@ -11,6 +11,8 @@ import AdminHomePage from './Admin/Pages/AdminHomePage'; // Import the AdminHome
 import PrivateRoute from './Admin/Utils/PrivateRoute';
 import StudentAuth from './Admin/Pages/StudentAuth'; // Import PrivateRoute
 import useAuth from './Admin/Utils/auth'; // Import the authentication hoo
+import MentorApply from './Students/Pages/MentorApply';
+import MentorListPage from './Admin/Pages/MentorListPage';
 
 
 const AppRoutes = () => {
@@ -88,6 +90,19 @@ const AppRoutes = () => {
           }
         />
         <Route
+          path="/Mentorapply"
+          element={
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -50 }}
+              transition={{ duration: 0.5 }}
+            >
+              <MentorApply />
+            </motion.div>
+          }
+        />
+        <Route
           path="/admin/dashboard"
           element={
             <PrivateRoute isAuthenticated={isAuthenticated}>   
@@ -100,6 +115,14 @@ const AppRoutes = () => {
         element={
             <PrivateRoute isAuthenticated={isAuthenticated}>   
           <StudentAuth />
+          </PrivateRoute>
+        }
+        />
+        <Route
+        path='/admin/MentorAuth'
+        element={
+            <PrivateRoute isAuthenticated={isAuthenticated}>   
+          <MentorListPage/>
           </PrivateRoute>
         }
         />

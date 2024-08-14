@@ -35,7 +35,7 @@ function Sidebar() {
           <li><Link to="/admin/StudentsAuth" className="hover:text-blue-300">Authentication</Link></li>
           <li><Link to="/admin/statistics" className="hover:text-blue-300">Statistics</Link></li>
           <li><Link to="/admin/settings" className="hover:text-blue-300">Settings</Link></li>
-          <li><Link to="/admin/mentors-room" className="hover:text-blue-300">Mentor's Room</Link></li>
+          <li><Link to="/admin/MentorAuth" className="hover:text-blue-300">Mentor's Room</Link></li>
         </ul>
         <button className="mt-auto text-left text-white hover:text-blue-300" onClick={handleLogout}>Sign Out</button>
       </nav>

@@ -52,3 +52,14 @@ export const AdminLogout = async (navigate) => {
   };
 
 
+export const GetMentors = async () =>{
+    try {
+        const response = await AdminInstance.get('Mentorauth',{
+            });
+            return response;
+            } catch (error) {
+                const errorMessage = error.response?.data?.message || 'Error fetching mentor data';
+                showToastError(errorMessage);
+                throw new Error(errorMessage); // Optionally, rethrow the error for further handling
+                }
+                }
