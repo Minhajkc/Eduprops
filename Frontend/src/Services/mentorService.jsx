@@ -3,7 +3,7 @@ import { showToastSuccess, showToastError } from '../utils/toastify';
 
 
 export const registerMentor = async (formData) => {  
-      console.log(formData,'ffffffffff');
+      
     try {
      
         const response = await MentorInstance.post('MentorRegister', formData, {
@@ -20,8 +20,30 @@ export const registerMentor = async (formData) => {
         return response.data; 
 
     } catch (error) {
-        // Handle error response and fallback message
+       
         const errorMessage = error.response?.data?.message || 'An error occurred during registration.';
+        showToastError(errorMessage);
+        throw error; // Rethrow the error to allow further handling if needed
+    }
+};
+
+export const Login = async (formData, navigate) => {
+    try {
+        // Send a POST request to the login endpoint with formData
+        const response = await MentorInstance.post('Login', formData);
+
+        if (response.data && response.data.message) {
+            showToastSuccess(response.data.message);
+            navigate('/mentor/dashboard');
+        } else {
+            // Handle unexpected response
+            showToastError('Login failed. Please try again.');
+        }
+
+        return response.data; 
+    } catch (error) {
+        // Extract error message or use a default message
+        const errorMessage = error.response?.data?.message || 'An error occurred during login.';
         showToastError(errorMessage);
         throw error; // Rethrow the error to allow further handling if needed
     }

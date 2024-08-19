@@ -13,6 +13,7 @@ import StudentAuth from './Admin/Pages/StudentAuth'; // Import PrivateRoute
 import useAuth from './Admin/Utils/auth'; // Import the authentication hoo
 import MentorApply from './Students/Pages/MentorApply';
 import MentorListPage from './Admin/Pages/MentorListPage';
+import MentorLoginPage from './Mentor/Pages/MentorLoginPage';
 
 
 const AppRoutes = () => {
@@ -127,6 +128,7 @@ const AppRoutes = () => {
         }
         />
         <Route path="/admin/login" element={<AdminLoginPage />} />
+        <Route path="/mentor" element={<MentorLoginPage />} />
       </Routes>
     );
   };

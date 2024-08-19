@@ -62,4 +62,16 @@ export const GetMentors = async () =>{
                 showToastError(errorMessage);
                 throw new Error(errorMessage); // Optionally, rethrow the error for further handling
                 }
-                }
+ }
+
+ export const ApproveMentor = async (mentorId) => {
+    try {
+        const response = await AdminInstance.patch(`Mentorauth/${mentorId}/approve`);
+        showToastSuccess('Mentor approved successfully!');
+        return response.data;
+    } catch (error) {
+        const errorMessage = error.response?.data?.message || 'Error approving mentor';
+        showToastError(errorMessage);
+        throw new Error(errorMessage); 
+    }
+};

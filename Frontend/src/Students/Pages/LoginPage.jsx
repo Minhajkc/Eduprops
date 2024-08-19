@@ -5,10 +5,12 @@ import { loginStudent } from '../../Services/studentService';
 import { registerStudent, handleGoogleAuth } from '../../Services/studentService';
 import GoogleAuthButton from '../Components/Common/TempGoogleAuthButton';
 import { Spin } from 'antd';
+import ForgotPasswordModal from '../Components/Layout/ForgotPasswordModal';
 
 
 
 const LoginPage = () => {
+  const [modalIsOpen, setModalIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
@@ -127,6 +129,15 @@ const handleGoogleFailure = () => {
                     {loading && <Spin className="mr-2" indicator={<div className="ant-spin-dot"><i></i><i></i><i></i><i></i></div>} />}
                     {loading ? 'Processing...' : 'Login →'}
                 </button>
+                <div>
+            <button onClick={() => setModalIsOpen(true)} className="bg-cyan-500 text-white py-2 px-4 rounded-md hover:bg-cyan-600">
+                Forgot Password
+            </button>
+            <ForgotPasswordModal
+                isOpen={modalIsOpen}
+                onRequestClose={() => setModalIsOpen(false)}
+            />
+        </div>
           </form>
           <div className="mt-4 text-center">
             <p>Don't have an account? <Link to="/signup" className="text-custom-cyan">Sign Up</Link></p>

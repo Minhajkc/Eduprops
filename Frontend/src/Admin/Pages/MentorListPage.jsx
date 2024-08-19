@@ -1,18 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { GetMentors } from '../../Services/adminService';
+import { ApproveMentor, GetMentors } from '../../Services/adminService';
 import Sidebar from '../Components/Layout/Sidebar';
-import { FaEye } from 'react-icons/fa'; // Eye icon for viewing resumes
-import Modal from 'react-modal'; // Ensure you install react-modal
+import { FaDownload } from 'react-icons/fa'; 
+import axios from 'axios';
 
-Modal.setAppElement('#root'); // For accessibility reasons
 
 const MentorListPage = () => {
     const [mentors, setMentors] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [selectedResume, setSelectedResume] = useState(null); // State to hold the selected resume URL
-    const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
-    const [showPending, setShowPending] = useState(false); // State to toggle visibility of pending mentors
+    const [showPending, setShowPending] = useState(false); 
 
     useEffect(() => {
         const fetchMentors = async () => {
@@ -30,26 +27,31 @@ const MentorListPage = () => {
         fetchMentors();
     }, []);
 
-    const openModal = (resumeUrl) => {
-        setSelectedResume(resumeUrl);
-        setIsModalOpen(true);
-    };
-
-    const closeModal = () => {
-        setIsModalOpen(false);
-        setSelectedResume(null);
-    };
-
     const handleApprove = async (mentorId) => {
         try {
-            // Call API to approve mentor
-            await axios.patch(`your-api-endpoint/mentors/${mentorId}/approve`);
-            // Fetch mentors again to refresh the list
-            const response = await GetMentors();
+            await ApproveMentor(mentorId);
+            const response = await GetMentors()
             setMentors(response.data);
+            setShowPending(true)
         } catch (err) {
             console.error('Error approving mentor:', err);
             setError('Failed to approve mentor');
+        }
+    };
+
+    const handleDownload = async (resumeUrl,mentorname) => {
+        try {
+            const response = await fetch(resumeUrl);
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(new Blob([blob]));
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${mentorname.replace(/\s+/g, '_')}.pdf`; // Specify the desired filename with .pdf extension
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        } catch (error) {
+            console.error('Error downloading file:', error);
         }
     };
 
@@ -60,85 +62,103 @@ const MentorListPage = () => {
     const activeMentors = mentors.filter(mentor => mentor.isActive !== 'pending');
 
     return (
-        <div className="flex">
+        <div className="flex flex-col md:flex-row">
             <Sidebar />
             <div className="flex-1 p-4">
                 <h1 className="text-2xl font-bold mb-4">Mentors List</h1>
 
-                {/* Toggle Button for Pending Mentors */}
+   
                 <button
                     onClick={() => setShowPending(!showPending)}
-                    className="mb-6 bg-blue-500 text-white px-4 py-2 rounded"
+                    className="mb-6 bg-custom-cyan2 text-white px-4 py-2 rounded"
                 >
-                    {showPending ? 'Hide Pending Mentors' : 'Show Pending Mentors'}
+                    {showPending ? `Hide Pending Mentors (${pendingMentors.length})` : `Show Pending Mentors (${pendingMentors.length})`}
                 </button>
 
-                {/* Pending Mentors Section */}
                 {showPending && (
-                    <div className="mb-6">
+                    <div className="mb-6 overflow-x-auto">
                         <h2 className="text-xl font-semibold mb-4">Pending Mentors</h2>
                         {pendingMentors.length > 0 ? (
-                            <ul className="list-disc pl-5">
-                                {pendingMentors.map((mentor) => (
-                                    <li key={mentor._id} className="flex justify-between items-center mb-4">
-                                        <span className="font-semibold">{mentor.firstName} {mentor.lastName}</span>
-                                        <div className="flex items-center">
-                                            <button onClick={() => openModal(mentor.resume)} className="text-blue-500">
-                                                <FaEye />
-                                            </button>
-                                            <button
-                                                onClick={() => handleApprove(mentor._id)}
-                                                className="ml-4 bg-green-500 text-white px-4 py-2 rounded"
-                                            >
-                                                Approve
-                                            </button>
-                                        </div>
-                                    </li>
-                                ))}
-                            </ul>
+                            <table className="min-w-full divide-y divide-gray-200">
+                                <thead className="bg-gray-50">
+                                    <tr>
+                                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Username</th>
+                                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">First Name</th>
+                                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Name</th>
+                                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Degree</th>
+                                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Resume</th>
+                                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="bg-white divide-y divide-gray-200">
+                                    {pendingMentors.map((mentor) => (
+                                        <tr key={mentor._id}>
+                                            <td className="px-4 py-4 text-sm font-medium text-gray-900">{mentor.username}</td>
+                                            <td className="px-4 py-4 text-sm text-gray-500">{mentor.email}</td>
+                                            <td className="px-4 py-4 text-sm text-gray-500">{mentor.firstName}</td>
+                                            <td className="px-4 py-4 text-sm text-gray-500">{mentor.lastName}</td>
+                                            <td className="px-4 py-4 text-sm text-gray-500">{mentor.degree}</td>
+                                            <td className="px-4 py-4 text-sm text-gray-500">
+                                                <a
+                                                    onClick={() => handleDownload(mentor.resume,mentor.firstName)}
+                                                    className="text-blue-500 flex items-center cursor-pointer"
+                                                >
+                                                    <FaDownload className="mr-2" />
+                                                    Download CV
+                                                </a>
+                                            </td>
+                                            <td className="px-4 py-4 text-sm font-medium">
+                                                <button
+                                                    onClick={() => handleApprove(mentor._id)}
+                                                    className="bg-green-500 text-white px-4 py-2 rounded"
+                                                >
+                                                    Approve
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         ) : (
                             <p>No pending mentors found</p>
                         )}
                     </div>
                 )}
 
-                {/* Active Mentors Section */}
+                {/* Table for Active Mentors */}
                 <div>
                     <h2 className="text-xl font-semibold mb-4">Active Mentors</h2>
                     {activeMentors.length > 0 ? (
-                        <ul className="list-disc pl-5">
-                            {activeMentors.map((mentor) => (
-                                <li key={mentor._id} className="mb-2">
-                                    <span className="font-semibold">{mentor.firstName} {mentor.lastName}</span> - {mentor.degree}
-                                </li>
-                            ))}
-                        </ul>
+                        <div className="overflow-x-auto">
+                            <table className="min-w-full divide-y divide-gray-200">
+                                <thead className="bg-gray-50">
+                                    <tr>
+                                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Username</th>
+                                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">First Name</th>
+                                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Name</th>
+                                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Degree</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="bg-white divide-y divide-gray-200">
+                                    {activeMentors.map((mentor) => (
+                                        <tr key={mentor._id}>
+                                            <td className="px-4 py-4 text-sm font-medium text-gray-900">{mentor.username}</td>
+                                            <td className="px-4 py-4 text-sm text-gray-500">{mentor.email}</td>
+                                            <td className="px-4 py-4 text-sm text-gray-500">{mentor.firstName}</td>
+                                            <td className="px-4 py-4 text-sm text-gray-500">{mentor.lastName}</td>
+                                            <td className="px-4 py-4 text-sm text-gray-500">{mentor.degree}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     ) : (
                         <p>No active mentors found</p>
                     )}
                 </div>
             </div>
-
-            {/* Resume Modal */}
-            <Modal
-                isOpen={isModalOpen}
-                onRequestClose={closeModal}
-                contentLabel="Resume Modal"
-                className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
-                overlayClassName="fixed inset-0"
-            >
-                <div className="bg-white p-6 rounded">
-                    <button onClick={closeModal} className="text-red-500 mb-4">Close</button>
-                    {selectedResume && (
-                        <iframe
-                            src={selectedResume}
-                            title="Mentor Resume"
-                            className="w-full"
-                            frameBorder="0"
-                        />
-                    )}
-                </div>
-            </Modal>
         </div>
     );
 };

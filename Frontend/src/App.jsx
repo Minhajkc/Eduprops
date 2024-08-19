@@ -23,10 +23,11 @@ const App = () => {
 const Layout = () => {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith('/admin');
+  const isMentorRoute = location.pathname.startsWith('/mentor')
 
   return (
     <>
-      {!isAdminRoute && <Navbar />}
+      {!isAdminRoute && !isMentorRoute && <Navbar />}
       <AppRoutes />
     </>
   );
