@@ -1,5 +1,5 @@
 // src/components/OtpModal.jsx
-
+import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect, useRef } from 'react';
 import Modal from 'react-modal';
 import { toast } from 'react-toastify';
@@ -9,6 +9,7 @@ import { Spin } from 'antd';
 Modal.setAppElement('#root');
 
 const OtpModal = ({ isOpen, onClose, formData }) => {
+    const navigate = useNavigate();
     const [otp, setOtp] = useState(Array(6).fill(''));
     const [timeLeft, setTimeLeft] = useState(300); 
     const [loading, setLoading] = useState(false);// 5 minutes in seconds
@@ -71,6 +72,7 @@ const OtpModal = ({ isOpen, onClose, formData }) => {
                 },
             });
             setLoading(false); 
+             navigate('/')
             toast.success('Account created successfully!', {
                 position: 'top-center',
                 autoClose: 3000,
@@ -78,7 +80,7 @@ const OtpModal = ({ isOpen, onClose, formData }) => {
             });
             onClose(); 
         } catch (error) {
-            setLoading(false); // Hide loading spinner
+            setLoading(false); 
             toast.error(error.response?.data?.message || 'Error verifying OTP.', {
                 position: 'top-center',
                 autoClose: 3000,
@@ -102,7 +104,7 @@ const OtpModal = ({ isOpen, onClose, formData }) => {
             className="flex items-center mt-20 font-roboto justify-center p-4"
             overlayClassName="fixed inset-0 bg-black bg-opacity-50"
         >
-            <div className="bg-white rounded-xl shadow-lg p-6 max-w-sm mx-auto w-full border-4 border-custom-cyan2">
+            <div className="bg-white rounded-3xl shadow-lg p-6 max-w-sm mx-auto w-full border-4 border-custom-cyan2">
             <h2 className="text-lg text-center font-semibold text-gray-800 mb-4">Enter OTP</h2>
                 <p className="text-sm text-center text-gray-600 mb-4">
                     OTP has been sent to your email.{formData.email}
@@ -141,8 +143,8 @@ const OtpModal = ({ isOpen, onClose, formData }) => {
                 >
                     Close
                 </button>
-                <p className="text-sm text-center mt-5 text-yellow-500 mb-4">
-    Please do not close this window until you have entered the OTP.
+                <p className="text-xs text-center mt-5 text-yellow-500 mb-4">
+    DO not close this window until you have entered the OTP.
 </p>
 
 

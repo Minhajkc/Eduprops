@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {  showToastError, showToastWarning } from '../../utils/toastify';
 import { loginStudent } from '../../Services/studentService';
 import { registerStudent, handleGoogleAuth } from '../../Services/studentService';
@@ -18,6 +19,7 @@ const LoginPage = () => {
   });
 
   const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
 
   const validate = () => {
     const newErrors = {};
@@ -41,7 +43,7 @@ const LoginPage = () => {
     if (validate()) {
       setLoading(true); 
         try {
-          await loginStudent(formData);
+          await loginStudent(formData,navigate);
           setLoading(false); 
         } catch (error) {
           setLoading(false);
@@ -51,7 +53,7 @@ const LoginPage = () => {
 const handleGoogleSuccess = async (response) => {
   setLoading(true);
   try {
-    await handleGoogleAuth(response);
+    await handleGoogleAuth(response,navigate);
     setLoading(false);
   } catch (error) {
     setLoading(false);
@@ -109,16 +111,8 @@ const handleGoogleFailure = () => {
                 {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
               </div>
             </div>
-            <div className="flex items-center">
-              <input
-                type="checkbox"
-                name="terms"
-                id="terms"
-                className="mr-2"
-                checked={formData.terms}
-                onChange={handleChange}
-              />
-              <label htmlFor="terms">I agree to the Terms & Conditions</label>
+            <div className="flex items-center text-sm ml-1">
+              <a onClick={() => setModalIsOpen(true)} className='cursor-pointer hover:text-custom-cyan2'>Forgot Password ?</a>
             </div>
             {errors.terms && <p className="text-red-500 text-sm">{errors.terms}</p>}
             <button
@@ -130,9 +124,7 @@ const handleGoogleFailure = () => {
                     {loading ? 'Processing...' : 'Login →'}
                 </button>
                 <div>
-            <button onClick={() => setModalIsOpen(true)} className="bg-cyan-500 text-white py-2 px-4 rounded-md hover:bg-cyan-600">
-                Forgot Password
-            </button>
+          
             <ForgotPasswordModal
                 isOpen={modalIsOpen}
                 onRequestClose={() => setModalIsOpen(false)}

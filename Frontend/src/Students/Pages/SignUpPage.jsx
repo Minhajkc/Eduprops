@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link,useNavigate } from 'react-router-dom';
 import { Spin } from 'antd';
 import 'react-toastify/dist/ReactToastify.css';
 import OtpModal from '../Components/Specific/OtpModal'
 import { registerStudent, handleGoogleAuth } from '../../Services/studentService';
 import GoogleAuthButton from '../Components/Common/TempGoogleAuthButton';
 import { showToastSuccess, showToastError, showToastWarning } from '../../utils/toastify'
+import TermsAndConditionsModal from '../Components/Specific/TermsAndConditionsModal';
 
 
 const SignUpPage = () => {
+  const navigate = useNavigate();
   
   const [formData, setFormData] = useState({
     firstName: '',
@@ -21,7 +23,13 @@ const SignUpPage = () => {
   });
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [errors, setErrors] = useState({});
+
+  const handleAgree = () => {
+    setIsModalOpen(false);
+    console.log("User agreed to the terms and conditions");
+};
 
   const validate = () => {
     const newErrors = {};
@@ -54,7 +62,7 @@ const SignUpPage = () => {
     if (validate()) {
         setLoading(true); 
         try {
-            await registerStudent(formData);
+            await registerStudent(formData,navigate);
             setLoading(false); 
             setShowModal(true); 
         } catch (error) {
@@ -66,7 +74,7 @@ const SignUpPage = () => {
 const handleGoogleSuccess = async (response) => {
   setLoading(true);
   try {
-    await handleGoogleAuth(response);
+    await handleGoogleAuth(response,navigate);
     setLoading(false);
   } catch (error) {
     setLoading(false);
@@ -97,6 +105,7 @@ const handleGoogleFailure = () => {
             </div>
           </div>
         </div>
+        
 
         {/* Left side (Form section) */}
         <div className="w-full lg:w-1/2 p-8 lg:p-8 flex flex-col justify-center">
@@ -181,7 +190,12 @@ const handleGoogleFailure = () => {
                 checked={formData.terms}
                 onChange={handleChange}
               />
-              <label htmlFor="terms">I agree to the Terms & Conditions</label>
+              <label htmlFor="terms" onClick={() => setIsModalOpen(true)} className='cursor-pointer'>I agree to the Terms & Conditions</label>
+              <TermsAndConditionsModal
+                isOpen={isModalOpen}
+                onRequestClose={() => setIsModalOpen(false)}
+                onAgree={handleAgree}
+            />
             </div>
             {errors.terms && <p className="text-red-500 text-sm">{errors.terms}</p>}
             <button

@@ -6,11 +6,14 @@ import LoginPage from './Students/Pages/LoginPage';
 import ContactPage from './Students/Pages/ContactPage';
 import AboutPage from './Students/Pages/AboutPage';
 import HomePage from './Students/Pages/HomePage';
+import ProfilePage from './Students/Pages/ProfilePage';
 import AdminLoginPage from './Admin/Pages/AdminLoginPage';
 import AdminHomePage from './Admin/Pages/AdminHomePage'; // Import the AdminHomePage
 import PrivateRoute from './Admin/Utils/PrivateRoute';
+import PrivateRouteStudent from './Students/Utils/PrivateRouteStudent';
 import StudentAuth from './Admin/Pages/StudentAuth'; // Import PrivateRoute
 import useAuth from './Admin/Utils/auth'; // Import the authentication hoo
+import useAuthStudent from './Students/Utils/useAuthStudent';
 import MentorApply from './Students/Pages/MentorApply';
 import MentorListPage from './Admin/Pages/MentorListPage';
 import MentorLoginPage from './Mentor/Pages/MentorLoginPage';
@@ -18,7 +21,8 @@ import MentorLoginPage from './Mentor/Pages/MentorLoginPage';
 
 const AppRoutes = () => {
     const { isAuthenticated, loading } = useAuth();
-    if (loading) {
+    const { profile, studentIsAuth, studentLoading } = useAuthStudent();
+    if (loading && studentLoading) {
       return <div>Loading...</div>; 
     }
  
@@ -88,6 +92,14 @@ const AppRoutes = () => {
             >
               <AboutPage />
             </motion.div>
+          }
+        />
+         <Route
+          path="/profile"
+          element={
+            <PrivateRouteStudent studentIsAuth={studentIsAuth}>   
+              <ProfilePage/>
+            </PrivateRouteStudent>
           }
         />
         <Route
