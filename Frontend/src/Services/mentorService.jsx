@@ -48,3 +48,56 @@ export const Login = async (formData, navigate) => {
         throw error; // Rethrow the error to allow further handling if needed
     }
 };
+
+export const sendPasswordResetOtp = async (email) => {
+  
+    try {
+        const response = await MentorInstance.post('/password-reset/send-otp', { email }, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        showToastSuccess('OTP sent to your email!');
+        return response;
+    } catch (error) {
+        const errorMessage = error.response?.data?.message || 'Error sending OTP.';
+        showToastError(errorMessage);
+        throw error;
+    }
+};
+
+// POST request for verifying OTP
+export const verifyPasswordResetOtp = async (email, otp) => {
+    try {
+        const response = await MentorInstance.post('/password-reset/verify-otp', { email, otp }, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        showToastSuccess('OTP verified!');
+        return response;
+    } catch (error) {
+        const errorMessage = error.response?.data?.message || 'Invalid OTP. Please try again.';
+        showToastError(errorMessage);
+        throw error;
+    }
+};
+
+
+// POST request for resetting password
+export const resetPassword = async (email, newPassword) => {
+    try {
+        const response = await MentorInstance.post('/password-reset/reset-password', { email, newPassword }, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        showToastSuccess('Password reset successful!');
+        return response;
+    } catch (error) {
+        const errorMessage = error.response?.data?.message || 'Error resetting password. Please try again.';
+        showToastError(errorMessage);
+        throw error;
+    }
+};
+

@@ -38,8 +38,8 @@ const Navbar = () => {
             {studentIsAuth ? (
               <div className="flex items-center space-x-4 ml-10">
                 
-                <Link to="/profile" className="text-gray-700 hover:text-cyan-500 px-3 py-2 text-md font-medium"><FaUserGraduate/></Link>
-                <Link to="/cart" className="text-gray-700 hover:text-cyan-500 px-3 py-2 text-md font-medium"><ImCart /></Link>
+                <Link to="/profile" className="text-gray-700 hover:text-cyan-500 px-3 py-2 text-lg font-medium"><FaUserGraduate/></Link>
+                <Link to="/cart" className="text-gray-700 hover:text-cyan-500 px-3 py-2 text-lg font-medium"><ImCart /></Link>
               </div>
             ) : (
               <div>

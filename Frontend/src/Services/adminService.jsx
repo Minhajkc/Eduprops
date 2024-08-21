@@ -75,3 +75,76 @@ export const GetMentors = async () =>{
         throw new Error(errorMessage); 
     }
 };
+
+
+export const RejectMentor = async (mentorId) => {
+    try {
+        const response = await AdminInstance.patch(`Mentorauth/${mentorId}/reject`);
+        showToastSuccess('Mentor Rejected successfully!');
+        return response.data;
+    } catch (error) {
+        const errorMessage = error.response?.data?.message || 'Error rejecting mentor';
+        showToastError(errorMessage);
+        throw new Error(errorMessage); 
+    }
+}
+
+export const createCourseCategory = async (name, description,icon) => {
+    try {
+        const response = await AdminInstance.post('/categories', { name, description,icon});
+        showToastSuccess('Category added successfully!');
+        return response.data;
+    } catch (error) {
+        const errorMessage = error.response?.data?.message || 'Error adding category';
+        showToastError(errorMessage);
+        throw new Error(errorMessage);
+    }
+};
+
+export const getCourseCategory = async () =>{
+
+    try {
+        const response = await AdminInstance.get('categories');
+        return response.data;
+        } catch (error) {
+            const errorMessage = error.response?.data?.message || 'Error fetching categories';
+            showToastError(errorMessage);
+            throw new Error(errorMessage);
+        }
+}
+
+
+export const addCourse = async (courseData) =>{
+    try {
+        const response = await AdminInstance.post('/courses', courseData);
+        showToastSuccess('Course added successfully!');
+        return response.data;
+        } catch (error) {
+            const errorMessage = error.response?.data?.message || 'Error adding course';
+            showToastError(errorMessage);
+            throw new Error(errorMessage);
+        }
+}
+
+
+export const getAllCourses = async () => {
+    try {
+        const response = await AdminInstance.get('/courses');
+        return response.data;
+    } catch (error) {
+        const errorMessage = error.response?.data?.message || 'Error fetching courses';
+        toast.error(errorMessage); // Show error toast notification
+        throw new Error(errorMessage);
+    }
+};
+
+export const getCoursesById = async () => {
+    try {
+        const response = await AdminInstance.get('/coursesById');
+        return response.data;
+    } catch (error) {
+        const errorMessage = error.response?.data?.message || 'Error fetching courses';
+        toast.error(errorMessage); 
+        throw new Error(errorMessage);
+    }
+};

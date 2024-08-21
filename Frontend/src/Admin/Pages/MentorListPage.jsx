@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ApproveMentor, GetMentors } from '../../Services/adminService';
+import { ApproveMentor, GetMentors, RejectMentor } from '../../Services/adminService';
 import Sidebar from '../Components/Layout/Sidebar';
 import { FaDownload } from 'react-icons/fa'; 
 import axios from 'axios';
@@ -39,6 +39,18 @@ const MentorListPage = () => {
         }
     };
 
+    const handleReject = async (mentorId) =>{
+        try {
+            await RejectMentor(mentorId);
+            const response = await GetMentors()
+            setMentors(response.data);
+            setShowPending(true)
+        } catch (err) {
+            console.error('Error approving mentor:', err);
+            setError('Failed to approve mentor');
+        }
+    }
+
     const handleDownload = async (resumeUrl,mentorname) => {
         try {
             const response = await fetch(resumeUrl);
@@ -59,7 +71,7 @@ const MentorListPage = () => {
     if (error) return <p>{error}</p>;
 
     const pendingMentors = mentors.filter(mentor => mentor.isActive === 'pending');
-    const activeMentors = mentors.filter(mentor => mentor.isActive !== 'pending');
+    const activeMentors = mentors.filter(mentor => mentor.isActive === 'active');
 
     return (
         <div className="flex flex-col md:flex-row">
@@ -88,7 +100,8 @@ const MentorListPage = () => {
                                         <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Name</th>
                                         <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Degree</th>
                                         <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Resume</th>
-                                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Approve</th>
+                                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reject</th>
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
@@ -111,9 +124,17 @@ const MentorListPage = () => {
                                             <td className="px-4 py-4 text-sm font-medium">
                                                 <button
                                                     onClick={() => handleApprove(mentor._id)}
-                                                    className="bg-green-500 text-white px-4 py-2 rounded"
+                                                    className="bg-custom-cyan text-white px-4 py-2 rounded"
                                                 >
                                                     Approve
+                                                </button>
+                                            </td>
+                                            <td className="px-4 py-4 text-sm font-medium">
+                                                <button
+                                                    onClick={() => handleReject(mentor._id)}
+                                                    className="bg-red-400 text-white px-4 py-2 rounded"
+                                                >
+                                                    Reject
                                                 </button>
                                             </td>
                                         </tr>

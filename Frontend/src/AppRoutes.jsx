@@ -9,6 +9,8 @@ import HomePage from './Students/Pages/HomePage';
 import ProfilePage from './Students/Pages/ProfilePage';
 import AdminLoginPage from './Admin/Pages/AdminLoginPage';
 import AdminHomePage from './Admin/Pages/AdminHomePage'; // Import the AdminHomePage
+import CoursePage from './Admin/Pages/CoursePage';
+import CategoryPage from './Admin/Pages/CategoryPage';
 import PrivateRoute from './Admin/Utils/PrivateRoute';
 import PrivateRouteStudent from './Students/Utils/PrivateRouteStudent';
 import StudentAuth from './Admin/Pages/StudentAuth'; // Import PrivateRoute
@@ -136,6 +138,22 @@ const AppRoutes = () => {
         element={
             <PrivateRoute isAuthenticated={isAuthenticated}>   
           <MentorListPage/>
+          </PrivateRoute>
+        }
+        />
+        <Route
+        path='/admin/courses'
+        element={
+            <PrivateRoute isAuthenticated={isAuthenticated}>   
+          <CoursePage/>
+          </PrivateRoute>
+        }
+        />
+        <Route
+        path='/admin/courses/:categoryId'
+        element={
+            <PrivateRoute isAuthenticated={isAuthenticated}>   
+          <CategoryPage/>
           </PrivateRoute>
         }
         />

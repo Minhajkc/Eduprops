@@ -89,8 +89,8 @@ const MentorRegistrationForm = () => {
 
       {/* Form Section */}
       <div className="w-full lg:w-2/3 bg-white rounded-lg lg:p-8 pb-10 ">
-        <h2 className="text-2xl font-bold mb-6 text-center">Create Your Account</h2>
-        <form onSubmit={handleSubmit} className=' lg:p-10 lg:rounded-md shadow-custom-cyan lg:shadow-lg'>
+        <h2 className="text-2xl font-bold mb-6 text-center">Start your Instructor Journey</h2>
+        <form onSubmit={handleSubmit} className=' lg:p-10 lg:rounded-md border-t-4 border-custom-cyan shadow-custom-cyan lg:shadow-lg'>
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="fullName">
               Full Name
