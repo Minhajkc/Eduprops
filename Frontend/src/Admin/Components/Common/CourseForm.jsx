@@ -1,24 +1,48 @@
-import React, { useState } from 'react';
-import { addCourse } from '../../../Services/adminService';
+import React, { useState, useEffect } from 'react';
+import { addCourse,updateCourse } from '../../../Services/adminService';
 
-const CourseForm = ({ categoryId, refreshCourses, closeModal }) => {
+const CourseForm = ({ course, categoryId, refreshCourses, closeModal }) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
     const [instructor, setInstructor] = useState('');
     const [duration, setDuration] = useState('');
 
+    useEffect(() => {
+        if (course) {
+            
+            setTitle(course.title || '');
+            setDescription(course.description || '');
+            setPrice(course.price || '');
+            setInstructor(course.instructor || '');
+            setDuration(course.duration || '');
+        }
+    }, [course]);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await addCourse({
-                title,
-                description,
-                price,
-                instructor,
-                duration,
-                category: categoryId,
-            });
+            if (course) {
+                // If the course exists, update it
+                await updateCourse(course._id, {
+                    title,
+                    description,
+                    price,
+                    instructor,
+                    duration,
+                    category: categoryId,
+                });
+            } else {
+             
+                await addCourse({
+                    title,
+                    description,
+                    price,
+                    instructor,
+                    duration,
+                    category: categoryId,
+                });
+            }
 
             // Clear form fields
             setTitle('');
@@ -31,6 +55,7 @@ const CourseForm = ({ categoryId, refreshCourses, closeModal }) => {
             if (closeModal) closeModal();
         } catch (err) {
             // Handle error if needed
+            console.error('Failed to submit the course:', err);
         }
     };
 
@@ -78,9 +103,9 @@ const CourseForm = ({ categoryId, refreshCourses, closeModal }) => {
           
             <button
                 type="submit"
-                className="w-full  bg-custom-cyan text-white py-2 px-4 rounded-md hover:bg-custom-cyan2"
+                className="w-full bg-custom-cyan text-white py-2 px-4 rounded-md hover:bg-custom-cyan2"
             >
-                Add Course
+                {course ? 'Update Course' : 'Add Course'}
             </button>
         </form>
     );

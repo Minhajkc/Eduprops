@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getCoursesById,deleteCourseById  } from '../../../Services/adminService'; // Ensure you have deleteCourseById in your service
+import { getCourseById,getCoursesById,deleteCourseById  } from '../../../Services/adminService'; // Ensure you have deleteCourseById in your service
 import CourseForm from './CourseForm';
 import { AiOutlinePlus } from 'react-icons/ai';
 import { TrashIcon, PencilIcon } from '@heroicons/react/24/outline';
@@ -29,10 +29,21 @@ const CategorizedCourses = ({ categoryId }) => {
         fetchCourses();
     }, [categoryId]);
 
-    const openModal = (course = null) => {
-        setSelectedCourse(course); 
+    const openModal = async (course) => {
+        if (course) {
+            try {
+   
+                const courseDetails = await getCourseById(course._id);
+                setSelectedCourse(courseDetails);
+            } catch (err) {
+                setError('Failed to fetch course details');
+            }
+        } else {
+            setSelectedCourse(null); 
+        }
         setIsModalOpen(true);
     };
+
     
     const closeModal = () => setIsModalOpen(false);
 
@@ -111,7 +122,7 @@ const CategorizedCourses = ({ categoryId }) => {
                             categoryId={categoryId} 
                             refreshCourses={fetchCourses} 
                             closeModal={closeModal} 
-                            course={selectedCourse} // Pass the selected course to the form
+                            course={selectedCourse} 
                         />
                         <button
                             onClick={closeModal}

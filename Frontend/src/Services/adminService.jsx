@@ -198,3 +198,26 @@ export const deleteCourseById = async (id) =>{
         toast.error(errorMessage); // Show error toast notification
     }
 }
+
+export const getCourseById = async (id) =>{
+    try {
+        const response = await AdminInstance.get(`/getCoursebyId/${id}`)
+            return response.data;
+            } catch (error) {
+                const errorMessage = error.response?.data?.message || 'Error fetching category';
+                toast.error(errorMessage); // Show error toast notification
+                throw new Error(errorMessage);
+     }
+
+}
+
+export const updateCourse = async (id, updatedCourseData) => {
+    try {
+        const response = await AdminInstance.put(`/updateCourse/${id}`, updatedCourseData);
+        showToastSuccess(`Course updated successfully! `)
+        return response.data;
+    } catch (error) {
+        const errorMessage = error.response?.data?.message || 'Error updating course';
+        throw new Error(errorMessage);
+    }
+};
