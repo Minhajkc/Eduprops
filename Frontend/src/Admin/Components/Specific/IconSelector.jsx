@@ -16,7 +16,7 @@ const IconSelector = ({ selectedIcon, onSelect }) => {
                 <div
                     key={icon.name}
                     onClick={() => onSelect(icon.name)}
-                    className={`cursor-pointer p-2 ${selectedIcon === icon.name ? 'border-2 border-blue-500' : ''}`}
+                    className={`cursor-pointer p-2 ${selectedIcon === icon.name ? 'border-2 border-custom-cyan' : ''}`}
                 >
                     {icon.component}
                 </div>

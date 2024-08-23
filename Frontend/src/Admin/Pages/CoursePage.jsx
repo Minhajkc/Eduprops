@@ -1,17 +1,54 @@
-// components/CoursePage.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from '../Components/Layout/Sidebar';
-import CategoryForm from '../Components/Common/CategoryForm'; // Adjust the path as necessary
+import CategoryForm from '../Components/Common/CategoryForm';
 import CategoryList from '../Components/Common/CategoryList';
+import { getCourseCategory, createCourseCategory } from '../../Services/adminService'; // Adjust the import path as needed
+
 
 function CoursePage() {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [categories, setCategories] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const response = await getCourseCategory(); 
+                setCategories(response);
+            } catch (err) {
+                setError('Failed to fetch categories');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchCategories();
+    }, []);
+
+    const addCategory = async (name, description, selectedIcon) => {
+        try {
+            const newCategory = await createCourseCategory(name, description, selectedIcon);
+            setCategories((prevCategories) => [...prevCategories, newCategory]);
+        } catch (err) {
+            setError('Failed to add category');
+        }
+    };
+
+    const handleCategoryUpdate = async (id) => {
+        try {
+            const updatedCategories = await getCourseCategory();
+            setCategories(updatedCategories);
+        } catch (err) {
+            setError('Failed to update category list');
+        }
+    };
 
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
 
     return (
-        <div className="flex ">
+        <div className="flex">
             <Sidebar />
             <div className="flex-1 p-4">
                 <button
@@ -34,14 +71,13 @@ function CoursePage() {
                     </svg>
                     <span className="hidden md:block">Add New Category</span>
                 </button>
-                
 
                 {isModalOpen && (
                     <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
                         <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md relative">
                             <button
                                 onClick={closeModal}
-                                className="absolute top-2  right-2 text-gray-500 hover:text-gray-700"
+                                className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
                             >
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -58,15 +94,13 @@ function CoursePage() {
                                     />
                                 </svg>
                             </button>
-                            <CategoryForm />
+                            <CategoryForm addCategory={addCategory} />
                         </div>
                     </div>
                 )}
 
-                {/* Separate section for CategoryList */}
-                <div className="mt-6 ">
-               
-                    <CategoryList />
+                <div className="mt-6">
+                    <CategoryList categories={categories} onCategoryUpdate={handleCategoryUpdate} loading={loading} error={error} />
                 </div>
             </div>
         </div>

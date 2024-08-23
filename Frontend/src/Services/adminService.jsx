@@ -148,3 +148,53 @@ export const getCoursesById = async () => {
         throw new Error(errorMessage);
     }
 };
+
+export const deleteCategory = async (id) =>{
+    try {
+        const response = await AdminInstance.delete(`/categories/${id}`)
+
+        showToastSuccess( response.data.message);
+            return response.data;
+         
+            } catch (error) {
+                const errorMessage = error.response?.data?.message || 'Error deleting category';
+                toast.error(errorMessage); // Show error toast notification
+                throw new Error(errorMessage);
+     }
+}
+
+export const editCategory = async (id, updatedCategory) => {
+    try {
+        const response = await AdminInstance.put(`/categories/${id}`, updatedCategory);
+        showToastSuccess(`Category updated successfully! ${response.data.name}  `);
+        return response.data;
+    } catch (error) {
+        const errorMessage = error.response?.data?.message || 'Error editing category';
+        showToastError(errorMessage); 
+        throw new Error(errorMessage);
+    }
+};
+
+
+export const getCategoryById = async (id) =>{
+    try {
+        const response = await AdminInstance.get(`/courses/${id}`)
+            return response.data;
+            } catch (error) {
+                const errorMessage = error.response?.data?.message || 'Error fetching category';
+                toast.error(errorMessage); // Show error toast notification
+                throw new Error(errorMessage);
+     }
+
+}
+
+export const deleteCourseById = async (id) =>{
+    try {
+        const response = await AdminInstance.delete(`/courses/${id}`)
+        showToastSuccess( response.data.message);
+        return response.data;
+    }catch(error){
+        const errorMessage = error.response?.data?.message || 'Error deleting course';
+        toast.error(errorMessage); // Show error toast notification
+    }
+}

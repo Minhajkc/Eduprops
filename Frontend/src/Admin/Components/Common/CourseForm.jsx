@@ -1,93 +1,84 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-import { AdminInstance } from '../../../Services/apiInstances';
 import { addCourse } from '../../../Services/adminService';
 
-
-const CourseForm = ({ categoryId, closeModal }) => {
+const CourseForm = ({ categoryId, refreshCourses, closeModal }) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
     const [instructor, setInstructor] = useState('');
     const [duration, setDuration] = useState('');
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-
-            const response = await addCourse({
+            await addCourse({
                 title,
                 description,
                 price,
                 instructor,
                 duration,
                 category: categoryId,
-            })
+            });
+
+            // Clear form fields
             setTitle('');
             setDescription('');
             setPrice('');
             setInstructor('');
-            setDuration('')
-            closeModal();
-            
+            setDuration('');
+
+            refreshCourses();
+            if (closeModal) closeModal();
         } catch (err) {
-           
+            // Handle error if needed
         }
     };
 
     return (
         <form onSubmit={handleSubmit} className="space-y-4">
-            <h2 className="text-xl font-semibold mb-4">Add New Course</h2>
-            <div>
-                <label className="block text-gray-700">Title</label>
-                <input
-                    type="text"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    className="mt-1 p-2 border border-gray-300 rounded w-full"
-                    required
-                />
-            </div>
-            <div>
-                <label className="block text-gray-700">Description</label>
-                <textarea
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    className="mt-1 p-2 border border-gray-300 rounded w-full"
-                    required
-                />
-            </div>
-            <div>
-                <label className="block text-gray-700">Price</label>
-                <input
-                    type="number"
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
-                    className="mt-1 p-2 border border-gray-300 rounded w-full"
-                    required
-                />
-            </div>
-            <div>
-                <label className="block text-gray-700">Instructor</label>
-                <input
-                    type="text"
-                    value={instructor}
-                    onChange={(e) => setInstructor(e.target.value)}
-                    className="mt-1 p-2 border border-gray-300 rounded w-full"
-                />
-            </div>
-            <div>
-                <label className="block text-gray-700">Duration (weeks)</label>
-                <input
-                    type="number"
-                    value={duration}
-                    onChange={(e) => setDuration(e.target.value)}
-                    className="mt-1 p-2 border border-gray-300 rounded w-full"
-                    required
-                />
-            </div>
+            {/* Course Title */}
+            <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Course Title"
+                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+            />
+            {/* Course Description */}
+            <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Course Description"
+                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 h-24 resize-none"
+            />
+            {/* Course Price */}
+            <input
+                type="number"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                placeholder="Course Price"
+                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+            />
+            {/* Instructor */}
+            <input
+                type="text"
+                value={instructor}
+                onChange={(e) => setInstructor(e.target.value)}
+                placeholder="Instructor"
+                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+            />
+            {/* Course Duration */}
+            <input
+                type="number"
+                value={duration}
+                onChange={(e) => setDuration(e.target.value)}
+                placeholder="Course Duration (hours)"
+                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+            />
+          
             <button
                 type="submit"
-                className="bg-custom-cyan text-white px-4 py-2 rounded"
+                className="w-full  bg-custom-cyan text-white py-2 px-4 rounded-md hover:bg-custom-cyan2"
             >
                 Add Course
             </button>
