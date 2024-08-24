@@ -115,6 +115,7 @@ export const getCourseCategory = async () =>{
 
 
 export const addCourse = async (courseData) =>{
+
     try {
         const response = await AdminInstance.post('/courses', courseData);
         showToastSuccess('Course added successfully!');
@@ -218,6 +219,34 @@ export const updateCourse = async (id, updatedCourseData) => {
         return response.data;
     } catch (error) {
         const errorMessage = error.response?.data?.message || 'Error updating course';
+        throw new Error(errorMessage);
+    }
+};
+
+export const addVideoToCourse = async (courseId, videoData) => {
+    try {
+        const response = await AdminInstance.put(`/addVideo/${courseId}`, videoData, {
+            headers: {
+                "Content-Type": "multipart/form-data",  
+            },
+        });
+        showToastSuccess(`Video added successfully!`);
+        return response.data;
+    } catch (error) {
+        const errorMessage = error.response?.data?.message || 'Error adding video';
+        showToastError(errorMessage);
+        throw new Error(errorMessage);
+    }
+};
+
+export const deleteCourseLesson = async (courseId, lessonIndex) => {
+    try {
+        const response = await AdminInstance.delete(`/courses/${courseId}/lessons/${lessonIndex}`);
+        showToastSuccess(response.message || 'Lesson deleted successfully');
+        return response.data;
+    } catch (error) {
+        const errorMessage = error.response?.data?.message || 'Error deleting lesson';
+        showToastError(errorMessage);
         throw new Error(errorMessage);
     }
 };

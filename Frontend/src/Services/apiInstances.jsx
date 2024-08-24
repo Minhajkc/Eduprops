@@ -17,10 +17,8 @@ const MentorInstance = axios.create({
 
 const AdminInstance = axios.create({
     baseURL: "http://localhost:3000/Admin/",
-    headers: {
-        "Content-Type": "application/json",
-        },
-        timeout: 10000,
+    
+        timeout:120000,
         withCredentials: true  
 })
 
