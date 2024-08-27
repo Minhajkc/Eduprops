@@ -150,6 +150,7 @@ export const getCategoryCoursesById = async (id) =>{
 export const getCourseById = async (courseId) =>{
     try {
         const response = await StudentInstance.get(`/courses/category/selectedcourse/${courseId}`)
+       
         return response.data;
     }
     catch(err){
