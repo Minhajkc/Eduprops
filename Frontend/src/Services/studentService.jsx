@@ -122,4 +122,40 @@ export const fetchStudentProfile = async () => {
 };
 
 
+export const getCourseCategory = async () =>{
+
+    try {
+        const response = await StudentInstance.get('/courses/categories');
+        return response.data;
+        } catch (error) {
+            const errorMessage = error.response?.data?.message || 'Error fetching categories';
+            showToastError(errorMessage);
+            throw new Error(errorMessage);
+        }
+}
+
+export const getCategoryCoursesById = async (id) =>{
+ 
+    try {
+        const response = await StudentInstance.get(`/courses/category/${id}`)
+            return response.data;
+            } catch (error) {
+                const errorMessage = error.response?.data?.message || 'Error fetching category';
+                toast.error(errorMessage); // Show error toast notification
+                throw new Error(errorMessage);
+     }
+
+}
+
+export const getCourseById = async (courseId) =>{
+    try {
+        const response = await StudentInstance.get(`/courses/category/selectedcourse/${courseId}`)
+        return response.data;
+    }
+    catch(err){
+        console.log(err);
+    }
+}
+
+
 

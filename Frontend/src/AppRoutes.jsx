@@ -19,6 +19,10 @@ import useAuthStudent from './Students/Utils/useAuthStudent';
 import MentorApply from './Students/Pages/MentorApply';
 import MentorListPage from './Admin/Pages/MentorListPage';
 import MentorLoginPage from './Mentor/Pages/MentorLoginPage';
+import CoursePageStudents from './Students/Pages/CoursePageStudents';
+import CourseCategoryPage from './Students/Pages/CourseCategoryPage';
+import CourseFullViewPage from './Students/Pages/CourseFullViewPage';
+
 
 
 const AppRoutes = () => {
@@ -67,6 +71,45 @@ const AppRoutes = () => {
               transition={{ duration: 0.5 }}
             >
               <LoginPage />
+            </motion.div>
+          }
+        />
+        <Route
+          path="/courses"
+          element={
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -50 }}
+              transition={{ duration: 0.5 }}
+            >
+              <CoursePageStudents />
+            </motion.div>
+          }
+        />
+          <Route
+          path="/courses/category/:id"
+          element={
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -50 }}
+              transition={{ duration: 0.5 }}
+            >
+              <CourseCategoryPage />
+            </motion.div>
+          }
+        />
+        <Route
+          path="/courses/category/selectedcourse/:courseId"
+          element={
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -50 }}
+              transition={{ duration: 0.5 }}
+            >
+              <CourseFullViewPage/>
             </motion.div>
           }
         />
