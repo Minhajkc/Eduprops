@@ -1,32 +1,40 @@
 import { MentorInstance } from '../Services/apiInstances';
 import { showToastSuccess, showToastError } from '../utils/toastify';
 
-
-export const registerMentor = async (formData) => {  
-      
+export const registerMentor = async (formData) => {
     try {
-     
-        const response = await MentorInstance.post('MentorRegister', formData, {
-        });
-     
-        console.log(response, 'resss');
-         
-        if (response.data && response.data.message) {
-            showToastSuccess(response.data.message);
+      // Log FormData entries
+      for (let [key, value] of formData.entries()) {
+        if (value instanceof File) {
+          console.log(`${key}: File - ${value.name}`);
         } else {
-            showToastSuccess('Mentor registered successfully!');
+          console.log(`${key}: ${value}`);
         }
-
-        return response.data; 
-
+      }
+  
+      const response = await MentorInstance.post('MentorRegister', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+  
+      console.log(response, 'resss');
+  
+      if (response.data && response.data.message) {
+        showToastSuccess(response.data.message);
+      } else {
+        showToastSuccess('Mentor registered successfully!');
+      }
+  
+      return response.data;
+  
     } catch (error) {
-       
-        const errorMessage = error.response?.data?.message || 'An error occurred during registration.';
-        showToastError(errorMessage);
-        throw error; // Rethrow the error to allow further handling if needed
+      const errorMessage = error.response?.data?.message || 'An error occurred during registration.';
+      showToastError(errorMessage);
+      throw error; // Rethrow the error to allow further handling if needed
     }
-};
-
+  }
+  ;
 export const Login = async (formData, navigate) => {
     try {
         // Send a POST request to the login endpoint with formData

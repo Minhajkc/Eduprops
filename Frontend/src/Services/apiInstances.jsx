@@ -11,6 +11,9 @@ const StudentInstance = axios.create({
 
 const MentorInstance = axios.create({
     baseURL: "http://localhost:3000/Mentor/",
+    headers: {
+        'Content-Type': 'multipart/form-data'
+      },
         timeout: 10000,
         withCredentials: true     
 })

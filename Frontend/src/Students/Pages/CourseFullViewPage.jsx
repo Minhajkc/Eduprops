@@ -84,10 +84,10 @@ const CourseFullViewPage = () => {
     </div>
 
     {/* Right Side: Lesson List */}
-    <div className="lg:w-1/3 w-full space-y-4 bg-custom-cyan2 p-4 sm:p-5 text-white font-bold rounded-lg shadow-lg">
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl text-center font-bold mb-4">Lessons</h2>
+    <div className="lg:w-1/3 w-full space-y-4  bg-custom-cyan2 p-4 sm:p-5 text-white font-bold rounded-lg shadow-lg">
+        <h2 className="text-3xl sm:text-4xl  lg:text-5xl text-center font-bold mb-4">Lessons</h2>
         {course.lessonsInfo && course.lessonsInfo.length > 0 ? (
-            <div className="space-y-4 max-h-[60vh] overflow-y-auto ">
+            <div className="space-y-4   max-h-[60vh]  overflow-y-auto ">
                 {course.lessonsInfo.map((lesson, index) => (
                     <div key={index} className="p-3 sm:p-4 rounded-lg shadow-md bg-white bg-opacity-10 hover:bg-opacity-20 transition-all duration-300">
                         <h3 className="text-custom-cyan flex items-center justify-between text-sm sm:text-base">
