@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getCategoryCoursesById } from '../../Services/studentService';
-// Importing icons from react-icons
+import { addCourseToCart, getCategoryCoursesById } from '../../Services/studentService';
 import { FaSearch, FaFilter, FaCartArrowDown, FaArrowLeft } from 'react-icons/fa';
 import { CiClock2 } from "react-icons/ci";
+
 
 const CourseCategoryPage = () => {
   const { id } = useParams();
@@ -58,6 +58,14 @@ const CourseCategoryPage = () => {
   const handleCardClick = (courseId) => {
     navigate(`/courses/category/selectedcourse/${courseId}`); 
   };
+
+  const handleCart = async(id)=>{
+       try{
+         await addCourseToCart(id);
+       }catch(e){
+        setError('Failed to add course to cart');
+       }
+  }
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
@@ -136,11 +144,11 @@ const CourseCategoryPage = () => {
     <div
       key={course._id}
       className="bg-slate-100 p-4 rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 relative cursor-pointer flex flex-col"
-      onClick={() => handleCardClick(course._id)}
+     
     >
       <img src={course.image} alt={course.title} className="w-full  h-32 object-cover rounded-t-lg mb-4" />
       <div className="flex flex-col flex-grow p-2">
-        <h2 className="text-lg font-bold mb-1">{course.title}</h2>
+        <h2 className="text-lg font-bold mb-1"  onClick={() => handleCardClick(course._id)}>{course.title}</h2>
         <div className="flex justify-between items-center mb-2">
           <p className="text-xs text-gray-700">{course.description}</p>
           <p className="text-xs text-gray-700 flex items-center">
@@ -150,7 +158,7 @@ const CourseCategoryPage = () => {
         </div>
         <div className="flex justify-between items-center mt-auto">
           <p className="text-md font-bold text-gray-900">${course.price}</p>
-          <button className="text-custom-cyan hover:text-custom-cyan2 transition-colors duration-300">
+          <button className="text-custom-cyan hover:text-custom-cyan2 transition-colors duration-300" onClick={() => handleCart(course._id)}>
             <FaCartArrowDown className="h-6 w-6" />
           </button>
         </div>

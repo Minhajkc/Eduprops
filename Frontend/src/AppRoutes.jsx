@@ -22,6 +22,10 @@ import MentorLoginPage from './Mentor/Pages/MentorLoginPage';
 import CoursePageStudents from './Students/Pages/CoursePageStudents';
 import CourseCategoryPage from './Students/Pages/CourseCategoryPage';
 import CourseFullViewPage from './Students/Pages/CourseFullViewPage';
+import PublicRouteGuard from './Students/Utils/PublicRouteGuard';
+import CartPage from './Students/Pages/CartPage';
+
+
 
 
 
@@ -51,19 +55,23 @@ const AppRoutes = () => {
         <Route
           path="/signup"
           element={
+            <PublicRouteGuard>
             <motion.div
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -50 }}
               transition={{ duration: 0.5 }}
             >
+
               <SignUpPage />
             </motion.div>
+            </PublicRouteGuard>
           }
         />
         <Route
           path="/signin"
           element={
+            <PublicRouteGuard>
             <motion.div
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
@@ -72,6 +80,7 @@ const AppRoutes = () => {
             >
               <LoginPage />
             </motion.div>
+            </PublicRouteGuard>
           }
         />
         <Route
@@ -144,6 +153,14 @@ const AppRoutes = () => {
           element={
             <PrivateRouteStudent studentIsAuth={studentIsAuth}>   
               <ProfilePage/>
+            </PrivateRouteStudent>
+          }
+        />
+         <Route
+          path="/cart"
+          element={
+            <PrivateRouteStudent studentIsAuth={studentIsAuth}>   
+              <CartPage/>
             </PrivateRouteStudent>
           }
         />

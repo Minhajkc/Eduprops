@@ -7,6 +7,8 @@ import { registerStudent, handleGoogleAuth } from '../../Services/studentService
 import GoogleAuthButton from '../Components/Common/TempGoogleAuthButton';
 import { Spin } from 'antd';
 import ForgotPasswordModal from '../Components/Layout/ForgotPasswordModal';
+import { setStudentId } from '../../Redux/studentSlice';
+import { useDispatch } from 'react-redux';
 
 
 
@@ -17,6 +19,8 @@ const LoginPage = () => {
     email: '',
     password: '',
   });
+
+  const dispatch = useDispatch()
 
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
@@ -43,7 +47,11 @@ const LoginPage = () => {
     if (validate()) {
       setLoading(true); 
         try {
-          await loginStudent(formData,navigate);
+         const student = await loginStudent(formData,navigate);
+         if(student){
+             dispatch(setStudentId(student.data.Student._id))
+             localStorage.setItem('studentId',student.data.Student._id)
+         }
           setLoading(false); 
         } catch (error) {
           setLoading(false);
@@ -53,7 +61,8 @@ const LoginPage = () => {
 const handleGoogleSuccess = async (response) => {
   setLoading(true);
   try {
-    await handleGoogleAuth(response,navigate);
+    await handleGoogleAuth(response,navigate,dispatch);
+ 
     setLoading(false);
   } catch (error) {
     setLoading(false);

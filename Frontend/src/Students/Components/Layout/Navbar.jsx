@@ -1,12 +1,49 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import useAuthStudent from '../../Utils/useAuthStudent'; // Import your authentication hook
 import { FaUserGraduate } from "react-icons/fa";
 import { ImCart } from "react-icons/im";
+import { useSelector, useDispatch } from 'react-redux';
+import { logoutStudentRedux } from '../../../Redux/studentSlice';
+import { logoutStudent } from '../../../Services/studentService';
+import useAuthStudent from '../../Utils/useAuthStudent';
+import { StudentInstance } from '../../../Services/apiInstances';
+
+
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { studentIsAuth } = useAuthStudent(); 
+  const reduxStudentId = useSelector((state) => state.student.studentId);
+  const dispatch = useDispatch();
+  const [studentId, setStudentId] = useState(reduxStudentId || localStorage.getItem('studentId'));
+  const [isToken,setIsToken]=useState(false)
+
+
+  useEffect(() => {
+   const status = async()=>{
+  try{
+    const response = await StudentInstance.get('profile')
+    if(response){
+      setIsToken(true)
+      setStudentId(reduxStudentId || localStorage.getItem('studentId'));
+    }
+  }catch(e){
+    console.log(e,'error')
+  }
+}
+status()
+   
+  },[reduxStudentId]);
+
+  const handleLogout = async () => {
+    try {
+      await logoutStudent();
+      dispatch(logoutStudentRedux()); // Dispatch the logout action to clear Redux state
+      localStorage.removeItem('studentId'); // Clear localStorage
+      setStudentId(null); // Clear local component state immediately
+    } catch (error) {
+      console.error('Failed to log out:', error);
+    }
+  };
 
   return (
     <nav className="bg-white font-roboto">
@@ -26,7 +63,6 @@ const Navbar = () => {
             </button>
           </div>
 
-          {/* Navigation Links and Buttons */}
           <div className="hidden lg:flex lg:items-center lg:w-auto">
             <div className="text-sm ">
               <Link to="/" className="text-gray-700 hover:text-cyan-500 px-3 py-2 text-sm font-medium">Home</Link>
@@ -35,11 +71,11 @@ const Navbar = () => {
               <Link to="/contact" className="text-gray-700 hover:text-cyan-500 px-3 py-2 text-sm font-medium">Contact</Link>
               <Link to="/faq" className="text-gray-700 hover:text-cyan-500 px-3 py-2 text-sm font-medium">FAQ</Link>
             </div>
-            {studentIsAuth ? (
+            {isToken && studentId ? (
               <div className="flex items-center space-x-4 ml-10">
-                
                 <Link to="/profile" className="text-gray-700 hover:text-cyan-500 px-3 py-2 text-lg font-medium"><FaUserGraduate/></Link>
                 <Link to="/cart" className="text-gray-700 hover:text-cyan-500 px-3 py-2 text-lg font-medium"><ImCart /></Link>
+                <button onClick={handleLogout} className="bg-transparent text-xs text-red-500 px-2 py-1  rounded-3xl text-center hover:border-orange-400 hover:text-orange-500 border border-red-500">Logout →</button>
               </div>
             ) : (
               <div>
@@ -49,7 +85,6 @@ const Navbar = () => {
             )}
           </div>
 
-          {/* Mobile menu button */}
           <div className="lg:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -70,7 +105,6 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Mobile menu */}
         {isMenuOpen && (
           <div className="lg:hidden mt-4">
             <div className="mb-4 md:hidden">
@@ -88,10 +122,19 @@ const Navbar = () => {
             <Link to="/courses" className="block text-gray-700 hover:text-cyan-500 py-2" onClick={() => setIsMenuOpen(false)}>Courses</Link>
             <Link to="/contact" className="block text-gray-700 hover:text-cyan-500 py-2" onClick={() => setIsMenuOpen(false)}>Contact us</Link>
             <Link to="/faq" className="block text-gray-700 hover:text-cyan-500 py-2" onClick={() => setIsMenuOpen(false)}>FAQ's</Link>
-            {studentIsAuth? (
+            {isToken && studentId ? (
               <div className="mt-4 flex flex-col space-y-2">
                 <Link to="/profile" className="bg-transparent text-custom-cyan px-4 py-2 rounded-lg text-center hover:bg-cyan-500 hover:text-white border border-cyan-500" onClick={() => setIsMenuOpen(false)}>Profile</Link>
                 <Link to="/cart" className="bg-custom-cyan text-white px-4 py-2 rounded-lg text-center hover:bg-cyan-600" onClick={() => setIsMenuOpen(false)}>Cart</Link>
+                <button
+    onClick={() => {
+      handleLogout(); // Call logout function
+      setIsMenuOpen(false); // Close menu after logout
+    }}
+    className="bg-transparent text-custom-cyan px-4 py-2 rounded-lg text-center hover:bg-cyan-500 hover:text-white border border-cyan-500"
+  >
+    Logout
+  </button>
               </div>
             ) : (
               <div className="mt-4 flex flex-col space-y-2">

@@ -9,6 +9,7 @@ const useAuthStudent = () => {
   useEffect(() => {
    
     const fetchProfile = async () => {
+        
       try {
         const response = await StudentInstance.get('profile');
         setProfile(response.data); 

@@ -5,6 +5,8 @@ import Modal from 'react-modal';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import { Spin } from 'antd';
+import { setStudentId } from '../../../Redux/studentSlice';
+import { useDispatch } from 'react-redux'
 
 Modal.setAppElement('#root');
 
@@ -14,6 +16,7 @@ const OtpModal = ({ isOpen, onClose, formData }) => {
     const [timeLeft, setTimeLeft] = useState(300); 
     const [loading, setLoading] = useState(false);// 5 minutes in seconds
     const inputsRef = useRef([]);
+    const dispatch = useDispatch()
 
     useEffect(() => {
         if (isOpen) {
@@ -72,7 +75,10 @@ const OtpModal = ({ isOpen, onClose, formData }) => {
                 },
             });
             setLoading(false); 
+            dispatch(setStudentId(response.data._id))
+            localStorage.setItem('studentId',response.data._id)
              navigate('/')
+             
             toast.success('Account created successfully!', {
                 position: 'top-center',
                 autoClose: 3000,

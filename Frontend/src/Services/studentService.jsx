@@ -1,5 +1,7 @@
 import { StudentInstance } from '../Services/apiInstances';
 import { showToastSuccess, showToastError } from '../utils/toastify';
+import { setStudentId } from '../Redux/studentSlice';
+
 
 // POST request for login
 export const loginStudent = async (formData, navigate) => {
@@ -10,7 +12,7 @@ export const loginStudent = async (formData, navigate) => {
             },
         });
         showToastSuccess('Login successful!');
-        navigate('/'); // Navigate to the home page
+        navigate('/'); 
         return response;
     } catch (error) {
         console.log(error);
@@ -37,13 +39,19 @@ export const registerStudent = async (formData, navigate) => {
     }
 };
 
-export const handleGoogleAuth = async (response, navigate) => {
+export const handleGoogleAuth = async (response, navigate,dispatch) => {
+ 
     try {
         const result = await StudentInstance.post('/auth/google', {
             idToken: response.credential,
         });
         showToastSuccess('Sign-up successful!');
         navigate('/'); // Navigate to the home page
+        console.log(result.data.Student._id)
+        const studentId = result.data.Student._id;
+
+        localStorage.setItem('studentId', studentId);
+        dispatch(setStudentId(studentId));
         return result;
     } catch (error) {
         const errorMessage = error.response?.data?.message || 'Error signing up with Google.';
@@ -157,6 +165,51 @@ export const getCourseById = async (courseId) =>{
         console.log(err);
     }
 }
+
+export const logoutStudent = async () => {
+    try {
+    const response = await StudentInstance.post('/student/logout');
+    showToastSuccess(response.message||'Logout Successful');
+    return response.data;
+   
+    } catch (error) {
+        console.log(error)
+    }
+};
+export const getCartItems = async () =>{
+    try {
+        const response = await StudentInstance.get(`/cart`)
+        return response.data;
+        }
+        catch(err){
+            console.log(err);
+            }
+}
+
+export const addCourseToCart = async (id) => {
+    try {
+        const response = await StudentInstance.post(`/cart/${id}`);
+        showToastSuccess('Course added to cart successfully');
+        return response.data;
+    } catch (err) {
+        if (err.response) {
+            const statusCode = err.response.status;
+            if (statusCode === 400) {
+                showToastError('Course is already in the cart');
+            } else if (statusCode === 404) {
+                showToastError('Course not found');
+            } else {
+                showToastError('An unexpected error occurred');
+            }
+        } else if (err.request) {
+            showToastError('No response from server, please try again later');
+        } else {
+            showToastError('An unexpected error occurred');
+        }
+
+        console.log(err); // For debugging purposes
+    }
+};
 
 
 
