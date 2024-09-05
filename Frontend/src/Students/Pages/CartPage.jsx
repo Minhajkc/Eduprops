@@ -1,9 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { getCartItems } from '../../Services/studentService'; 
-import { Star, Trash2 } from 'lucide-react';
+import { getCartItems, removeFromCart } from '../../Services/studentService'; 
+import { Trash2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { CiClock2 } from "react-icons/ci";
 
 const CartPage = () => {
-  const [cartItems, setCartItems] = useState([]);
+  const navigate = useNavigate();
+  const [cartData, setCartData] = useState({
+    items: [],
+    subtotal: 0,
+    discount: 0,
+    tax: 0,
+    total: 0,
+  });
+  
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -11,7 +21,8 @@ const CartPage = () => {
     const fetchCartItems = async () => {
       try {
         const response = await getCartItems();
-        setCartItems(response);
+        const { courses, subtotal, discount, tax, total } = response;
+        setCartData({ items: courses, subtotal, discount, tax, total });
       } catch (error) {
         console.error('Failed to fetch cart items:', error);
         setError('Failed to fetch cart items.');
@@ -23,77 +34,93 @@ const CartPage = () => {
     fetchCartItems();
   }, []);
 
-  const handleRemove = (itemToRemove) => {
-    setCartItems(cartItems.filter(item => item.id !== itemToRemove.id));
+  const handleRemove = async (itemToRemoveId) => {
+    try {
+      await removeFromCart(itemToRemoveId);
+      const response = await getCartItems();
+      const { courses, subtotal, discount, tax, total } = response;
+      setCartData({ items: courses, subtotal, discount, tax, total });
+    } catch (error) {
+      console.log('Failed to remove course:', error);
+    }
   };
 
-  const subtotal = cartItems.reduce((sum, item) => sum + item.price, 0);
-  const discount = 10; // Hardcoded for now, adjust as needed
-  const tax = 20; // Hardcoded for now, adjust as needed
-  const total = subtotal - discount + tax;
+  const handleClick = (id) => {
+    navigate(`/courses/category/selectedcourse/${id}`);
+  };
 
   if (loading) {
-    return <div className="p-6 text-center">Loading cart items...</div>;
+    return <div className="p-6 text-center text-gray-600">Loading cart items...</div>;
   }
 
   if (error) {
-    return <div className="p-6 text-center text-red-500">{error}</div>;
+    return <div className="p-6 text-center text-red-500 font-semibold">{error}</div>;
   }
 
+  const { items, subtotal, discount, tax, total } = cartData;
+
   return (
-    <div className="lg:p-10 p-6 mx-auto font-roboto">
-      <h1 className="text-2xl font-bold mb-6">Shopping Cart</h1>
-      <div className="text-sm text-gray-600 mb-4">{cartItems.length} Course in cart</div>
+    <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8 font-roboto">
+      <h1 className="text-3xl font-extrabold text-gray-900 mb-6">Shopping Cart</h1>
+      <div className="text-sm text-gray-500 mb-6">{items.length} {items.length === 1 ? 'Course' : 'Courses'} in cart</div>
       
-      <div className="flex flex-col md:flex-row gap-6">
-        <div className="flex-grow  ">
-          {cartItems.map((item, index) => (
-            <div key={index} className="flex items-start space-x-4 pb-4 mb-4 border-b">
-              <img src={item.image} alt={item.title} className="w-24 h-16 object-cover rounded" />
+      <div className="flex flex-col lg:flex-row gap-8">
+        {/* Cart Items */}
+        <div className="lg:w-2/3">
+          {items.map((item) => (
+            <div 
+              key={item._id} 
+              className="flex items-center space-x-4 py-6 border-b border-gray-200 last:border-b-0  cursor-pointer" 
+              onClick={() => handleClick(item._id)}
+            >
+              <img src={item.image} alt={item.title} className="w-24 h-16 object-cover rounded-md shadow-sm" />
               <div className="flex-grow">
-                <h3 className="font-bold">{item.title}</h3>
-                <p className="text-sm text-gray-600">By {item.author}</p>
-                <div className="flex items-center mt-1">
-                  <span className="text-yellow-400 mr-1">{item.rating?.toFixed(1)}</span>
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} size={12} fill={i < Math.floor(item.rating || 0) ? "gold" : "none"} stroke="gold" />
-                  ))}
-                  <span className="text-xs text-gray-500 ml-1">({item.ratingCount} ratings)</span>
-                </div>
-                <p className="text-xs text-gray-600 mt-1">{item.totalHours} Total Hours, {item.lectureCount} Lectures, All levels</p>
+                <h3 className="font-semibold text-lg text-gray-800">{item.title}</h3>
+                <p className="text-sm text-gray-500">{item.description}</p>
+                <p className="text-xs text-gray-700 flex items-center">
+            <CiClock2 className="mr-1" />
+            {item.duration} Hours
+          </p>
               </div>
               <div className="flex flex-col items-end">
-                <span className="font-bold">${item.price.toFixed(2)}</span>
-                <button onClick={() => handleRemove(item)} className="text-red-500 hover:text-red-700 mt-2">
+                <span className="font-bold text-lg text-gray-800">₹{item.price.toFixed(2)}</span>
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevents the click from bubbling up to the parent div
+                    handleRemove(item._id);
+                  }} 
+                  className="text-red-500 hover:text-red-700 transition duration-150 ease-in-out mt-2 focus:outline-none"
+                >
                   <Trash2 size={18} />
                 </button>
               </div>
             </div>
           ))}
         </div>
-        
-        <div className="w-full md:w-64">
-          <div className="bg-gray-100 p-4 rounded">
-            <h2 className="font-bold mb-4">Order Details</h2>
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span>Price</span>
-                <span>${subtotal.toFixed(2)}</span>
+
+        {/* Order Summary */}
+        <div className="lg:w-1/3">
+          <div className="bg-gray-50 p-6 rounded-lg shadow-sm">
+            <h2 className="font-bold text-xl text-gray-800 mb-4">Order Summary</h2>
+            <div className="space-y-3">
+              <div className="flex justify-between text-gray-600">
+                <span>Subtotal</span>
+                <span>₹{subtotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-green-600">
                 <span>Discount</span>
-                <span>-${discount.toFixed(2)}</span>
+                <span>-₹{discount.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between">
-                <span>Tax</span>
-                <span>${tax.toFixed(2)}</span>
+              <div className="flex justify-between text-gray-600">
+                <span>Estimated Tax</span>
+                <span>₹{tax.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between font-bold pt-2 border-t">
+              <div className="flex justify-between font-bold text-lg text-gray-800 pt-3 border-t border-gray-200">
                 <span>Total</span>
-                <span>${total.toFixed(2)}</span>
+                <span>₹{total.toFixed(2)}</span>
               </div>
             </div>
-            <button className="w-full bg-blue-600 text-white py-2 rounded mt-4 hover:bg-blue-700">
+            <button className="w-full  bg-custom-cyan text-white py-3 rounded-md mt-6 hover:bg-custom-cyan2 transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-custom-cyan">
               Proceed to Checkout
             </button>
           </div>

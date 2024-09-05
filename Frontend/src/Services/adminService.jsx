@@ -214,16 +214,22 @@ export const getCourseById = async (id) =>{
 
 export const updateCourse = async (id, updatedCourseData) => {
     try {
-        const response = await AdminInstance.put(`/updateCourse/${id}`, updatedCourseData);
-        showToastSuccess(`Course updated successfully! `)
+  
+        const response = await AdminInstance.put(`/updateCourse/${id}`, updatedCourseData, {
+            headers: {
+                "Content-Type": "multipart/form-data",  
+            },
+        });
+        showToastSuccess('Course updated successfully!');
         return response.data;
     } catch (error) {
         const errorMessage = error.response?.data?.message || 'Error updating course';
         throw new Error(errorMessage);
     }
-};
+}
 
 export const addVideoToCourse = async (courseId, videoData) => {
+
     try {
         const response = await AdminInstance.put(`/addVideo/${courseId}`, videoData, {
             headers: {

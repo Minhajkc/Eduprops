@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams,useNavigate } from 'react-router-dom';
-import { getCourseById } from '../../Services/studentService';
+import { getCourseById,addCourseToCart} from '../../Services/studentService';
 import { FaLock, FaPlay, FaBook, FaVideo, FaClock, FaUser, FaTag, FaList,FaShoppingCart,FaCartArrowDown  } from 'react-icons/fa';
 import { CiClock2 } from "react-icons/ci";
 import { toast } from 'react-toastify';
@@ -22,7 +22,7 @@ const CourseFullViewPage = () => {
         const fetchCourse = async () => {
             try {
                 const response = await getCourseById(courseId);
-                console.log(courseId,'a')
+                console.log(response)
                 setCourse(response);
                 if (response.firstLessonFirstVideoUrl) {
                     setSelectedVideo(response.firstLessonFirstVideoUrl);
@@ -50,9 +50,12 @@ const CourseFullViewPage = () => {
         }
     };
 
-    const handleAddToCart = () => {
-        console.log('Added to cart');
-        toast.success('Course added to cart!');
+    const handleCart = async (id) => {
+        try{
+            await addCourseToCart(id);
+          }catch(e){
+           setError('Failed to add course to cart');
+          }
     };
 
     if (loading) return <div>Loading...</div>;
@@ -130,7 +133,7 @@ const CourseFullViewPage = () => {
             <div className="bg-gray-50 p-4 rounded-lg">
                 <p className="text-md font-bold text-gray-900 flex items-center">
                     <FaTag className="mr-3 text-custom-cyan text-xl" /> 
-                    <span>Price: <span className="text-custom-cyan">${course.price}</span></span>
+                    <span>Price: <span className="text-custom-cyan">₹{course.price}</span></span>
                 </p>
             </div>
             <div className="bg-gray-50 p-4 rounded-lg">
@@ -160,7 +163,7 @@ const CourseFullViewPage = () => {
         </div>
 <div className='flex justify-center lg:m-5 '>
         <button
-            onClick={handleAddToCart}
+            onClick={() => handleCart(course.id)}
             className="w-1/2 bg-custom-cyan hover:bg-custom-cyan2  text-white mb-2 lg:px-6 lg:py-3 p-2 rounded-full hover:bg-opacity-90 transition-all duration-300 lg:text-lg text-sm font-semibold flex items-center justify-center "
         >
             <FaShoppingCart className="mr-3 lg:text-xl " /> Add to Cart
@@ -176,12 +179,12 @@ const CourseFullViewPage = () => {
   {similarCourses.map((course) => (
     <div
       key={course._id}
-      className="bg-slate-100 p-4 rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 relative cursor-pointer flex flex-col"
-      onClick={() => handleCardClick(course._id)}
+      className="bg-slate-100 p-4 rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 relative flex flex-col"
+      
     >
       <img src={course.image} alt={course.title} className="w-full  h-32 object-cover rounded-t-lg mb-4" />
       <div className="flex flex-col flex-grow p-2">
-        <h2 className="text-lg font-bold mb-1">{course.title}</h2>
+        <h2 className="text-lg font-bold mb-1 cursor-pointer text-custom-cyan2  " onClick={() => handleCardClick(course._id)}>{course.title}</h2>
         <div className="flex justify-between items-center mb-2">
           <p className="text-xs text-gray-700">{course.description}</p>
           <p className="text-xs text-gray-700 flex items-center">
@@ -190,8 +193,8 @@ const CourseFullViewPage = () => {
           </p>
         </div>
         <div className="flex justify-between items-center mt-auto">
-          <p className="text-md font-bold text-gray-900">${course.price}</p>
-          <button className="text-custom-cyan hover:text-custom-cyan2 transition-colors duration-300">
+          <p className="text-md font-bold text-gray-900">₹{course.price}</p>
+          <button className="text-custom-cyan hover:text-custom-cyan2 transition-colors duration-300"  onClick={() => handleCart(course._id)}>
             <FaCartArrowDown className="h-6 w-6" />
           </button>
         </div>

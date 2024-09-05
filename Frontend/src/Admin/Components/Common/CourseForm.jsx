@@ -38,18 +38,18 @@ const CourseForm = ({ course, categoryId, refreshCourses, closeModal }) => {
         formData.append('whatYouLearn', whatYouLearn); // Include the new field
         if (image) {
             formData.append('image', image); // Include the hero image
-        }e
+        }
+        for (let pair of formData.entries()) {
+            console.log(`${pair[0]}: ${pair[1]}`);
+        }
 
         try {
             if (course) {
-                // If the course exists, update it
                 await updateCourse(course._id, formData);
             } else {
-                // If the course does not exist, add a new one
                 await addCourse(formData);
             }
 
-            // Clear form fields
             setTitle('');
             setDescription('');
             setPrice('');

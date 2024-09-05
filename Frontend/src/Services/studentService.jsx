@@ -197,9 +197,10 @@ export const addCourseToCart = async (id) => {
             if (statusCode === 400) {
                 showToastError('Course is already in the cart');
             } else if (statusCode === 404) {
-                showToastError('Course not found');
+                showToastError('Please Login and try again !');
             } else {
-                showToastError('An unexpected error occurred');
+                showToastError('Please Login and try again !');
+              
             }
         } else if (err.request) {
             showToastError('No response from server, please try again later');
@@ -210,6 +211,18 @@ export const addCourseToCart = async (id) => {
         console.log(err); // For debugging purposes
     }
 };
+
+export const removeFromCart = async (id) => {
+    try {
+      const response = await StudentInstance.delete(`/removeFromCart/${id}`);
+      showToastSuccess('Course removed successfully');
+      return response.data;
+    } catch (error) {
+      console.error('Error removing course:', error);
+      showToastError('Failed to remove the course. Please try again.');
+      throw error; // Rethrow the error so it can be handled in handleRemove
+    }
+  };
 
 
 

@@ -40,7 +40,7 @@ const VideoAdd = ({ courseId, closeModal, refreshCourses }) => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
             <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
                 <h3 className="text-xl font-semibold mb-4">Add New Video</h3>
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleSubmit} className="space-y-4" >
                     {/* Video Title */}
                     <input
                         type="text"
