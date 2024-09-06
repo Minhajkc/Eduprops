@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link,useNavigate } from 'react-router-dom';
 import { FaUserGraduate } from "react-icons/fa";
 import { ImCart } from "react-icons/im";
 import { useSelector, useDispatch } from 'react-redux';
 import { logoutStudentRedux } from '../../../Redux/studentSlice';
 import { logoutStudent } from '../../../Services/studentService';
-import useAuthStudent from '../../Utils/useAuthStudent';
 import { StudentInstance } from '../../../Services/apiInstances';
+import { Modal } from 'antd';
 
 
 
@@ -16,7 +16,7 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const [studentId, setStudentId] = useState(reduxStudentId || localStorage.getItem('studentId'));
   const [isToken,setIsToken]=useState(false)
-
+  const navigate = useNavigate()
 
   useEffect(() => {
    const status = async()=>{
@@ -34,15 +34,25 @@ status()
    
   },[reduxStudentId]);
 
-  const handleLogout = async () => {
-    try {
-      await logoutStudent();
-      dispatch(logoutStudentRedux()); // Dispatch the logout action to clear Redux state
-      localStorage.removeItem('studentId'); // Clear localStorage
-      setStudentId(null); // Clear local component state immediately
-    } catch (error) {
-      console.error('Failed to log out:', error);
-    }
+  const handleLogout = () => {
+    Modal.confirm({
+      title: 'Confirm Logout',
+      content: 'Are you sure you want to log out?',
+      onOk: async () => {
+        try {
+          await logoutStudent();
+          dispatch(logoutStudentRedux()); // Dispatch the logout action to clear Redux state
+          localStorage.removeItem('studentId'); // Clear localStorage
+          setStudentId(null); // Clear local component state immediately
+          navigate('/')
+        } catch (error) {
+          console.error('Failed to log out:', error);
+        }
+      },
+      onCancel() {
+        console.log('Logout cancelled');
+      },
+    });
   };
 
   return (

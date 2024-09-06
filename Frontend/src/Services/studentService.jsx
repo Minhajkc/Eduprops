@@ -3,6 +3,7 @@ import { showToastSuccess, showToastError } from '../utils/toastify';
 import { setStudentId } from '../Redux/studentSlice';
 
 
+
 // POST request for login
 export const loginStudent = async (formData, navigate) => {
     try {
@@ -224,5 +225,50 @@ export const removeFromCart = async (id) => {
     }
   };
 
+  export const handleRazorpayPayment = async ({ cartData }) => {
+    try {
+      const { total } = cartData;
+      
+      // Create an order by sending a request to the backend
+      const response = await StudentInstance.post('/createOrder', {
+        amount: total, // Amount from the cart data
+        currency: 'INR', // Setting currency to INR
+      });
+  
+      return response.data; // Return the order data (including order_id)
+    } catch (error) {
+      console.error('Error creating Razorpay order:', error);
+      throw error; 
+    }
+  }
 
+export const verifyRazorPayPayment = async ({ order_id, payment_id, signature }) => {
+  try {
+  
+    const response = await StudentInstance.post('/verifyPayment', {
+      order_id,
+      payment_id,
+      signature
+    });
+    return response.data; 
+  } catch (error) {
+    console.error('Error verifying payment:', error);
+    throw error; // Rethrow error to handle it in the calling function
+  }
+}
+
+export const savePurchase = async ({ cartData}) => {
+    try {
+
+      const response = await StudentInstance.post('/savePurchase', {
+        cartData,   
+      });
+      console.log(response,'jisisis')
+      return response.data;
+    } catch (error) {
+      console.error('Error saving purchase:', error);
+      throw error; // Rethrow error to handle it in the calling function
+    }
+  };
+  
 
