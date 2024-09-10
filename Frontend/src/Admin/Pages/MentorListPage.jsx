@@ -181,6 +181,7 @@ const MentorListPage = () => {
                                         <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">First Name</th>
                                         <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Name</th>
                                         <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Degree</th>
+                                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mentor For</th>
                                         <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Enroll</th>
                                     </tr>
                                 </thead>
@@ -192,8 +193,9 @@ const MentorListPage = () => {
                                             <td className="px-4 py-4 text-sm text-gray-500">{mentor.firstName}</td>
                                             <td className="px-4 py-4 text-sm text-gray-500">{mentor.lastName}</td>
                                             <td className="px-4 py-4 text-sm text-gray-500">{mentor.degree}</td>
+                                            <td className="px-4 py-4 text-sm text-gray-500">{mentor.degree}</td>
                                             <td>
-        <button onClick={openModal}>hi</button>
+        <button className="bg-custom-cyan text-white px-4 py-2 rounded" onClick={openModal}>Enroll a Course</button>
       </td>
                                         </tr>
                                     ))}
