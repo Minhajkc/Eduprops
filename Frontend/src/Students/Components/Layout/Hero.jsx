@@ -1,8 +1,9 @@
 import React from 'react';
 
+
 const Hero = () => {
   return (
-    <div className="container mx-auto px-4 py-8 sm:py-12 lg:py-16 font-roboto">
+    <div className="container mx-auto px-5 lg:px-11 py-8 sm:py-12 lg:py-16 font-roboto">
       <div className="flex flex-col lg:flex-row items-center">
         {/* Content section */}
         <div className="w-full lg:w-1/2 mb-8 lg:mb-0 text-center lg:text-left">

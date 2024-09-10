@@ -125,7 +125,7 @@ export const fetchStudentProfile = async () => {
     } catch (error) {
         console.log(error);
         const errorMessage = error.response?.data?.message || 'Error fetching profile. Please try again.';
-        showToastError(errorMessage);
+        
         throw error;
     }
 };
@@ -191,7 +191,9 @@ export const addCourseToCart = async (id) => {
     try {
         const response = await StudentInstance.post(`/cart/${id}`);
         showToastSuccess('Course added to cart successfully');
+        console.log(response.data)
         return response.data;
+
     } catch (err) {
         if (err.response) {
             const statusCode = err.response.status;
@@ -199,7 +201,9 @@ export const addCourseToCart = async (id) => {
                 showToastError('Course is already in the cart');
             } else if (statusCode === 404) {
                 showToastError('Please Login and try again !');
-            } else {
+            } else if(statusCode === 409){
+                showToastError('You have already purchased this course');
+            }else {
                 showToastError('Please Login and try again !');
               
             }

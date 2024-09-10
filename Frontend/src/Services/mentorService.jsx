@@ -18,7 +18,7 @@ export const registerMentor = async (formData) => {
         },
       });
   
-      console.log(response, 'resss');
+  
   
       if (response.data && response.data.message) {
         showToastSuccess(response.data.message);
@@ -38,7 +38,12 @@ export const registerMentor = async (formData) => {
 export const Login = async (formData, navigate) => {
     try {
         // Send a POST request to the login endpoint with formData
-        const response = await MentorInstance.post('Login', formData);
+        const response = await MentorInstance.post('Login', formData,{
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        console.log(response, 'resss');
 
         if (response.data && response.data.message) {
             showToastSuccess(response.data.message);

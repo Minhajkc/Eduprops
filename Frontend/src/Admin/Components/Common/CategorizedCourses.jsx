@@ -100,12 +100,14 @@ const CategorizedCourses = ({ categoryId }) => {
                         className="flex flex-col bg-gray-100 rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl"
                     >
                         <img src={course.image} alt="" className="w-full h-48 object-cover"/>
+                        
                         <div className="p-6">
                             <Link to={`/admin/course/${course._id}`}>
                                 <h4 className="text-2xl font-bold text-blue-600 hover:underline mb-3">
                                     {course.title}
                                 </h4>
                             </Link>
+                            
                             <p className="text-gray-700 mb-4">{course.description}</p>
                             <div className="flex justify-between items-center mb-4">
                                 <p className="text-2xl text-gray-900 font-bold">${course.price}</p>

@@ -20,7 +20,7 @@ export const AdminLogout = async (navigate) => {
     try {
       const response = await AdminInstance.post('logout');
       showToastSuccess('Logged out successfully!');
-      navigate('/admin/login');
+      navigate('/admin');
       return response.data;
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Error logging out. Please try again.';
@@ -252,6 +252,19 @@ export const deleteCourseLesson = async (courseId, lessonIndex) => {
         return response.data;
     } catch (error) {
         const errorMessage = error.response?.data?.message || 'Error deleting lesson';
+        showToastError(errorMessage);
+        throw new Error(errorMessage);
+    }
+};
+
+export const coursedetailsmentor = async () => {
+    console.log('in')
+    try {
+        const response = await AdminInstance.get('/coursedetailsmentor');
+        console.log(response);
+        return response.data;
+    } catch (error) {
+        const errorMessage = error.response?.data?.message || 'Error fetching course details';
         showToastError(errorMessage);
         throw new Error(errorMessage);
     }

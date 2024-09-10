@@ -1,21 +1,42 @@
 import React, { useEffect, useState } from 'react';
-import { ApproveMentor, GetMentors, RejectMentor } from '../../Services/adminService';
+import { ApproveMentor, GetMentors, RejectMentor,coursedetailsmentor } from '../../Services/adminService';
 import Sidebar from '../Components/Layout/Sidebar';
 import { FaDownload } from 'react-icons/fa'; 
+import Modal from 'react-modal';
 import axios from 'axios';
 
 
 const MentorListPage = () => {
     const [mentors, setMentors] = useState([]);
+    const [courses, setCourses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [showPending, setShowPending] = useState(false); 
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedCourse, setSelectedCourse] = useState(null);
+  
+    const openModal = () => setIsModalOpen(true);
+    const closeModal = () => setIsModalOpen(false);
+  
+    const handleCourseSelect = (course) => {
+      setSelectedCourse(course);
+    };
+  
+    const handleSubmit = () => {
+      if (selectedCourse) {
+        // Submit logic here
+        console.log('Selected course:', selectedCourse);
+        closeModal();
+      }
+    };
 
     useEffect(() => {
         const fetchMentors = async () => {
             try {
                 const response = await GetMentors();
                 setMentors(response.data);
+                const courseResponse = await coursedetailsmentor()
+                setCourses(courseResponse);
             } catch (err) {
                 setError('Failed to load mentors');
                 console.error('Error fetching mentors:', err);
@@ -160,6 +181,7 @@ const MentorListPage = () => {
                                         <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">First Name</th>
                                         <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Name</th>
                                         <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Degree</th>
+                                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Enroll</th>
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
@@ -170,6 +192,9 @@ const MentorListPage = () => {
                                             <td className="px-4 py-4 text-sm text-gray-500">{mentor.firstName}</td>
                                             <td className="px-4 py-4 text-sm text-gray-500">{mentor.lastName}</td>
                                             <td className="px-4 py-4 text-sm text-gray-500">{mentor.degree}</td>
+                                            <td>
+        <button onClick={openModal}>hi</button>
+      </td>
                                         </tr>
                                     ))}
                                 </tbody>
@@ -179,6 +204,69 @@ const MentorListPage = () => {
                         <p>No active mentors found</p>
                     )}
                 </div>
+                <Modal
+      isOpen={isModalOpen}
+      onRequestClose={closeModal}
+      contentLabel="Select Course"
+      className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-100 rounded-lg shadow-xl p-6 max-w-md w-full"
+      overlayClassName="fixed inset-0 bg-black bg-opacity-50"
+    >
+      <div className="relative">
+        <button
+          className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+          onClick={closeModal}
+          aria-label="Close"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+        <h2 className="text-xl font-semibold mb-4 text-center text-gray-800">Select a Course</h2>
+
+        <div className="mb-4 max-h-60 overflow-y-auto">
+          {loading ? (
+            <p className="text-center text-gray-600">Loading...</p>
+          ) : error ? (
+            <p className="text-center text-red-600">{error}</p>
+          ) : (
+            <div className="space-y-2">
+              {courses.map((course) => (
+                <div
+                  key={course.courseId}
+                  className={`p-3 border rounded-md cursor-pointer transition-colors duration-200 ${
+                    selectedCourse?._id === course.courseId
+                      ? 'bg-blue-100 border-blue-300'
+                      : 'bg-white border-gray-200 hover:bg-gray-50'
+                  }`}
+                  onClick={() => handleCourseSelect(course)}
+                >
+                  <h3 className="text-sm font-medium text-gray-800">{course.title}</h3>
+                  <p className="text-xs text-gray-500">Category: {course.categoryName}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="mt-4 flex items-center justify-between">
+          {selectedCourse ? (
+            <div className="text-sm text-gray-700">
+              <p className="font-semibold">{selectedCourse.title}</p>
+              <p className="text-xs">{selectedCourse.categoryName}</p>
+            </div>
+          ) : (
+            <div className="text-sm text-gray-500 italic">No course selected</div>
+          )}
+          <button
+            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            onClick={handleSubmit}
+            disabled={!selectedCourse}
+          >
+            Set Course 
+          </button>
+        </div>
+      </div>
+    </Modal>
             </div>
         </div>
     );

@@ -23,6 +23,7 @@ import CoursePageStudents from './Students/Pages/CoursePageStudents';
 import CourseCategoryPage from './Students/Pages/CourseCategoryPage';
 import CourseFullViewPage from './Students/Pages/CourseFullViewPage';
 import PublicRouteGuard from './Students/Utils/PublicRouteGuard';
+import PublicRouteGuardAdmin from './Admin/Utils/PublicRouteGurdAdmin';
 import CartPage from './Students/Pages/CartPage';
 
 
@@ -217,7 +218,9 @@ const AppRoutes = () => {
           </PrivateRoute>
         }
         />
-        <Route path="/admin/login" element={<AdminLoginPage />} />
+       
+       <Route path="/admin" element={<PublicRouteGuardAdmin><AdminLoginPage /></PublicRouteGuardAdmin> }
+/>
         <Route path="/mentor" element={<MentorLoginPage />} />
       </Routes>
     );
