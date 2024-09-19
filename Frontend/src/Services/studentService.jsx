@@ -274,5 +274,32 @@ export const savePurchase = async ({ cartData}) => {
       throw error; // Rethrow error to handle it in the calling function
     }
   };
+
+  export const searchCourseCategory = async (searchTerm) => {
+    try {
+      const response = await StudentInstance.get(`/categories/search`, {
+        params: { searchTerm },
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error searching categories:', error);
+      throw error;
+    }
+  }
+
+  export const getCategoryCoursesByIdSort = async (categoryId, searchTerm = '', sortOption = 'price-asc') => {
+    try {
+      const response = await StudentInstance.get(`/category/${categoryId}/courses`, {
+        params: {
+          searchTerm,
+          sortOption,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching courses:', error);
+      throw error;
+    }
+  };
   
 

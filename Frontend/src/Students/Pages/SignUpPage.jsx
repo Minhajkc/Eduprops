@@ -31,22 +31,58 @@ const SignUpPage = () => {
     console.log("User agreed to the terms and conditions");
 };
 
-  const validate = () => {
-    const newErrors = {};
-    if (!formData.firstName) newErrors.firstName = 'First Name is required';
-    if (!formData.lastName) newErrors.lastName = 'Last Name is required';
-    if (!formData.username) newErrors.username = 'Username is required';
-    if (!formData.email) newErrors.email = 'Email is required';
-    if (!formData.password) {
-      newErrors.password = 'Password is required';
-  } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters long';
+const validate = () => {
+  const newErrors = {};
+
+  // Regular expression to allow only alphabetic characters and spaces
+  const textOnlyRegex = /^[A-Za-z\s]+$/;
+
+  // Check if firstName is not empty and contains only text
+  if (!formData.firstName) {
+    newErrors.firstName = 'First Name is required';
+  } else if (!textOnlyRegex.test(formData.firstName)) {
+    newErrors.firstName = 'First Name can only contain letters';
   }
-    if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
-    if (!formData.terms) newErrors.terms = 'You must agree to the Terms & Conditions';
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+
+  // Check if lastName is not empty and contains only text
+  if (!formData.lastName) {
+    newErrors.lastName = 'Last Name is required';
+  } else if (!textOnlyRegex.test(formData.lastName)) {
+    newErrors.lastName = 'Last Name can only contain letters';
+  }
+
+  // Check if username is not empty and contains only text
+  if (!formData.username) {
+    newErrors.username = 'Username is required';
+  } else if (!textOnlyRegex.test(formData.username)) {
+    newErrors.username = 'Username can only contain letters';
+  }
+
+  // Check if email is provided
+  if (!formData.email) {
+    newErrors.email = 'Email is required';
+  }
+
+  // Check if password is provided and meets length requirements
+  if (!formData.password) {
+    newErrors.password = 'Password is required';
+  } else if (formData.password.length < 6) {
+    newErrors.password = 'Password must be at least 6 characters long';
+  }
+
+  // Check if password and confirmPassword match
+  if (formData.password !== formData.confirmPassword) {
+    newErrors.confirmPassword = 'Passwords do not match';
+  }
+
+  // Check if terms are agreed
+  if (!formData.terms) {
+    newErrors.terms = 'You must agree to the Terms & Conditions';
+  }
+
+  setErrors(newErrors);
+  return Object.keys(newErrors).length === 0;
+};
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;

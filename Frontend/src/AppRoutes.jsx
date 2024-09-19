@@ -25,6 +25,7 @@ import CourseFullViewPage from './Students/Pages/CourseFullViewPage';
 import PublicRouteGuard from './Students/Utils/PublicRouteGuard';
 import PublicRouteGuardAdmin from './Admin/Utils/PublicRouteGurdAdmin';
 import CartPage from './Students/Pages/CartPage';
+import AdminSettingsForm from './Admin/Components/Common/AdminSettingsForm';
 
 
 
@@ -215,6 +216,14 @@ const AppRoutes = () => {
         element={
             <PrivateRoute isAuthenticated={isAuthenticated}>   
           <CategoryPage/>
+          </PrivateRoute>
+        }
+        />
+         <Route
+        path='/admin/settings'
+        element={
+            <PrivateRoute isAuthenticated={isAuthenticated}>   
+          <AdminSettingsForm/>
           </PrivateRoute>
         }
         />

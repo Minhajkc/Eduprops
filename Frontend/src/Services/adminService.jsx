@@ -258,13 +258,56 @@ export const deleteCourseLesson = async (courseId, lessonIndex) => {
 };
 
 export const coursedetailsmentor = async () => {
-    console.log('in')
+
     try {
         const response = await AdminInstance.get('/coursedetailsmentor');
         console.log(response);
         return response.data;
     } catch (error) {
         const errorMessage = error.response?.data?.message || 'Error fetching course details';
+        showToastError(errorMessage);
+        throw new Error(errorMessage);
+    }
+};
+
+
+export const editLessonVideo = async (courseId, lessonId, formData) => {
+ 
+    try {
+        const response = await AdminInstance.put(`/editVideo/${courseId}/${lessonId}`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+        showToastSuccess(`Video updated successfully!`);
+        return response.data;
+    } catch (error) {
+        const errorMessage = error.response?.data?.message || 'Error editing lesson video';
+        showToastError(errorMessage);
+        throw new Error(errorMessage);
+    }
+};
+
+
+export const fetchAdminSettings = async () => {
+    try {
+        const response = await AdminInstance.get('/settings');
+        return response.data;
+    } catch (error) {
+        const errorMessage = error.response?.data?.message || 'Error fetching settings';
+        showToastError(errorMessage);
+        throw new Error(errorMessage);
+    }
+};
+
+// Update settings function
+export const updateAdminSettings = async (formData) => {
+    try {
+        const response = await AdminInstance.put('/settings', formData);
+        showToastSuccess('Settings updated successfully!');
+        return response.data;
+    } catch (error) {
+        const errorMessage = error.response?.data?.message || 'Error updating settings';
         showToastError(errorMessage);
         throw new Error(errorMessage);
     }

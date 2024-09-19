@@ -195,7 +195,7 @@ const CartPage = () => {
                 </div>
                 <div className="flex justify-between text-gray-600">
                   <span>Estimated Tax</span>
-                  <span>₹{tax.toFixed(2)}</span>
+                  <span>{tax}%</span>
                 </div>
                 <div className="flex justify-between font-bold text-lg text-gray-800 pt-3 border-t border-gray-200">
                   <span>Total</span>
@@ -230,7 +230,7 @@ const CartPage = () => {
           </div>
           <div className="flex justify-between text-gray-600">
             <span>Estimated Tax</span>
-            <span>₹{tax.toFixed(2)}</span>
+            <span>{tax}%</span>
           </div>
           <div className="flex justify-between font-bold text-lg text-gray-800 pt-3 border-t border-gray-200">
             <span>Total</span>

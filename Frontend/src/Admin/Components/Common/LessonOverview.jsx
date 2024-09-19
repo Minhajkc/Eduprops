@@ -1,20 +1,36 @@
-import React from 'react';
-import { TrashIcon } from '@heroicons/react/24/outline';
+import React, { useState } from 'react';
+import { Trash2, Edit3 } from 'lucide-react';
 import { deleteCourseLesson } from '../../../Services/adminService'; // Ensure correct path
+import VideoAdd from './VideoAdd';
 
 const LessonOverview = ({ courseId, lessons, fetchCourses }) => {
+    const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+    const [editLesson, setEditLesson] = useState(null);
+    const [editLessonIndex, setEditLessonIndex] = useState(null);
+
     const handleDeleteLesson = async (lessonIndex) => {
         try {
             await deleteCourseLesson(courseId, lessonIndex);
             fetchCourses();
         } catch (error) {
-            // Handle error if needed
+            console.error('Error deleting lesson:', error);
         }
+    };
+
+    const openVideoModal = (lesson, lessonIndex) => {
+        setEditLesson(lesson);
+        setEditLessonIndex(lessonIndex);
+        setIsVideoModalOpen(true);
+    };
+
+    const closeVideoModal = () => {
+        setIsVideoModalOpen(false);
+        setEditLesson(null);
+        setEditLessonIndex(null);
     };
 
     return (
         <div className="mt-8 bg-gray-50 p-6 rounded-xl shadow-lg">
-      
             {lessons && lessons.length > 0 ? (
                 <div className="space-y-4">
                     {lessons.map((lesson, lessonIndex) => (
@@ -28,17 +44,36 @@ const LessonOverview = ({ courseId, lessons, fetchCourses }) => {
                                     {lesson.url.length} Video{lesson.url.length !== 1 ? 's' : ''}
                                 </p>
                             </div>
-                            <button
-                                onClick={() => handleDeleteLesson(lessonIndex)}
-                                className="text-red-500 hover:text-red-700 focus:outline-none transform hover:scale-110 transition duration-300"
-                            >
-                                <TrashIcon className="h-6 w-6" />
-                            </button>
+                            <div className="flex space-x-2">
+                                <button
+                                    onClick={() => openVideoModal(lesson, lessonIndex)}
+                                    className="text-blue-500 hover:text-blue-700 border-2 focus:outline-none p-2 rounded-full transition-colors duration-300 hover:bg-blue-100"
+                                    aria-label="Edit lesson"
+                                >
+                                    <Edit3 className="h-5 w-5" />
+                                </button>
+                                <button
+                                    onClick={() => handleDeleteLesson(lessonIndex)}
+                                    className="text-red-500 hover:text-red-700 border-2 focus:outline-none p-2 rounded-full transition-colors duration-300 hover:bg-red-100"
+                                    aria-label="Delete lesson"
+                                >
+                                    <Trash2 className="h-5 w-5" />
+                                </button>
+                            </div>
                         </div>
                     ))}
                 </div>
             ) : (
                 <p className="text-gray-600 italic">No lessons available</p>
+            )}
+            {isVideoModalOpen && (
+                <VideoAdd
+                    courseId={courseId}
+                    lesson={editLesson}
+                    lessonIndex={editLessonIndex}
+                    closeModal={closeVideoModal}
+                    refreshCourses={fetchCourses}
+                />
             )}
         </div>
     );

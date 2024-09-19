@@ -87,35 +87,32 @@ const CourseFullViewPage = () => {
     </div>
 
     {/* Right Side: Lesson List */}
-    <div className="lg:w-1/3 w-full space-y-4  bg-custom-cyan2 p-4 sm:p-5 text-white font-bold rounded-lg shadow-lg">
-        <h2 className="text-3xl sm:text-4xl  lg:text-5xl text-center font-bold mb-4">Lessons</h2>
-        {course.lessonsInfo && course.lessonsInfo.length > 0 ? (
-            <div className="space-y-4   max-h-[60vh]  overflow-y-auto ">
-                {course.lessonsInfo.map((lesson, index) => (
-                    <div key={index} className="p-3 sm:p-4 rounded-lg shadow-md bg-white bg-opacity-10 hover:bg-opacity-20 transition-all duration-300">
-                        <h3 className="text-custom-cyan flex items-center justify-between text-sm sm:text-base">
-                            <span><FaBook className="inline mr-2" />Lesson: {index + 1}</span>
-                            {index !== 0 && <FaLock className="text-custom-cyan" />}
-                        </h3>
-                        <h3 className="text-base sm:text-lg font-semibold mb-1 sm:mb-2">{lesson.title}</h3>
-                        <p className="text-xs sm:text-sm text-gray-200 mb-2">{lesson.description}</p>
-                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mt-2 gap-2 sm:gap-0">
-                            <span className="text-xs sm:text-sm"><FaVideo className="inline mr-1  animate-pulse" /> Videos: {lesson.videoCount}</span>
-                            <button
-                                onClick={() => handleVideoSelect(course.firstLessonFirstVideoUrl, index)}
-                                className={`px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm ${index === 0 ? 'bg-custom-cyan text-white' : 'bg-gray-400 text-gray-200 cursor-not-allowed'}`}
-                            >
-                                <FaPlay className="inline mr-1" /> {index === 0 ? 'Trail Video' : 'Locked'}
-                            </button>
+    <div className="lg:w-1/3 bg-indigo-100 p-6 rounded-lg shadow-lg">
+                            <h2 className="text-2xl font-bold mb-4 text-indigo-800">Course Lessons</h2>
+                            <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-4">
+                                {course.lessonsInfo && course.lessonsInfo.map((lesson, index) => (
+                                    <div key={index} className="bg-white p-4 rounded-lg shadow transition-all duration-300 hover:shadow-md">
+                                        <h3 className="text-lg font-semibold mb-2 flex items-center justify-between">
+                                            <span><FaBook className="inline mr-2 text-indigo-600" />Lesson {index + 1}</span>
+                                            {index !== 0 && <FaLock className="text-gray-400" />}
+                                        </h3>
+                                        <p className="text-sm text-gray-600 mb-2">{lesson.description}</p>
+                                        <div className="flex justify-between items-center">
+                                            <span className="text-xs text-gray-500"><FaVideo className="inline mr-1" /> {lesson.videoCount} videos</span>
+                                            <button
+                                                onClick={() => handleVideoSelect(course.firstLessonFirstVideoUrl, index)}
+                                                className={`px-3 py-1 rounded-full text-xs ${index === 0 ? 'bg-indigo-600 text-white' : 'bg-gray-300 text-gray-600 cursor-not-allowed'}`}
+                                            >
+                                                <FaPlay className="inline mr-1" /> {index === 0 ? 'Play' : 'Locked'}
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
-                    </div>
-                ))}
-            </div>
-        ) : (
-            <p className="text-center">No lessons available</p>
-        )}
-    </div>
 </div>
+
+
 
        {/* Course Details */}
 <div className="mb-8 flex flex-col lg:flex-row gap-8">
@@ -173,40 +170,35 @@ const CourseFullViewPage = () => {
     
 </div>
 <div className="bg-[#00b8d4] h-40 rounded-lg"></div>
-<div className="mt-8">
-                <h2 className="text-center lg:text-left lg:text-4xl text-2xl  font-bold mb-6">Similar Courses</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8  p-2">
-  {similarCourses.map((course) => (
-    <div
-      key={course._id}
-      className="bg-slate-100 p-4 rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 relative flex flex-col"
-      
-    >
-      <img src={course.image} alt={course.title} className="w-full  h-32 object-cover rounded-t-lg mb-4" />
-      <div className="flex flex-col flex-grow p-2">
-        <h2 className="text-lg font-bold mb-1 cursor-pointer text-custom-cyan2  " onClick={() => handleCardClick(course._id)}>{course.title}</h2>
-        <div className="flex justify-between items-center mb-2">
-          <p className="text-xs text-gray-700">{course.description}</p>
-          <p className="text-xs text-gray-700 flex items-center">
-            <CiClock2 className="mr-1" />
-            {course.duration} Hours
-          </p>
-        </div>
-        <div className="flex justify-between items-center mt-auto">
-          <p className="text-md font-bold text-gray-900">₹{course.price}</p>
-          <button className="text-custom-cyan hover:text-custom-cyan2 transition-colors duration-300"  onClick={() => handleCart(course._id)}>
-            <FaCartArrowDown className="h-6 w-6" />
-          </button>
-        </div>
-      </div>
-    </div>
-  ))}
-</div>
-            </div>
+<div className="mt-12">
+                        <h2 className="text-3xl font-bold mb-6 text-gray-800">Similar Courses</h2>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                            {similarCourses.map((course) => (
+                                <div key={course._id} className="bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl">
+                                    <img src={course.image} alt={course.title} className="w-full h-48 object-cover" />
+                                    <div className="p-4">
+                                        <h3 className="text-lg font-bold mb-2 text-indigo-800 cursor-pointer" onClick={() => handleCardClick(course._id)}>{course.title}</h3>
+                                        <p className="text-sm text-gray-600 mb-4">{course.description.substring(0, 100)}...</p>
+                                        <div className="flex justify-between items-center">
+                                            <span className="text-sm text-gray-500 flex items-center"><CiClock2 className="mr-1" />{course.duration} hours</span>
+                                            <span className="text-lg font-bold text-custom-cyan2">₹{course.price}</span>
+                                        </div>
+                                        <button 
+                                            onClick={() => handleCart(course._id)}
+                                            className="mt-4 w-full bg-custom-cyan text-white py-2 rounded-full hover:bg-custom-cyan2 transition-colors duration-300 flex items-center justify-center"
+                                        >
+                                            <FaCartArrowDown className="mr-2" /> Add to Cart
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
 
           
  
     </div>
+    
     
     );
 };

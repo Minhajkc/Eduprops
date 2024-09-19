@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { addCourseToCart, getCategoryCoursesById } from '../../Services/studentService';
+import { addCourseToCart, getCategoryCoursesByIdSort } from '../../Services/studentService';
 import { FaSearch, FaFilter, FaCartArrowDown, FaArrowLeft } from 'react-icons/fa';
 import { CiClock2 } from "react-icons/ci";
-
 
 const CourseCategoryPage = () => {
   const { id } = useParams();
@@ -18,7 +17,8 @@ const CourseCategoryPage = () => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await getCategoryCoursesById(id);
+        // Make the API call with searchTerm and sortOption as query parameters
+        const response = await getCategoryCoursesByIdSort(id, searchTerm, sortOption);
         setCourses(response);
       } catch (err) {
         setError('Failed to fetch courses');
@@ -28,7 +28,7 @@ const CourseCategoryPage = () => {
     };
 
     fetchCourses();
-  }, [id]);
+  }, [id, searchTerm, sortOption]);
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
@@ -36,24 +36,8 @@ const CourseCategoryPage = () => {
 
   const handleSort = (option) => {
     setSortOption(option);
-    const sortedCourses = [...courses].sort((a, b) => {
-      if (option === 'price-asc') {
-        return a.price - b.price;
-      } else if (option === 'price-desc') {
-        return b.price - a.price;
-      } else if (option === 'title-asc') {
-        return a.title.localeCompare(b.title);
-      } else {
-        return b.title.localeCompare(a.title);
-      }
-    });
-    setCourses(sortedCourses);
     setIsModalOpen(false); // Close the modal after sorting
   };
-
-  const filteredCourses = courses.filter((course) =>
-    course.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   const handleCardClick = (courseId) => {
     navigate(`/courses/category/selectedcourse/${courseId}`); 
@@ -139,34 +123,27 @@ const CourseCategoryPage = () => {
         </div>
       )}
 
-<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-  {filteredCourses.map((course) => (
-    <div
-      key={course._id}
-      className="bg-slate-100 p-4 rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 relative flex flex-col"
-     
-    >
-      <img src={course.image} alt={course.title} className="w-full  h-32 object-cover rounded-t-lg mb-4" />
-      <div className="flex flex-col flex-grow p-2">
-        <h2 className="text-lg font-bold mb-1  cursor-pointer text-custom-cyan2"  onClick={() => handleCardClick(course._id)}>{course.title}</h2>
-        <div className="flex justify-between items-center mb-2">
-          <p className="text-xs text-gray-700">{course.description}</p>
-          <p className="text-xs text-gray-700 flex items-center">
-            <CiClock2 className="mr-1" />
-            {course.duration} Hours
-          </p>
-        </div>
-        <div className="flex justify-between items-center mt-auto">
-          <p className="text-md font-bold text-gray-900">₹{course.price}</p>
-          <button className="text-custom-cyan hover:text-custom-cyan2 transition-colors duration-300" onClick={() => handleCart(course._id)}>
-            <FaCartArrowDown className="h-6 w-6" />
-          </button>
-        </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {courses.map((course) => (
+          <div key={course._id} className="bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl">
+            <img src={course.image} alt={course.title} className="w-full h-48 object-cover" />
+            <div className="p-4">
+              <h3 className="text-lg font-bold mb-2 text-indigo-800 cursor-pointer" onClick={() => handleCardClick(course._id)}>{course.title}</h3>
+              <p className="text-sm text-gray-600 mb-4">{course.description.substring(0, 100)}...</p>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-500 flex items-center"><CiClock2 className="mr-1" />{course.duration} hours</span>
+                <span className="text-lg font-bold text-custom-cyan2">₹{course.price}</span>
+              </div>
+              <button 
+                onClick={() => handleCart(course._id)}
+                className="mt-4 w-full bg-custom-cyan text-white py-2 rounded-full hover:bg-custom-cyan2 transition-colors duration-300 flex items-center justify-center"
+              >
+                <FaCartArrowDown className="mr-2" /> Add to Cart
+              </button>
+            </div>
+          </div>
+        ))}
       </div>
-    </div>
-  ))}
-</div>
-
     </div>
   );
 };
