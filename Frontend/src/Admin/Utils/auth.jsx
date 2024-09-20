@@ -12,7 +12,9 @@ const useAuth = () => {
         setIsAuthenticated(true);  
       } catch (error) {
         if (error.response && error.response.status === 401) {
+
           setIsAuthenticated(false); 
+
         } else {
           console.error('Error checking authentication:', error);
         }

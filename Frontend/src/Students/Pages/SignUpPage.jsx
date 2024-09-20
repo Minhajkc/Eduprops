@@ -34,48 +34,44 @@ const SignUpPage = () => {
 const validate = () => {
   const newErrors = {};
 
-  // Regular expression to allow only alphabetic characters and spaces
   const textOnlyRegex = /^[A-Za-z\s]+$/;
 
-  // Check if firstName is not empty and contains only text
   if (!formData.firstName) {
     newErrors.firstName = 'First Name is required';
   } else if (!textOnlyRegex.test(formData.firstName)) {
     newErrors.firstName = 'First Name can only contain letters';
   }
 
-  // Check if lastName is not empty and contains only text
+
   if (!formData.lastName) {
     newErrors.lastName = 'Last Name is required';
   } else if (!textOnlyRegex.test(formData.lastName)) {
     newErrors.lastName = 'Last Name can only contain letters';
   }
 
-  // Check if username is not empty and contains only text
   if (!formData.username) {
     newErrors.username = 'Username is required';
   } else if (!textOnlyRegex.test(formData.username)) {
     newErrors.username = 'Username can only contain letters';
   }
 
-  // Check if email is provided
+
   if (!formData.email) {
     newErrors.email = 'Email is required';
   }
 
-  // Check if password is provided and meets length requirements
   if (!formData.password) {
     newErrors.password = 'Password is required';
   } else if (formData.password.length < 6) {
     newErrors.password = 'Password must be at least 6 characters long';
   }
 
-  // Check if password and confirmPassword match
+
   if (formData.password !== formData.confirmPassword) {
     newErrors.confirmPassword = 'Passwords do not match';
   }
 
-  // Check if terms are agreed
+
   if (!formData.terms) {
     newErrors.terms = 'You must agree to the Terms & Conditions';
   }
@@ -128,7 +124,7 @@ const handleGoogleFailure = () => {
   return (
     <div className=" flex flex-col justify-center min-h-screen items-center p-4 lg:p-0 font-roboto">
       <div className="bg-white rounded-3xl shadow-2xl overflow-hidden w-full max-w-6xl lg:flex">
-        {/* Right side (Cyan section) */}
+
         <div className="w-full lg:w-1/2 bg-gradient-to-br from-custom-cyan2 to-cyan-600 p-8 flex flex-col justify-center items-center  lg:h-full ">
           <img src="src/assets/images/Logoblack2.png" alt="Eduprops Logo" className="w-24 lg:w-36 mb-6 filter drop-shadow-md" />
           <h1 className="text-2xl lg:text-4xl font-bold text-white mb-6 text-center leading-tight">
