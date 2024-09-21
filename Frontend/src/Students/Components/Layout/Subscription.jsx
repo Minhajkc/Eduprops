@@ -34,18 +34,7 @@ const Subscription = () => {
         }
     };
 
-    const plans = [
-        {
-            title: 'Basic',
-            description: 'Practice quizzes & assignments, In-depth explanations',
-            price: currentRates.goldRate || '$600', // Use the fetched rate
-        },
-        {
-            title: 'Platinum',
-            description: '10 HD video lessons, 3 Official exams, and more',
-            price: currentRates.platinumRate || '$1200', // Use the fetched rate
-        },
-    ];
+
 
     return (
         <div className="bg-white py-12 font-roboto">
@@ -148,7 +137,7 @@ const Subscription = () => {
                         </div>
                         <div className="mt-6">
                             <div className="text-center font-bold text-2xl">{currentRates.goldRate || '$600'}</div>
-                            <button className="w-full bg-custom-cyan hover:bg-custom-cyan2 text-white py-2 rounded-lg mt-4" onClick={() => handlePurchaseClick(currentRates.goldRate)}>
+                            <button className="w-full bg-custom-cyan hover:bg-custom-cyan2 text-white py-2 rounded-lg mt-4" onClick={() => handlePurchaseClick({rate:currentRates.goldRate,name:'gold'})}>
                                 Purchase Course
                             </button>
                         </div>
@@ -193,7 +182,7 @@ const Subscription = () => {
                         </div>
                         <div className="mt-6">
                             <div className="text-center font-bold text-2xl">{currentRates.platinumRate || '$1200'}</div>
-                            <button className="w-full bg-custom-cyan hover:bg-custom-cyan2 text-white py-2 rounded-lg mt-4" onClick={() => handlePurchaseClick(currentRates.platinumRate)}>
+                            <button className="w-full bg-custom-cyan hover:bg-custom-cyan2 text-white py-2 rounded-lg mt-4" onClick={() => handlePurchaseClick({rate:currentRates.platinumRate,name:'platinum'})}>
                                 Purchase Course
                             </button>
                         </div>
