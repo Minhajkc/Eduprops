@@ -46,11 +46,10 @@ export const handleGoogleAuth = async (response, navigate,dispatch) => {
         const result = await StudentInstance.post('/auth/google', {
             idToken: response.credential,
         });
+        console.log(result,'m new')
         showToastSuccess('Sign-up successful!');
-        navigate('/'); // Navigate to the home page
-        console.log(result.data.Student._id)
+        navigate('/'); 
         const studentId = result.data.Student._id;
-
         localStorage.setItem('studentId', studentId);
         dispatch(setStudentId(studentId));
         return result;
@@ -302,4 +301,14 @@ export const savePurchase = async ({ cartData}) => {
     }
   };
   
+
+  export const fetchMentors = async () => {
+    try {
+      const response = await StudentInstance.get(`/mentorCarousel`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching mentors:', error);
+      throw error; // Propagate the error to be handled by the calling component
+    }
+  };
 

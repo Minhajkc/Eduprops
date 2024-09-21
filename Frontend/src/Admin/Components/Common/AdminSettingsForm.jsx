@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from '../Layout/Sidebar';
 import { fetchAdminSettings, updateAdminSettings } from '../../../Services/adminService';
 import { FaPercent, FaMoneyBillWave, FaEdit } from 'react-icons/fa';
+import UpdateSubscriptionRates from './UpdateSubscriptionRates';
 
 const AdminSettingsForm = () => {
     const [currentSettings, setCurrentSettings] = useState({ tax: 0, discount: 0 });
@@ -51,12 +52,9 @@ const AdminSettingsForm = () => {
             <Sidebar />
             <div className="flex-1 overflow-auto p-8">
                 <div className="max-w-4xl mx-auto">
-                    <h2 className="text-3xl font-bold text-gray-800 mb-6">Admin Settings</h2>
-                    
-                    
                     <div className="bg-white shadow-lg rounded-lg overflow-hidden mb-6">
                         <div className="bg-blue-600 text-white py-3 px-6">
-                            <h3 className="text-xl font-semibold">Current Settings</h3>
+                            <h3 className="text-xl font-semibold">Current Tax & Discounts</h3>
                         </div>
                         <div className="p-6 flex justify-around">
                             <div className="text-center">
@@ -76,7 +74,7 @@ const AdminSettingsForm = () => {
 
                     <div className="bg-white shadow-lg rounded-lg overflow-hidden">
                         <div className="bg-gray-800 text-white py-3 px-6">
-                            <h3 className="text-xl font-semibold">Update Settings</h3>
+                            <h3 className="text-xl font-semibold">Tax & Discounts</h3>
                         </div>
                         <form onSubmit={handleSubmit} className="p-6 space-y-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -118,7 +116,7 @@ const AdminSettingsForm = () => {
                                     {loading ? 'Updating...' : (
                                         <>
                                             <FaEdit className="mr-2" />
-                                            Update Settings
+                                            Update
                                         </>
                                     )}
                                 </button>
@@ -126,7 +124,9 @@ const AdminSettingsForm = () => {
                         </form>
                     </div>
                 </div>
+                <UpdateSubscriptionRates/>
             </div>
+       
         </div>
     );
 };

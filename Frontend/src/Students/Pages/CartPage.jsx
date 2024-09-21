@@ -148,7 +148,7 @@ const CartPage = () => {
             {items.map((item) => (
               <div
                 key={item._id}
-                className="flex items-center space-x-4 py-6 border-b border-gray-200 last:border-b-0 cursor-pointer"
+                className="flex items-center space-x-4 py-6 lg:p-5 rounded-md border-b border-gray-200 last:border-b-0 hover:bg-slate-100 duration-300 cursor-pointer"
                 onClick={() => handleClick(item._id)}
               >
                 <img
@@ -183,7 +183,7 @@ const CartPage = () => {
           {/* Order Summary */}
           <div className="lg:w-1/3">
             <div className="bg-gray-50 p-6 rounded-lg shadow-sm">
-              <h2 className="font-bold text-xl text-gray-800 mb-4">Order Summary</h2>
+              <h2 className="font-bold text-xl text-gray-800 mb-4">Cart Summary</h2>
               <div className="space-y-3">
                 <div className="flex justify-between text-gray-600">
                   <span>Subtotal</span>
@@ -214,7 +214,7 @@ const CartPage = () => {
       )}
 
       <Modal
-        title="Cart Summary"
+        title="Order Summary "
         visible={isModalVisible}
         onCancel={handleCancel}
         footer={null} // Custom footer to add Checkout button

@@ -53,11 +53,11 @@ const CourseHomePageView = () => {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4  gap-6 mb-8">
         {categories.map((category) => (
           <div
             key={category._id}
-            className="p-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 text-center"
+            className="p-6 rounded-lg border- shadow-lg hover:shadow-xl transition-all duration-300 text-center"
           >
             {getIcon(category.icon)}
             <h2
@@ -71,7 +71,7 @@ const CourseHomePageView = () => {
             </p>
             <Link
               to={`/courses/category/${category._id}`}
-              className="bg-custom-cyan text-white px-4 py-2 rounded-full inline-flex items-center justify-center hover:bg-[#0099b3] transition-colors duration-300 text-sm"
+              className="bg-custom-cyan text-white text-xs p-2 lg:px-4 lg:py-2 rounded-full inline-flex items-center justify-center hover:bg-[#0099b3] transition-colors duration-300 lg:text-sm"
             >
               View Courses
               <svg

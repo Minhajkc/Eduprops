@@ -7,11 +7,12 @@ import { registerStudent, handleGoogleAuth } from '../../Services/studentService
 import GoogleAuthButton from '../Components/Common/TempGoogleAuthButton';
 import { showToastSuccess, showToastError, showToastWarning } from '../../utils/toastify'
 import TermsAndConditionsModal from '../Components/Specific/TermsAndConditionsModal';
+import { useDispatch } from 'react-redux';
 
 
 const SignUpPage = () => {
   const navigate = useNavigate();
-  
+  const dispatch = useDispatch()
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -106,7 +107,7 @@ const validate = () => {
 const handleGoogleSuccess = async (response) => {
   setLoading(true);
   try {
-    await handleGoogleAuth(response,navigate);
+    await handleGoogleAuth(response,navigate,dispatch);
     setLoading(false);
   } catch (error) {
     setLoading(false);

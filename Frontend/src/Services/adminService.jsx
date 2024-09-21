@@ -312,3 +312,26 @@ export const updateAdminSettings = async (formData) => {
         throw new Error(errorMessage);
     }
 };
+
+export const updateSubscriptionRates = async (rates) => {
+    try {
+      const response = await AdminInstance.post('/subscription/update-rates', rates);
+      showToastSuccess('Subscription rates updated successfully!');
+      return response.data;
+    } catch (error) {
+        showToastError('Failed to update rates')
+      console.error('Error updating subscription rates:', error);
+      throw error;
+    }
+  };
+
+
+  export const fetchSubscriptionRates = async () => {
+    try {
+      const response = await AdminInstance.get('/get-rates-subscription'); // Adjust the endpoint if necessary
+      return response.data; // Returns the rates: { goldRate, platinumRate }
+    } catch (error) {
+      console.error('Error fetching subscription rates:', error);
+      throw error;
+    }
+  }
