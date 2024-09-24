@@ -1,13 +1,19 @@
 import React from 'react';
 import { Modal, Button, Typography, Space, List, Alert } from 'antd';
 import { CreditCardOutlined, CheckOutlined } from '@ant-design/icons';
-import { handleRazorpayPaymentSubscription,verifyRazorPayPaymentSubscription,savePurchaseSubscription} from '../../../Services/studentService'; 
+import { handleRazorpayPaymentSubscription,verifyRazorPayPaymentSubscription,savePurchaseSubscription} from '../../../Services/studentService';
+import { showToastSuccess, showToastError } from '../../../utils/toastify'
+import { useNavigate,Link } from 'react-router-dom';
 
 const { Title, Text } = Typography;
 
 const SubscriptionModal =  ({ isOpen, onClose, planDetails }) => {
+    console.log(planDetails)
+    const navigate = useNavigate();
+
     const handlePayment = async () => {
         try {
+            const subscriptionPlan = planDetails.name;
             const amount = planDetails.rate; // Ensure this is the numeric amount
             const currency = 'INR';
 
@@ -32,7 +38,7 @@ const SubscriptionModal =  ({ isOpen, onClose, planDetails }) => {
         
                 if (verifyResponse.status === 'success') {
                   const purchaseResponse = await savePurchaseSubscription({
-                    cartData: cartData.items, 
+                    subscriptionPlan
                   });
       
                   if (purchaseResponse.status === 'success') {

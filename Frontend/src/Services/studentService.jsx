@@ -314,7 +314,6 @@ export const savePurchase = async ({ cartData}) => {
 
 
   export const handleRazorpayPaymentSubscription = async ({amount,currency} ) => {
-    console.log(amount,'am')
     try {
       const  total  = amount;
       
@@ -326,6 +325,8 @@ export const savePurchase = async ({ cartData}) => {
   
       return response.data; // Return the order data (including order_id)
     } catch (error) {
+        const errorMessage = error.response?.data?.message || 'Error logging in. Please try again.';
+        showToastError(errorMessage);
       console.error('Error creating Razorpay order:', error);
       throw error; 
     }
@@ -334,7 +335,7 @@ export const savePurchase = async ({ cartData}) => {
 export const verifyRazorPayPaymentSubscription = async ({ order_id, payment_id, signature }) => {
   try {
   
-    const response = await StudentInstance.post('/verifyPayment', {
+    const response = await StudentInstance.post('/verifyPaymentSubscription', {
       order_id,
       payment_id,
       signature
@@ -346,11 +347,11 @@ export const verifyRazorPayPaymentSubscription = async ({ order_id, payment_id, 
   }
 }
 
-export const savePurchaseSubscription = async ({ cartData}) => {
+export const savePurchaseSubscription = async ({ subscriptionPlan}) => {
     try {
 
-      const response = await StudentInstance.post('/savePurchase', {
-        cartData,   
+      const response = await StudentInstance.post('/savePurchaseSubscription', {
+        subscriptionPlan  
       });
       console.log(response,'jisisis')
       return response.data;
