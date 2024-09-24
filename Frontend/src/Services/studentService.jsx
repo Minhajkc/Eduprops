@@ -312,3 +312,51 @@ export const savePurchase = async ({ cartData}) => {
     }
   };
 
+
+  export const handleRazorpayPaymentSubscription = async ({amount,currency} ) => {
+    console.log(amount,'am')
+    try {
+      const  total  = amount;
+      
+      // Create an order by sending a request to the backend
+      const response = await StudentInstance.post('/createOrderSubscription', {
+        amount: total, // Amount from the cart data
+        currency: 'INR', // Setting currency to INR
+      });
+  
+      return response.data; // Return the order data (including order_id)
+    } catch (error) {
+      console.error('Error creating Razorpay order:', error);
+      throw error; 
+    }
+  }
+
+export const verifyRazorPayPaymentSubscription = async ({ order_id, payment_id, signature }) => {
+  try {
+  
+    const response = await StudentInstance.post('/verifyPayment', {
+      order_id,
+      payment_id,
+      signature
+    });
+    return response.data; 
+  } catch (error) {
+    console.error('Error verifying payment:', error);
+    throw error; // Rethrow error to handle it in the calling function
+  }
+}
+
+export const savePurchaseSubscription = async ({ cartData}) => {
+    try {
+
+      const response = await StudentInstance.post('/savePurchase', {
+        cartData,   
+      });
+      console.log(response,'jisisis')
+      return response.data;
+    } catch (error) {
+      console.error('Error saving purchase:', error);
+      throw error; // Rethrow error to handle it in the calling function
+    }
+  };
+

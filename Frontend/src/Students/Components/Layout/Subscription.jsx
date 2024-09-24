@@ -138,7 +138,7 @@ const Subscription = () => {
                         <div className="mt-6">
                             <div className="text-center font-bold text-2xl">{currentRates.goldRate || '$600'}</div>
                             <button className="w-full bg-custom-cyan hover:bg-custom-cyan2 text-white py-2 rounded-lg mt-4" onClick={() => handlePurchaseClick({rate:currentRates.goldRate,name:'gold'})}>
-                                Purchase Course
+                                Purchase
                             </button>
                         </div>
                     </div>
@@ -183,7 +183,7 @@ const Subscription = () => {
                         <div className="mt-6">
                             <div className="text-center font-bold text-2xl">{currentRates.platinumRate || '$1200'}</div>
                             <button className="w-full bg-custom-cyan hover:bg-custom-cyan2 text-white py-2 rounded-lg mt-4" onClick={() => handlePurchaseClick({rate:currentRates.platinumRate,name:'platinum'})}>
-                                Purchase Course
+                                Purchase
                             </button>
                         </div>
                     </div>

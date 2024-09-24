@@ -1,15 +1,18 @@
 import React from 'react';
 import { Modal, Button, Typography, Space, List, Alert } from 'antd';
 import { CreditCardOutlined, CheckOutlined } from '@ant-design/icons';
-import { handleRazorpayPayment,verifyRazorPayPayment,savePurchase} from '../../../Services/studentService'; 
+import { handleRazorpayPaymentSubscription,verifyRazorPayPaymentSubscription,savePurchaseSubscription} from '../../../Services/studentService'; 
 
 const { Title, Text } = Typography;
 
 const SubscriptionModal =  ({ isOpen, onClose, planDetails }) => {
     const handlePayment = async () => {
         try {
-            const response = await handleRazorpayPayment({ cartData });
-            const { id, amount } = response; // `id` is the order_id from backend
+            const amount = planDetails.rate; // Ensure this is the numeric amount
+            const currency = 'INR';
+
+            const response = await handleRazorpayPaymentSubscription({amount,currency});
+           const { id, amount: orderAmount } = response // `id` is the order_id from backend
         
             const options = {
               key: import.meta.env.VITE_RAZORPAY_KEY_ID, // Razorpay API Key
@@ -21,14 +24,14 @@ const SubscriptionModal =  ({ isOpen, onClose, planDetails }) => {
               image: 'https://yourdomain.com/logo.png', // Optional logo URL
               handler: async (response) => {
                 const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = response;
-                const verifyResponse = await verifyRazorPayPayment({
+                const verifyResponse = await verifyRazorPayPaymentSubscription({
                   order_id: razorpay_order_id,
                   payment_id: razorpay_payment_id,
                   signature: razorpay_signature,
                 });
         
                 if (verifyResponse.status === 'success') {
-                  const purchaseResponse = await savePurchase({
+                  const purchaseResponse = await savePurchaseSubscription({
                     cartData: cartData.items, 
                   });
       
