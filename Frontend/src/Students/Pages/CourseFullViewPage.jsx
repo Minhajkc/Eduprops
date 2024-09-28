@@ -6,6 +6,8 @@ import { CiClock2 } from "react-icons/ci";
 import { toast } from 'react-toastify';
 import { showToastError } from '../../utils/toastify';
 import { getCategoryCoursesById } from '../../Services/studentService';
+import Footer from '../Components/Layout/Footer';
+
 
 const CourseFullViewPage = () => {
     const { courseId } = useParams();
@@ -196,7 +198,7 @@ const CourseFullViewPage = () => {
                     </div>
 
           
- 
+ <Footer/>
     </div>
     
     

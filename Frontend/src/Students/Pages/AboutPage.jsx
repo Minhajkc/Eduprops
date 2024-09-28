@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { FaGraduationCap, FaLaptop, FaClock, FaBriefcase, FaUsers, FaPiggyBank } from 'react-icons/fa';
+import Footer from '../Components/Layout/Footer'
 
 const AboutPage = () => {
 
@@ -128,6 +129,7 @@ const AboutPage = () => {
           </button>
         </section>
       </div>
+      <Footer/>
     </div>
   );
 };

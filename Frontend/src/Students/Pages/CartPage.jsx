@@ -5,6 +5,8 @@ import { Trash2 } from 'lucide-react';
 import { useNavigate,Link } from 'react-router-dom';
 import { CiClock2 } from "react-icons/ci";
 import { Modal, Button } from 'antd';
+import Footer from '../Components/Layout/Footer';
+
 
 const CartPage = () => {
   const navigate = useNavigate();
@@ -245,6 +247,7 @@ const CartPage = () => {
           Continue To Pay <span className='font-bold'>₹{total.toFixed(2)}</span>
         </Button>
       </Modal>
+      <Footer/>
     </div>
   );
 };

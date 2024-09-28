@@ -10,6 +10,7 @@ const Subscription = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedPlan, setSelectedPlan] = useState({});
     const [currentRates, setCurrentRates] = useState({});
+    const membershipType = useSelector((state) => state.student.membershipType || localStorage.getItem('membershipType'));
     const reduxStudentId = useSelector((state) => state.student.studentId||localStorage.getItem('studentId'));
     const navigate = useNavigate();
 
@@ -49,7 +50,7 @@ const Subscription = () => {
                 </p>
             </div>
 
-            <div className="mt-12 max-w-md mx-auto grid gap-8 p-5 lg:grid-cols-3 lg:max-w-7xl lg:px-8">
+            <div className="mt-12 max-w- mx-auto grid gap-8 p-5 lg:grid-cols-3 md:grid-cols-3 lg:max-w-7xl lg:px-8">
 
                 {/* Silver Pack */}
                 <div className="flex flex-col rounded-lg shadow-lg overflow-hidden border border-[#C0C0C0]">
@@ -89,10 +90,10 @@ const Subscription = () => {
                         </div>
                         <div className="mt-6 text-center">
                             {reduxStudentId ? (
-                                <p className="text-md font-bold bg-slate-500 p-2 rounded-md text-white">You are in Silver membership</p>
+                                 <p className="text-md font-bold  p-2 rounded-md text-black">You are in {membershipType} membership</p>
                             ) : (
-                                <button className="w-full bg-custom-cyan hover:bg-custom-cyan2 text-white py-2 rounded-lg" onClick={() => handlePurchaseClick()}>
-                                    Purchase 
+                                <button className="w-full bg-custom-cyan hover:bg-custom-cyan2 text-white py-2 rounded-lg" onClick={() => handlePurchaseClick({ rate: currentRates.silverRate, name: 'silver' })}>
+                                    Purchase Silver
                                 </button>
                             )}
                         </div>
@@ -100,7 +101,7 @@ const Subscription = () => {
                 </div>
 
                 {/* Standard Pack */}
-                <div className="flex flex-col rounded-lg shadow-lg overflow-hidden border border-[#FFD700]">
+                <div className="flex flex-col rounded-lg shadow-2xl  overflow-hidden border border-[#FFD700]">
                     <div className="flex-1 bg-white p-6 flex flex-col justify-between">
                         <div className="flex-1">
                             <h1 className="mt-6 text-center text-3xl font-bold leading-6 text-[#FFD700]">
@@ -135,11 +136,16 @@ const Subscription = () => {
                 </li>
                             </ul>
                         </div>
-                        <div className="mt-6">
-                            <div className="text-center font-bold text-2xl">{currentRates.goldRate || '$600'}</div>
-                            <button className="w-full bg-custom-cyan hover:bg-custom-cyan2 text-white py-2 rounded-lg mt-4" onClick={() => handlePurchaseClick({rate:currentRates.goldRate,name:'gold'})}>
-                                Purchase
-                            </button>
+                        <div className="mt-6 text-center">
+                            {membershipType === 'gold' ? (
+                                <p className="text-md font-bold bg-yellow-500 p-2 rounded-md text-white">You are in Gold membership</p>
+                            ) : membershipType === 'platinum' ? (
+                                <p className="text-md font-bold bg-red-400 p-2 rounded-md text-white">Unavailable. You are in Platinum.</p>
+                            ) : (
+                                <button className="w-full bg-custom-cyan hover:bg-custom-cyan2 text-white py-2 rounded-lg" onClick={() => handlePurchaseClick({ rate: currentRates.goldRate, name: 'gold' })}>
+                                    Purchase Gold
+                                </button>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -180,11 +186,14 @@ const Subscription = () => {
                 </li>
                             </ul>
                         </div>
-                        <div className="mt-6">
-                            <div className="text-center font-bold text-2xl">{currentRates.platinumRate || '$1200'}</div>
-                            <button className="w-full bg-custom-cyan hover:bg-custom-cyan2 text-white py-2 rounded-lg mt-4" onClick={() => handlePurchaseClick({rate:currentRates.platinumRate,name:'platinum'})}>
-                                Purchase
-                            </button>
+                        <div className="mt-6 text-center">
+                            {membershipType === 'platinum' ? (
+                                <p className="text-md font-bold bg-purple-600 p-2 rounded-md text-white">You are in Platinum membership</p>
+                            ) : (
+                                <button className="w-full bg-custom-cyan hover:bg-custom-cyan2 text-white py-2 rounded-lg" onClick={() => handlePurchaseClick({ rate: currentRates.platinumRate, name: 'platinum' })}>
+                                    Purchase Platinum
+                                </button>
+                            )}
                         </div>
                     </div>
                 </div>

@@ -3,6 +3,7 @@ import { fetchStudentProfile, logoutStudent } from '../../Services/studentServic
 import { useNavigate } from 'react-router-dom';
 import { logoutStudentRedux } from '../../Redux/studentSlice';
 import { useDispatch } from 'react-redux';
+import Footer from '../Components/Layout/Footer'
 
 const StudentPortal = () => {
     const [profile, setProfile] = useState(null);
@@ -25,6 +26,8 @@ const StudentPortal = () => {
 
         getProfile();
     }, []);
+
+    console.log(profile)
 
     const handleLogout = () => {
         dispatch(logoutStudentRedux());
@@ -50,13 +53,14 @@ const StudentPortal = () => {
 
             <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
                 <div className="px-4 py-6 sm:px-0">
-                    <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
+                    <div className="flex flex-col sm:flex-row justify-between items-center mb-6 ">
                         <h1 className="text-3xl font-bold text-gray-900 mb-4 sm:mb-0">Student Portal</h1>
-                        <div className="flex space-x-1 bg-gray-200 p-1 rounded-xl">
-                            {['Profile', 'Courses', 'Teachers', 'Chat'].map((tab) => (
+                        <div className="flex  bg-gray-300 p-1 rounded-xl ">
+                            {['Profile', 'Courses', 'Teachers', 'Chat','Subscription'].map((tab) => (
+                                 (tab !== 'Subscription' || profile.subscription?.length > 0) &&(
                                 <button
                                     key={tab.toLowerCase()}
-                                    className={`py-2 px-4 rounded-lg text-sm font-medium transition-colors duration-150 ${
+                                    className={`py-2  px-3 rounded-lg lg:text-sm text-xs font-medium transition-colors duration-150 ${
                                         activeTab === tab.toLowerCase()
                                             ? 'bg-white text-custom-cyan shadow'
                                             : 'text-gray-600 hover:text-gray-900'
@@ -65,45 +69,104 @@ const StudentPortal = () => {
                                 >
                                     {tab}
                                 </button>
+                                 )
                             ))}
                         </div>
                     </div>
 
                     <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-                        {activeTab === 'profile' && (
-                            <div className="px-4 py-5 sm:p-6">
-                                <div className="flex items-center space-x-5 mb-5">
-                                    <div className="flex-shrink-0">
-                                        <div className="relative">
-                                            <img className="h-16 w-16 rounded-full" src="/placeholder-avatar.jpg" alt="" />
-                                            <span className="absolute bottom-0 right-0 block h-4 w-4 rounded-full ring-2 ring-white bg-green-400"></span>
-                                        </div>
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
-                                            {profile.firstName} {profile.lastName}
-                                        </h2>
-                                        <p className="text-sm font-medium text-gray-500">{profile.username}</p>
-                                    </div>
-                                </div>
-                                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700">Email</label>
-                                        <input type="text" value={profile.email} readOnly className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700">Membership Type</label>
-                                        <input type="text" value={profile.membershipType} readOnly className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
-                                    </div>
-                                </div>
-                            </div>
-                        )}
+                    {activeTab === 'profile' && (
+    <div className="px-4 py-5 sm:p-6">
+        <div className="flex items-center space-x-5 mb-5">
+            <div className="flex-shrink-0">
+                <div className="relative">
+                    <img className="h-16 w-16 rounded-full" src="/placeholder-avatar.jpg" alt="" />
+                    <span className="absolute bottom-0 right-0 block h-4 w-4 rounded-full ring-2 ring-white bg-green-400"></span>
+                </div>
+            </div>
+            <div className="flex-1 min-w-0">
+                <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+                    {profile.firstName} {profile.lastName}
+                </h2>
+                <p className="text-sm font-medium text-gray-500">{profile.username}</p>
+            </div>
+        </div>
+
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <div>
+                <label className="block text-sm font-medium text-gray-700">Email</label>
+                <input type="text" value={profile.email} readOnly className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
+            </div>
+
+            <div>
+                <label className="block text-sm font-medium text-gray-700">Membership Type</label>
+                <div className={`flex items-center mt-1 block w-full border rounded-md shadow-sm py-2 px-3 sm:text-sm 
+                    ${profile.membershipType === 'gold' ? 'border-yellow-500 bg-yellow-100' :
+                        profile.membershipType === 'platinum' ? 'border-purple-500 bg-purple-100' :
+                        profile.membershipType === 'silver' ? 'border-gray-500 bg-gray-100' : 'border-gray-300'}`}>
+                    {profile.membershipType === 'gold' && (
+                        <>
+                            <span className="text-yellow-500 mr-2">
+                                <i className="fas fa-crown"></i> {/* Crown icon for Gold */}
+                            </span>
+                            <span>Gold Membership</span>
+                        </>
+                    )}
+                    {profile.membershipType === 'platinum' && (
+                        <>
+                            <span className="text-purple-500 mr-2">
+                                <i className="fas fa-gem"></i> {/* Gem icon for Platinum */}
+                            </span>
+                            <span>Platinum Membership</span>
+                        </>
+                    )}
+                    {profile.membershipType === 'silver' && (
+                        <>
+                            <span className="text-gray-500 mr-2">
+                                <i className="fas fa-medal"></i> {/* Medal icon for Silver */}
+                            </span>
+                            <span>Silver Membership</span>
+                        </>
+                    )}
+                </div>
+            </div>
+        </div>
+    </div>
+)}
 
                         {activeTab === 'courses' && (
                             <div className="px-4 py-5 sm:p-6">
                                 <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">Purchased Courses</h3>
                                 <div className="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-3">
                                     {profile.purchasedCourses.map((course) => (
+                                        <div key={course._id} className="flex flex-col p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
+                                            <div className="flex items-center justify-between mb-4">
+                                                <div className="flex items-center">
+                                                    <img className="object-cover w-8 h-8 rounded-full" src={course.image} alt="Course" />
+                                                    <div className="ml-3">
+                                                        <p className="text-sm font-medium text-gray-900 dark:text-white">{course.title}</p>
+                                                    </div>
+                                                </div>
+                                                <span className="px-2 py-1 text-xs font-medium text-green-600 bg-green-100 rounded-full">{course.completionRate}% Complete</span>
+                                            </div>
+                                            <p className="text-sm text-gray-600 dark:text-gray-400">{course.description}</p>
+                                            <div className="flex items-center justify-between mt-4">
+                                                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Rating: {course.rating}/5</span>
+                                                <button className="px-3 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-blue-600 border border-transparent rounded-md active:bg-blue-600 hover:bg-blue-700 focus:outline-none focus:shadow-outline-blue">
+                                                    Continue
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+{activeTab === 'subscription'  && profile.subscription && profile.subscription.length > 0 && (
+                            <div className="px-4 py-5 sm:p-6">
+                                <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">Subscribed Courses</h3>
+                                <div className="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-3">
+                                    {profile.subscription.map((course) => (
                                         <div key={course._id} className="flex flex-col p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
                                             <div className="flex items-center justify-between mb-4">
                                                 <div className="flex items-center">
@@ -187,7 +250,10 @@ const StudentPortal = () => {
                         )}
                     </div>
                 </div>
+                
+            
             </div>
+            <Footer/>
         </div>
     );
 };

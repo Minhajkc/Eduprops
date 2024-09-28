@@ -335,3 +335,37 @@ export const updateSubscriptionRates = async (rates) => {
       throw error;
     }
   }
+
+
+  export const fetchAds = async () => {
+    const response = await AdminInstance.get('/ads');
+    return response.data;
+  };
+
+  export const createAd = async (adData) => {
+    const response = await AdminInstance.post('/ads', adData, {
+      headers: {
+        'Content-Type': 'multipart/form-data', // Set the content type for multipart form data
+      },
+    });
+    showToastSuccess('Added New Ads successfully!');
+    return response.data;
+  };
+  
+
+  export const updateAd = async (id, adData) => {
+    const response = await AdminInstance.put(`${'/ads'}/${id}`, adData, {
+      headers: {
+        'Content-Type': 'multipart/form-data', // Set the content type for multipart form data
+      },
+    });
+    showToastSuccess('Ads updated successfully!');
+    return response.data;
+  };
+  
+  
+  // Function to delete an ad
+  export const deleteAd = async (id) => {
+    await AdminInstance.delete(`${'/ads'}/${id}`);
+    showToastSuccess('Deleted successfully!');
+  };

@@ -4,11 +4,13 @@ import { CreditCardOutlined, CheckOutlined } from '@ant-design/icons';
 import { handleRazorpayPaymentSubscription,verifyRazorPayPaymentSubscription,savePurchaseSubscription} from '../../../Services/studentService';
 import { showToastSuccess, showToastError } from '../../../utils/toastify'
 import { useNavigate,Link } from 'react-router-dom';
+import { setStudentId } from '../../../Redux/studentSlice';
+import { useDispatch } from 'react-redux';
 
 const { Title, Text } = Typography;
 
 const SubscriptionModal =  ({ isOpen, onClose, planDetails }) => {
-    console.log(planDetails)
+    const dispatch = useDispatch()
     const navigate = useNavigate();
 
     const handlePayment = async () => {
@@ -40,9 +42,12 @@ const SubscriptionModal =  ({ isOpen, onClose, planDetails }) => {
                   const purchaseResponse = await savePurchaseSubscription({
                     subscriptionPlan
                   });
+                  const membershipType = purchaseResponse.membershipType
       
                   if (purchaseResponse.status === 'success') {
                     showToastSuccess('Payment Successful!');
+                    dispatch(setStudentId({membershipType}));
+                    localStorage.setItem('membershipType', membershipType)
                     navigate('/profile'); 
                   } else {
                     showToastError('Failed to save purchase details');

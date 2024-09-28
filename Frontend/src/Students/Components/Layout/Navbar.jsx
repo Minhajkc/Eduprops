@@ -43,6 +43,7 @@ status()
           await logoutStudent();
           dispatch(logoutStudentRedux()); // Dispatch the logout action to clear Redux state
           localStorage.removeItem('studentId'); // Clear localStorage
+          localStorage.removeItem('membershipType');
           setStudentId(null); // Clear local component state immediately
           navigate('/')
         } catch (error) {

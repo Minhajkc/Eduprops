@@ -49,8 +49,9 @@ const LoginPage = () => {
         try {
          const student = await loginStudent(formData,navigate);
          if(student){
-             dispatch(setStudentId(student.data.Student._id))
+             dispatch(setStudentId(student.data.Student._id,student.data.Student.membershipType))
              localStorage.setItem('studentId',student.data.Student._id)
+             localStorage.setItem('membershipType',student.data.Student.membershipType)
          }
           setLoading(false); 
         } catch (error) {

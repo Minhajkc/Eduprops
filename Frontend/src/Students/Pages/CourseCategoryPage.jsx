@@ -3,6 +3,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { addCourseToCart, getCategoryCoursesByIdSort } from '../../Services/studentService';
 import { FaSearch, FaFilter, FaCartArrowDown, FaArrowLeft } from 'react-icons/fa';
 import { CiClock2 } from "react-icons/ci";
+import Footer from '../Components/Layout/Footer';
+
+
 
 const CourseCategoryPage = () => {
   const { id } = useParams();
@@ -144,6 +147,7 @@ const CourseCategoryPage = () => {
           </div>
         ))}
       </div>
+      <Footer/>
     </div>
   );
 };

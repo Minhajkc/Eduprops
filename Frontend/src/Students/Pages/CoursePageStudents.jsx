@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { searchCourseCategory } from '../../Services/studentService'; // Updated function
 import * as HeroIcons from '@heroicons/react/24/outline';
+import Footer from '../Components/Layout/Footer'
 
 const CoursePageStudents = () => {
   const [categories, setCategories] = useState([]);
@@ -102,7 +103,8 @@ const CoursePageStudents = () => {
         ))}
       </div>
 
-      <div className="bg-[#00b8d4] h-20 rounded-lg"></div>
+      <div className="bg-[#00b8d4] h-40 rounded-lg"></div>
+      <Footer/>
     </div>
   );
 };

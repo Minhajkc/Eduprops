@@ -6,6 +6,10 @@ import CourseHomePageView from '../Components/Layout/CourseHomePageView';
 import MentorCarousel from '../Components/Layout/MentorCarousel';
 import StudentReviews from '../Components/Layout/StudentReviews';
 import Subscription from '../Components/Layout/Subscription';
+import FAQSection from '../Components/Layout/FAQSection';
+import SubscriptionUpdate from '../Components/Layout/SubscriptionUpdate';
+import Footer from '../Components/Layout/Footer';
+
 
 
 
@@ -20,6 +24,9 @@ const HomePage = () => {
 <MentorCarousel/>
 <StudentReviews/>
 <Subscription/>
+<FAQSection/>
+<SubscriptionUpdate/>
+<Footer/>
 
 
   </>

@@ -50,8 +50,10 @@ export const handleGoogleAuth = async (response, navigate,dispatch) => {
         showToastSuccess('Sign-up successful!');
         navigate('/'); 
         const studentId = result.data.Student._id;
+        const membershipType =result.data.Student.membershipType
         localStorage.setItem('studentId', studentId);
-        dispatch(setStudentId(studentId));
+        localStorage.setItem('membershipType', membershipType)
+        dispatch(setStudentId({studentId,membershipType}));
         return result;
     } catch (error) {
         const errorMessage = error.response?.data?.message || 'Error signing up with Google.';
@@ -313,24 +315,31 @@ export const savePurchase = async ({ cartData}) => {
   };
 
 
-  export const handleRazorpayPaymentSubscription = async ({amount,currency} ) => {
-    try {
-      const  total  = amount;
-      
-      // Create an order by sending a request to the backend
-      const response = await StudentInstance.post('/createOrderSubscription', {
-        amount: total, // Amount from the cart data
-        currency: 'INR', // Setting currency to INR
-      });
-  
-      return response.data; // Return the order data (including order_id)
-    } catch (error) {
-        const errorMessage = error.response?.data?.message || 'Error logging in. Please try again.';
-        showToastError(errorMessage);
-      console.error('Error creating Razorpay order:', error);
-      throw error; 
-    }
+
+export const handleRazorpayPaymentSubscription = async ({ amount, currency }) => {
+  try {
+    const total = amount;
+    
+    // Create an order by sending a request to the backend
+    const response = await StudentInstance.post('/createOrderSubscription', {
+      amount: total, // Amount from the cart data
+      currency: 'INR', // Setting currency to INR
+    });
+
+    console.log(response);
+
+    return response.data; // Return the order data (including order_id)
+  } catch (error) {
+    // Handling error and displaying a custom message
+    const errorMessage = error.message || 'Failed to create the order. Please try again.';
+    showToastError(errorMessage); // Show the error message using Toastify
+
+    console.error('Error creating Razorpay order:', error);
+
+    throw error; // Rethrow the error to handle it in the calling function
   }
+};
+
 
 export const verifyRazorPayPaymentSubscription = async ({ order_id, payment_id, signature }) => {
   try {
@@ -361,3 +370,13 @@ export const savePurchaseSubscription = async ({ subscriptionPlan}) => {
     }
   };
 
+
+  export const fetchAds = async () => {
+    try {
+      const response = await StudentInstance.get('/ads');
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching ads:', error);
+      throw error;
+    }
+  };

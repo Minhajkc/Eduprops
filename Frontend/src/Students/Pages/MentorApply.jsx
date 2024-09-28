@@ -1,6 +1,8 @@
 import React from 'react';
 import MentorRegistrationForm from '../Components/Layout/MentorRegistrationForm';
 import { FaInfoCircle } from 'react-icons/fa';
+import Footer from '../Components/Layout/Footer';
+
 
 const MentorApply = () => {
   return (
@@ -75,6 +77,7 @@ const MentorApply = () => {
       </div>
 
       <MentorRegistrationForm />
+      <Footer/>
     </div>
   );
 };
