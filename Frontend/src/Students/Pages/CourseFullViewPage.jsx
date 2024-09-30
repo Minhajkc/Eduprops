@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 import { showToastError } from '../../utils/toastify';
 import { getCategoryCoursesById } from '../../Services/studentService';
 import Footer from '../Components/Layout/Footer';
+import { useSelector } from 'react-redux';
 
 
 const CourseFullViewPage = () => {
@@ -17,6 +18,22 @@ const CourseFullViewPage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [selectedVideo, setSelectedVideo] = useState(null);
+
+
+    const ads = useSelector((state) => state.student.ads);
+
+  // Function to get an ad by its position
+  const getAdByPosition = (position) => {
+    return ads.find(ad => ad.position === position) || { 
+      title: 'No Ad Available',
+      content: 'No content available for this position.',
+      image: "/api/placeholder/300/200",
+      link: '#'
+    };
+  };
+
+  // Retrieve ad for 'homepage3'
+  const homepageAd3 = getAdByPosition('coursefullviewpage');
 
    
 
@@ -171,7 +188,24 @@ const CourseFullViewPage = () => {
     </div>
     
 </div>
-<div className="bg-[#00b8d4] h-40 rounded-lg"></div>
+<div className="bg-[#00b8d4] h-auto lg:h-30 rounded-lg mt-5 flex flex-col lg:flex-row justify-between items-center p-4">
+  {/* Left Section: Advertisement */}
+  <div className="w-full lg:w-1/2 flex flex-col items-center justify-center text-black">
+    <p className='text-xs mb-2'>Ads</p>
+    <a href={homepageAd3.link} target="_blank" rel="noopener noreferrer" className="w-full">
+      <img src={homepageAd3.image} alt={homepageAd3.title} className="w-full h-20 lg:h-35 object-cover rounded-lg" />
+      <h3 className="text-sm font-bold mt-2 text-center">{homepageAd3.title}</h3>
+      <a className="text-xs text-blue-800 hover:border-b-2 border-blue-500 font-bold block text-center">{homepageAd3.link}</a>
+    </a>
+  </div>
+
+  {/* Right Section: Contact Info */}
+  <div className="w-full lg:w-1/2 pl-5 text-center lg:text-left mt-4 lg:mt-0 flex flex-col justify-center items-center lg:items-start">
+    <h3 className="text-lg font-bold text-white">Make Your Advertisement Here</h3>
+    <p className="text-sm text-white">Contact us to showcase your advertisement. Reach thousands of potential customers!</p>
+    <p className="text-sm text-white font-bold mt-2">Call: 703-493-6080</p>
+  </div>
+</div>
 <div className="mt-12">
                         <h2 className="text-3xl font-bold mb-6 text-gray-800">Similar Courses</h2>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

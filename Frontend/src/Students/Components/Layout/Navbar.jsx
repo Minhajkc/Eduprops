@@ -80,7 +80,7 @@ status()
               <Link to="/about" className="text-gray-700 hover:text-cyan-500 px-3 py-2 text-sm font-medium">About</Link>
               <Link to="/courses" className="text-gray-700 hover:text-cyan-500 px-3 py-2 text-sm font-medium">Courses</Link>
               <Link to="/contact" className="text-gray-700 hover:text-cyan-500 px-3 py-2 text-sm font-medium">Contact</Link>
-              <Link to="/faq" className="text-gray-700 hover:text-cyan-500 px-3 py-2 text-sm font-medium">FAQ</Link>
+              <Link to="/#faqsection" className="text-gray-700 hover:text-cyan-500 px-3 py-2 text-sm font-medium">FAQ</Link>
             </div>
             {isToken && studentId ? (
               <div className="flex items-center space-x-4 ml-10">
@@ -132,7 +132,7 @@ status()
             <Link to="/about" className="block text-gray-700 hover:text-cyan-500 py-2" onClick={() => setIsMenuOpen(false)}>About us</Link>
             <Link to="/courses" className="block text-gray-700 hover:text-cyan-500 py-2" onClick={() => setIsMenuOpen(false)}>Courses</Link>
             <Link to="/contact" className="block text-gray-700 hover:text-cyan-500 py-2" onClick={() => setIsMenuOpen(false)}>Contact us</Link>
-            <Link to="/faq" className="block text-gray-700 hover:text-cyan-500 py-2" onClick={() => setIsMenuOpen(false)}>FAQ's</Link>
+            <Link to="/#faqsection" className="block text-gray-700 hover:text-cyan-500 py-2" onClick={() => setIsMenuOpen(false)}>FAQ's</Link>
             {isToken && studentId ? (
               <div className="mt-4 flex flex-col space-y-2">
                 <Link to="/profile" className="bg-transparent text-custom-cyan px-4 py-2 rounded-lg text-center hover:bg-cyan-500 hover:text-white border border-cyan-500" onClick={() => setIsMenuOpen(false)}>Profile</Link>

@@ -40,9 +40,9 @@ const FAQSection = () => {
   const homepageAd3 = getAdByPosition('homepage3');
 
   return (
-    <div className="mx-auto px-4 py-12 font-roboto">
-      <h1 className="text-3xl font-bold text-center mb-2">FAQ's</h1>
-      <p className="text-center text-gray-600 mb-8">
+    <div className="mx-auto px-4 py-12 font-roboto" >
+      <h1 className="text-3xl font-bold text-center mb-2" >FAQ's</h1>
+      <p className="text-center text-gray-600 mb-8"  id="faqsection">
         On Weekend UX, instructors from all over the world instruct millions of students.
         <br />
         We offer the knowledge and abilities.
@@ -57,12 +57,12 @@ const FAQSection = () => {
           </p>
           
           {/* Display Ad for Homepage3 */}
-          <div className="bg-custom-cyan2 h-64 w-full flex items-center justify-center text-white p-4">
+          <div className=" h-64 w-full flex items-center justify-center text-black  p-4">
             <p className='text-xs'>Ads</p>
             <a href={homepageAd3.link} target="_blank" rel="noopener noreferrer">
-              <img src={homepageAd3.image} alt={homepageAd3.title} className="w-full h-40 object-cover mb-4" />
-              <h3 className="text-lg font-bold">{homepageAd3.title}</h3>
-              <a className="text-lg font-bold">{homepageAd3.link}</a>
+              <img src={homepageAd3.image} alt={homepageAd3.title} className="w-full h-40 object-cover " />
+              <h3 className="text-sm font-bold">{homepageAd3.title}</h3>
+              <a className="text-xs text-blue-800 hover:border-b-2 border-blue-500 font-bold">{homepageAd3.link}</a>
             </a>
           </div>
         </div>

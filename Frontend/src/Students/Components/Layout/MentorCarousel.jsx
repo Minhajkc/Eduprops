@@ -42,7 +42,8 @@ const MentorCarousel = () => {
 
   useEffect(() => {
     getMentors();
-    getAds();
+      getAds();
+ 
   }, []);
 
   const getMentors = async () => {
@@ -58,6 +59,7 @@ const MentorCarousel = () => {
     try {
       const adsData = await fetchAds();
       dispatch(setAds(adsData));
+      localStorage.setItem('ads', JSON.stringify(adsData));
     } catch (error) {
       console.error('Error fetching ads:', error);
     }

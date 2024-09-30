@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { registerMentor } from './../../../Services/mentorService';
 import { Form, Input, Button, Select, Upload, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
+import { useSelector } from 'react-redux';
 
 const MentorRegistrationForm = () => {
   // Form state and validation
@@ -18,6 +19,22 @@ const MentorRegistrationForm = () => {
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+
+  
+  const ads = useSelector((state) => state.student.ads);
+
+  // Function to get an ad by its position
+  const getAdByPosition = (position) => {
+    return ads.find(ad => ad.position === position) || { 
+      title: 'No Ad Available',
+      content: 'No content available for this position.',
+      image: "/api/placeholder/300/200",
+      link: '#'
+    };
+  };
+
+  // Retrieve ad for 'homepage3'
+  const homepageAd3 = getAdByPosition('mentorpage');
 
   const validateForm = () => {
     let formErrors = {};
@@ -243,13 +260,33 @@ const MentorRegistrationForm = () => {
         </form>
       </div>
 
-      <div className="w-full lg:w-1/3 bg-custom-cyan2 rounded-lg to-teal-600 flex items-center justify-center p-8 mb-8 lg:mb-0">
-        {/* Add your ad content here */}
-        <div className="text-white text-center">
-          <h2 className="text-2xl font-bold mb-4">Advertise Here</h2>
-          <p>Your ad content goes here.</p>
-        </div>
-      </div>
+      <div className="w-full lg:w-1/3 max-h-[760px] bg-custom-cyan2 rounded-lg flex flex-col items-center justify-center p-8 mb-8 lg:mb-0">
+
+  {/* Ad Section */}
+  <div className="w-full flex flex-col items-center justify-center text-black">
+    <p className="text-xs lg:text-base mb-4 font-bold">Advertisement</p>
+    <a href={homepageAd3.link} target="_blank" rel="noopener noreferrer" className="w-full">
+      <img 
+        src={homepageAd3.image} 
+        alt={homepageAd3.title} 
+        className="w-full h-48 lg:h-60 object-cover rounded-lg" 
+      />
+      <h3 className="text-lg lg:text-xl font-bold mt-4 text-center">{homepageAd3.title}</h3>
+      <a className="text-sm lg:text-base text-blue-800 hover:border-b-2 border-blue-500 font-bold block text-center mt-2">
+        {homepageAd3.link}
+      </a>
+    </a>
+  </div>
+
+  {/* Contact Info */}
+  <div className="w-full text-center mt-6">
+    <h3 className="text-lg lg:text-xl font-bold text-white">Advertise With Us!</h3>
+    <p className="text-sm lg:text-base text-white">Contact us to showcase your advertisement to a wide audience.</p>
+    <p className="text-sm lg:text-base text-white font-bold mt-4">Call: 703-493-6080</p>
+  </div>
+</div>
+
+
     </div>
   );
 };

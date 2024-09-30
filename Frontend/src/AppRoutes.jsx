@@ -27,6 +27,7 @@ import PublicRouteGuardAdmin from './Admin/Utils/PublicRouteGurdAdmin';
 import CartPage from './Students/Pages/CartPage';
 import AdminSettingsForm from './Admin/Components/Common/AdminSettingsForm';
 import AdsPage from './Admin/Pages/AdsPages';
+import MentorDashboardPage from './Mentor/Pages/MentorDashboardPage';
 
 
 
@@ -242,6 +243,7 @@ const AppRoutes = () => {
        <Route path="/admin" element={<PublicRouteGuardAdmin><AdminLoginPage /></PublicRouteGuardAdmin> }
 />
         <Route path="/mentor" element={<MentorLoginPage />} />
+        <Route path="/mentor/dashboard" element={<MentorDashboardPage />} />
       </Routes>
     );
   };

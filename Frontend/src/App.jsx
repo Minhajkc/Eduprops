@@ -1,4 +1,4 @@
-import React from 'react';
+import {React, useEffect} from 'react';
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -10,6 +10,16 @@ import AppRoutes from './AppRoutes';
 
 
 const App = () => {
+  useEffect(() => {
+    // Check if there's a hash in the URL
+    if (location.hash) {
+      const element = document.getElementById(location.hash.replace('#', ''));
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  }, [location]);
+
   return (
     <Provider store={store}>
     <Router>
@@ -25,6 +35,15 @@ const App = () => {
 
 const Layout = () => {
   const location = useLocation();
+  useEffect(() => {
+    if (location.hash) {
+      const element = document.getElementById(location.hash.replace('#', ''));
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  }, [location]);
+
   const isAdminRoute = location.pathname.startsWith('/admin');
   const isMentorRoute = location.pathname.startsWith('/mentor')
 
