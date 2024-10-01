@@ -1,12 +1,13 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 
 const Hero = () => {
   return (
-    <div className="container mx-auto px-5 lg:px-11 py-8 sm:py-12 lg:py-16 font-roboto">
+    <div className="container mx-auto px-5 lg:px-11 py-8 sm:py-12 lg:py-10 font-roboto">
       <div className="flex flex-col lg:flex-row items-center">
         {/* Content section */}
-        <div className="w-full lg:w-1/2 mb-8 lg:mb-0 text-center lg:text-left">
+        <div className="w-fullg:w-1/2 mb-8 lg:mb-0 text-center lg:text-left">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4">
             <span className="text-gray-900">Up Your </span>
             <span className="text-cyan-400">Skills</span>
@@ -23,9 +24,12 @@ const Hero = () => {
             Learn UI-UX Design skills with weekend UX. The latest online
             learning system and material that help your knowledge growing.
           </p>
-          <button className="bg-cyan-400 text-white font-bold py-2 px-4 md:py-3 md:px-6 lg:py-3 lg:px-8 rounded-full  hover:bg-cyan-500 transition duration-300 text-base md:text-lg">
+          <Link to='/courses'>
+          <button  className="bg-cyan-400 animate-bounce text-white font-bold py-2 px-4 md:py-3 md:px-6 lg:py-3 lg:px-8 rounded-full  hover:bg-cyan-500 transition duration-300 text-base md:text-lg">
              Explore Courses
             </button>
+          </Link>
+       
 
           <div className="flex flex-wrap mt-8 gap-6 justify-center lg:justify-start">
             <div className="flex items-center text-base">
@@ -51,28 +55,32 @@ const Hero = () => {
           </div>
         </div>
 
-       <div className="hidden lg:block lg:w-1/2 relative">
+       <div className="hidden lg:block lg:w-1/2 relative ">
   <div className="w-full h-[600px] relative">
-    {/* Top right circle */}
-    <div className="absolute top-0 right-12 p-2 bg-white rounded-full border-4 border-blue-500">
+
+  <img src="src/assets/images/Newhome.png" alt="Student 3" className="w-[600px] ml-6" />
+
+
+ 
+    {/* <div className="absolute top-0 right-12 p-2 bg-white rounded-full border-4 border-blue-500">
       <div className="w-79 h-72 bg-blue-500 rounded-full overflow-hidden">
         <img src="src/assets/images/SignUpimage.PNG" alt="Student 1" className="w-full h-full object-cover" />
       </div>
     </div>
 
-    {/* Left circle */}
+  
     <div className="absolute top-1/2 left-0 transform -translate-y-1/2 p-2 bg-white border-4 border-red-500 rounded-full">
       <div className="w-90 h-80 bg-red-500 rounded-full overflow-hidden">
         <img src="src/assets/images/SignUpimage.PNG" alt="Student 2" className="w-full h-full object-cover" />
       </div>
     </div>
 
-    {/* Bottom right circle */}
+   
     <div className="absolute bottom-0 right-20 p-2 bg-white border-4 border-yellow-500 rounded-full ">
       <div className="w-60 h-60 bg-yellow-500 rounded-full overflow-hidden">
         <img src="src/assets/images/SignUpimage.PNG" alt="Student 3" className="w-full h-full object-cover" />
       </div>
-    </div>
+    </div> */}
   </div>
 </div>
         

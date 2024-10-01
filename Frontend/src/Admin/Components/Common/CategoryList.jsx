@@ -4,6 +4,7 @@ import { AcademicCapIcon, BookOpenIcon, BriefcaseIcon, CogIcon, TrashIcon, Penci
 import { editCategory, deleteCategory, getCategoryById } from '../../../Services/adminService';
 import CategoryForm from '../Common/CategoryForm';
 import Modal from '../Specific/Modal';
+import { Flex, Spin } from 'antd';
 
 const iconMap = {
     AcademicCapIcon: <AcademicCapIcon className="h-16 w-16 text-blue-500" />,
@@ -16,7 +17,9 @@ const CategoryList = ({ categories, loading, error, onCategoryUpdate }) => {
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState(null);
 
-    if (loading) return <div className="flex justify-center items-center h-screen"><div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div></div>;
+    if (loading)  return <div className="flex items-center justify-center h-screen bg-gray-100">
+    <Spin  size='large'/>;
+</div>
     if (error) return <div className="text-red-500 text-center text-xl mt-8">{error}</div>;
 
     const handleDelete = async (id) => {

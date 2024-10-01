@@ -6,6 +6,7 @@ import { AiOutlinePlus } from 'react-icons/ai';
 import { TrashIcon, PencilIcon, VideoCameraIcon } from '@heroicons/react/24/outline';
 import VideoAdd from './VideoAdd';
 import LessonOverview from './LessonOverview';
+import { Flex, Spin } from 'antd';
 
 
 
@@ -77,7 +78,9 @@ const CategorizedCourses = ({ categoryId }) => {
     
     
 
-    if (loading) return <p>Loading...</p>;
+    if (loading) return <div className="flex items-center justify-center h-screen bg-gray-100">
+    <Spin  size='large'/>;
+</div>;;
     if (error) return <p className="text-red-500">{error}</p>;
 
     return (

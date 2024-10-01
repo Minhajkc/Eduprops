@@ -55,9 +55,29 @@ status()
       },
     });
   };
+  const [isSticky, setIsSticky] = useState(false);
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      if (scrollTop > 50) {
+        setIsSticky(true);
+      } else {
+        setIsSticky(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   return (
-    <nav className="bg-white font-roboto">
+    <nav
+    className={`b font-roboto sticky top-0 z-50 transition-all duration-500 ${
+      isSticky ? 'bg-white': ''
+    }`}
+  >
       <div className="container mx-auto px-5 py-2">
         <div className="flex items-center justify-between flex-wrap">
           <div className="flex items-center flex-shrink-0 text-custom-cyan mr-6">

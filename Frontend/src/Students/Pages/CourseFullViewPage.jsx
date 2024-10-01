@@ -8,6 +8,7 @@ import { showToastError } from '../../utils/toastify';
 import { getCategoryCoursesById } from '../../Services/studentService';
 import Footer from '../Components/Layout/Footer';
 import { useSelector } from 'react-redux';
+import { Flex, Spin } from 'antd';
 
 
 const CourseFullViewPage = () => {
@@ -77,12 +78,16 @@ const CourseFullViewPage = () => {
           }
     };
 
-    if (loading) return <div>Loading...</div>;
+    if (loading) {
+        return <div className="flex items-center justify-center h-screen bg-gray-100">
+            <Spin  size='large'/>;
+        </div>;
+    }
     if (error) return <div>Error: {error}</div>;
     if (!course) return <div>No course found</div>;
     const handleCardClick = (courseId) => {
         navigate(`/courses/category/selectedcourse/${courseId}`); 
-        window.location.reload()
+        window.scrollTo(0, 0);
       }
 
     return (

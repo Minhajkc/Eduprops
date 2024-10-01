@@ -12,6 +12,7 @@ import { useDispatch } from 'react-redux';
 
 
 
+
 const LoginPage = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -74,6 +75,12 @@ const handleGoogleSuccess = async (response) => {
 const handleGoogleFailure = () => {
   showToastError('Authentication failed !');
 };
+
+if (loading) {
+  return <div className="flex items-center justify-center h-screen bg-gray-100">
+      <Spin  size='large'/>;
+  </div>;
+}
 
   return (
     

@@ -5,6 +5,8 @@ import { FaSearch, FaFilter, FaCartArrowDown, FaArrowLeft } from 'react-icons/fa
 import { CiClock2 } from "react-icons/ci";
 import Footer from '../Components/Layout/Footer';
 import { useSelector } from 'react-redux';
+import { Pagination } from 'antd';
+import { Flex, Spin } from 'antd';
 
 
 
@@ -18,6 +20,20 @@ const CourseCategoryPage = () => {
   const [sortOption, setSortOption] = useState('price-asc'); // Sort by price ascending by default
   const [isModalOpen, setIsModalOpen] = useState(false); // Modal open/close state
   const ads = useSelector((state) => state.student.ads);
+  const [currentPage, setCurrentPage] = useState(1);
+  const coursesPerPage = 4; // Number of courses per page
+
+  // Calculate the indexes for slicing the courses array
+  const startIndex = (currentPage - 1) * coursesPerPage;
+  const endIndex = startIndex + coursesPerPage;
+
+  // Slice courses to display only the current page courses
+  const currentCourses = courses.slice(startIndex, endIndex);
+
+  // Handle page change
+  const handlePaginationChange = (page) => {
+    setCurrentPage(page);
+  };
 
   // Function to get an ad by its position
   const getAdByPosition = (position) => {
@@ -69,7 +85,11 @@ const CourseCategoryPage = () => {
        }
   }
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) {
+    return <div className="flex items-center justify-center h-screen bg-gray-100">
+        <Spin  size='large'/>;
+    </div>;
+}
   if (error) return <div>Error: {error}</div>;
 
   return (
@@ -141,18 +161,24 @@ const CourseCategoryPage = () => {
         </div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {courses.map((course) => (
+    {/* Courses Grid Section */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {currentCourses.map((course) => (
           <div key={course._id} className="bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl">
             <img src={course.image} alt={course.title} className="w-full h-48 object-cover" />
             <div className="p-4">
-              <h3 className="text-lg font-bold mb-2 text-indigo-800 cursor-pointer" onClick={() => handleCardClick(course._id)}>{course.title}</h3>
+              <h3 className="text-lg font-bold mb-2 text-indigo-800 cursor-pointer" onClick={() => handleCardClick(course._id)}>
+                {course.title}
+              </h3>
               <p className="text-sm text-gray-600 mb-4">{course.description.substring(0, 100)}...</p>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-500 flex items-center"><CiClock2 className="mr-1" />{course.duration} hours</span>
+                <span className="text-sm text-gray-500 flex items-center">
+                  <CiClock2 className="mr-1" />
+                  {course.duration} hours
+                </span>
                 <span className="text-lg font-bold text-custom-cyan2">₹{course.price}</span>
               </div>
-              <button 
+              <button
                 onClick={() => handleCart(course._id)}
                 className="mt-4 w-full bg-custom-cyan text-white py-2 rounded-full hover:bg-custom-cyan2 transition-colors duration-300 flex items-center justify-center"
               >
@@ -162,6 +188,17 @@ const CourseCategoryPage = () => {
           </div>
         ))}
       </div>
+
+      {/* Pagination Section */}
+      <div className="flex justify-center mt-6">
+        <Pagination
+          current={currentPage}
+          pageSize={coursesPerPage} // Number of courses per page
+          total={courses.length} // Total number of courses
+          onChange={handlePaginationChange}
+        />
+      </div>
+
       <div className="bg-[#00b8d4] h-auto lg:h-30 rounded-lg mt-5 flex flex-col lg:flex-row justify-between items-center p-4">
   {/* Left Section: Advertisement */}
   <div className="w-full lg:w-1/2 flex flex-col items-center justify-center text-black">

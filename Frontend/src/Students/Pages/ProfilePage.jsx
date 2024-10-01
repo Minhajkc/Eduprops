@@ -4,6 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import { logoutStudentRedux } from '../../Redux/studentSlice';
 import { useDispatch } from 'react-redux';
 import Footer from '../Components/Layout/Footer'
+import { Flex, Spin } from 'antd';
+
+
 
 const StudentPortal = () => {
     const [profile, setProfile] = useState(null);
@@ -27,7 +30,6 @@ const StudentPortal = () => {
         getProfile();
     }, []);
 
-    console.log(profile)
 
     const handleLogout = () => {
         dispatch(logoutStudentRedux());
@@ -37,7 +39,7 @@ const StudentPortal = () => {
 
     if (loading) {
         return <div className="flex items-center justify-center h-screen bg-gray-100">
-            <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-800"></div>
+            <Spin  size='large'/>;
         </div>;
     }
 
@@ -80,8 +82,14 @@ const StudentPortal = () => {
         <div className="flex items-center space-x-5 mb-5">
             <div className="flex-shrink-0">
                 <div className="relative">
-                    <img className="h-16 w-16 rounded-full" src="/placeholder-avatar.jpg" alt="" />
-                    <span className="absolute bottom-0 right-0 block h-4 w-4 rounded-full ring-2 ring-white bg-green-400"></span>
+                <div className="w-20 h-20 bg-custom-cyan rounded-full flex items-center justify-center text-custom-cyan2">
+          <span className="text-4xl font-bold">
+            {profile.username.charAt(0).toUpperCase()}
+            {profile.email.charAt(0).toUpperCase()}
+
+          </span>
+        </div>
+                  
                 </div>
             </div>
             <div className="flex-1 min-w-0">

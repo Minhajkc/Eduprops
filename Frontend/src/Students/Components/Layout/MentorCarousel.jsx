@@ -20,7 +20,9 @@ const MentorCard = ({ mentor }) => (
     <h3 className="text-lg font-semibold text-center mb-1">{mentor.firstName} {mentor.lastName}</h3>
     <p className="text-teal-600 text-center text-sm font-medium mb-1">{mentor.specialization}</p>
     <p className="text-gray-600 text-center text-xs mb-2">{mentor.degree}</p>
-    <p className="text-blue-600 text-center text-xs mb-2">{mentor.email} </p>
+    <p className="text-blue-600 text-center text-xs mb-2"><a href={`mailto:${mentor.email}`} className="hover:underline">
+      {mentor.email}
+    </a> </p>
   </div>
 );
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { Flex, Spin } from 'antd';
 import SignUpPage from './Students/Pages/SignUpPage';
 import LoginPage from './Students/Pages/LoginPage';
 import ContactPage from './Students/Pages/ContactPage';
@@ -35,11 +36,14 @@ import MentorDashboardPage from './Mentor/Pages/MentorDashboardPage';
 
 
 
+
 const AppRoutes = () => {
     const { isAuthenticated, loading } = useAuth();
     const { profile, studentIsAuth, studentLoading } = useAuthStudent();
     if (loading && studentLoading) {
-      return <div>Loading...</div>; 
+      return <div className="flex items-center justify-center h-screen bg-gray-100">
+            <Spin  size='large'/>;
+        </div>;
     }
  
   

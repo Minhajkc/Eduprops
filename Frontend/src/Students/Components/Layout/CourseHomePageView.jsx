@@ -5,6 +5,7 @@ import * as HeroIcons from '@heroicons/react/24/outline';
 import { getCourseCategory } from '../../../Services/studentService'; 
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { MdExplore } from "react-icons/md";
+import {Spin} from 'antd'
 // Adjust the import path as needed
 
 const CourseHomePageView = () => {
@@ -29,7 +30,13 @@ const CourseHomePageView = () => {
     fetchCategories();
   }, []);
 
-  if (loading) return <p className="text-center py-8">Loading...</p>;
+ 
+if (loading) {
+  return <div className="flex items-center justify-center h-screen bg-gray-100">
+      <Spin  size='large'/>;
+  </div>;
+}
+
   if (error) return <p className="text-center py-8 text-red-500">{error}</p>;
 
   // Function to get the icon component based on the icon name

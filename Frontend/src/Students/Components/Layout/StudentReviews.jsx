@@ -49,8 +49,8 @@ const StudentReviews = () => {
       >
         {reviews.map((review) => (
           <SwiperSlide key={review.id}>
-            <div className="bg-gray-100 rounded-lg p-10 text-center shadow-md">
-              <p className="text-gray-600 italic mb-4">"{review.review}"</p>
+            <div className="bg-custom-cyan2 rounded-lg p-10 text-center text-white shadow-md">
+              <p className=" italic mb-4">"{review.review}"</p>
               <h3 className="text-lg font-semibold">{review.student}</h3>
               <p className="text-yellow-500 mb-2">{"⭐".repeat(review.rating)}</p>
             </div>

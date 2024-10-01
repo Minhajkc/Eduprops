@@ -4,6 +4,8 @@ import { searchCourseCategory } from '../../Services/studentService'; // Updated
 import * as HeroIcons from '@heroicons/react/24/outline';
 import Footer from '../Components/Layout/Footer'
 import { useSelector } from 'react-redux';
+import { Pagination } from 'antd';
+import { Flex, Spin } from 'antd';
 
 const CoursePageStudents = () => {
   const [categories, setCategories] = useState([]);
@@ -11,6 +13,21 @@ const CoursePageStudents = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+
+  const [currentPage, setCurrentPage] = useState(1); // Pagination current page
+  const categoriesPerPage = 4; // Number of categories to show per page
+
+  // Calculate the indexes for slicing the categories array
+  const startIndex = (currentPage - 1) * categoriesPerPage;
+  const endIndex = startIndex + categoriesPerPage;
+
+  // Slice categories to display only the current page categories
+  const currentCategories = categories.slice(startIndex, endIndex);
+
+  // Handle pagination change
+  const handlePaginationChange = (page) => {
+    setCurrentPage(page);
+  };
 
   const ads = useSelector((state) => state.student.ads);
 
@@ -55,6 +72,11 @@ const CoursePageStudents = () => {
     setSearchTerm(e.target.value); // Update searchTerm state
   };
 
+  if (loading) {
+    return <div className="flex items-center justify-center h-screen bg-gray-100">
+        <Spin  size='large'/>;
+    </div>;
+}
   return (
     <div className="bg-white p-6 font-roboto">
       {/* Header Section */}
@@ -81,8 +103,8 @@ const CoursePageStudents = () => {
       </div>
 
       {/* Categories Section */}
-      <div className="grid grid-cols-1 text-center align-center items-center sm:grid-cols-3 lg:grid-cols-4 md:grid-cols-3 gap-6 mb-6">
-        {categories.map((category) => (
+      <div className="grid grid-cols-1 text-center align-center items-center sm:grid-cols-3 lg:grid-cols-4 md:grid-cols-4 gap-6 mb-6">
+        {currentCategories.map((category) => (
           <div
             key={category._id}
             className="p-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 text-center"
@@ -97,7 +119,7 @@ const CoursePageStudents = () => {
             <p className="text-sm text-gray-700 mb-4">Explore courses in {category.name}</p>
             <Link
               to={`/courses/category/${category._id}`}
-              className="bg-[#00b8d4] text-white px-6 py-2 rounded-full inline-flex items-center justify-center hover:bg-[#0099b3] transition-colors duration-300"
+  className="bg-custom-cyan text-white text-xs p-2 lg:px-4 lg:py-2 rounded-full inline-flex items-center justify-center hover:bg-[#0099b3] transition-colors duration-300 lg:text-sm"
             >
               View Courses
               <svg
@@ -117,6 +139,16 @@ const CoursePageStudents = () => {
             </Link>
           </div>
         ))}
+      </div>
+
+      {/* Pagination Section */}
+      <div className="flex justify-center mt-6 mb-5">
+        <Pagination
+          current={currentPage}
+          pageSize={categoriesPerPage} // Number of categories per page
+          total={categories.length} // Total number of categories
+          onChange={handlePaginationChange}
+        />
       </div>
 
       <div className="bg-[#00b8d4] h-auto lg:h-40 rounded-lg flex flex-col lg:flex-row justify-between items-center p-4">
