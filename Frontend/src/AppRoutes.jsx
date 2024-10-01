@@ -14,9 +14,11 @@ import CoursePage from './Admin/Pages/CoursePage';
 import CategoryPage from './Admin/Pages/CategoryPage';
 import PrivateRoute from './Admin/Utils/PrivateRoute';
 import PrivateRouteStudent from './Students/Utils/PrivateRouteStudent';
+import PrivateRouteMentor from './Mentor/Utils/privateRouteMentor';
 import StudentAuth from './Admin/Pages/StudentAuth'; // Import PrivateRoute
 import useAuth from './Admin/Utils/auth'; // Import the authentication hoo
 import useAuthStudent from './Students/Utils/useAuthStudent';
+import useAuthMentor from './Mentor/Utils/Mentorauth';
 import MentorApply from './Students/Pages/MentorApply';
 import MentorListPage from './Admin/Pages/MentorListPage';
 import MentorLoginPage from './Mentor/Pages/MentorLoginPage';
@@ -29,6 +31,7 @@ import CartPage from './Students/Pages/CartPage';
 import AdminSettingsForm from './Admin/Components/Common/AdminSettingsForm';
 import AdsPage from './Admin/Pages/AdsPages';
 import MentorDashboardPage from './Mentor/Pages/MentorDashboardPage';
+import PublicRouteGuardMentor from './Mentor/Utils/PublicRouteGurdMentor';
 
 
 
@@ -40,7 +43,9 @@ import MentorDashboardPage from './Mentor/Pages/MentorDashboardPage';
 const AppRoutes = () => {
     const { isAuthenticated, loading } = useAuth();
     const { profile, studentIsAuth, studentLoading } = useAuthStudent();
-    if (loading && studentLoading) {
+    const { mentorProfile, mentorIsAuth, mentorLoading } = useAuthMentor();
+
+    if (loading && studentLoading && mentorLoading) {
       return <div className="flex items-center justify-center h-screen bg-gray-100">
             <Spin  size='large'/>;
         </div>;
@@ -246,8 +251,15 @@ const AppRoutes = () => {
        
        <Route path="/admin" element={<PublicRouteGuardAdmin><AdminLoginPage /></PublicRouteGuardAdmin> }
 />
-        <Route path="/mentor" element={<MentorLoginPage />} />
-        <Route path="/mentor/dashboard" element={<MentorDashboardPage />} />
+        <Route path="/mentor" element={
+          <PublicRouteGuardMentor><MentorLoginPage /></PublicRouteGuardMentor>}
+         />
+        <Route path="/mentor/dashboard" element={
+          <PrivateRouteMentor mentorIsAuth={mentorIsAuth} >
+                <MentorDashboardPage />
+          </PrivateRouteMentor>
+      
+          } />
       </Routes>
     );
   };

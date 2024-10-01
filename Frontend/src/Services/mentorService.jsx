@@ -114,3 +114,27 @@ export const resetPassword = async (email, newPassword) => {
     }
 };
 
+export const getProfile = async () => {
+    try {
+      const response = await MentorInstance.get('/Profile');
+      return response.data;
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || 'An error occurred';
+ // Ensure showToastError is properly defined/imported
+      throw error;
+    }
+  };
+
+  export const logoutMentor = async () => {
+    try {
+      // Send logout request to the backend if necessary
+      await MentorInstance.post('/logout');// or sessionStorage.removeItem('mentorToken')
+      showToastSuccess('Logout successful!');
+      return { message: 'Logout successful' };
+    } catch (error) {
+      console.error('Error logging out:', error);
+      throw error;
+    }
+  };
+
+

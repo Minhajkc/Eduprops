@@ -102,7 +102,7 @@ if (loading) {
 
       <div className="text-center justify-center flex ">
         <button 
-          className="bg-gray-100 border-2 text-gray-700 px-6 py-2 rounded-full hover:bg-[#0099b3] hover:text-white transition-colors duration-500 flex items-center justify-center space-x-2"
+          className="bg-gray-100   border-2 text-gray-700 px-6 py-2 rounded-full hover:bg-[#0099b3] hover:text-white transition-colors duration-500 flex items-center justify-center space-x-2"
           onClick={() => navigate('/courses')}
         >
           Explore All Programs
