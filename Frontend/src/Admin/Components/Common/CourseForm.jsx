@@ -15,7 +15,6 @@ const CourseForm = ({ course, categoryId, refreshCourses, closeModal }) => {
             setTitle(course.title || '');
             setDescription(course.description || '');
             setPrice(course.price || '');
-            setInstructor(course.instructor || '');
             setDuration(course.duration || '');
             setWhatYouLearn(course.whatYouLearn || ''); // Load existing data if editing
             setImage(course.image || null); // Load existing image if editing
@@ -32,7 +31,6 @@ const CourseForm = ({ course, categoryId, refreshCourses, closeModal }) => {
         formData.append('title', title);
         formData.append('description', description);
         formData.append('price', price);
-        formData.append('instructor', instructor);
         formData.append('duration', duration);
         formData.append('category', categoryId);
         formData.append('whatYouLearn', whatYouLearn); // Include the new field
@@ -53,7 +51,6 @@ const CourseForm = ({ course, categoryId, refreshCourses, closeModal }) => {
             setTitle('');
             setDescription('');
             setPrice('');
-            setInstructor('');
             setDuration('');
             setWhatYouLearn(''); // Clear the new field
             setImage(null); // Clear the image
@@ -91,14 +88,7 @@ const CourseForm = ({ course, categoryId, refreshCourses, closeModal }) => {
                 placeholder="Course Price"
                 className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
             />
-            {/* Instructor */}
-            <input
-                type="text"
-                value={instructor}
-                onChange={(e) => setInstructor(e.target.value)}
-                placeholder="Instructor"
-                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-            />
+          
             {/* Course Duration */}
             <input
                 type="number"

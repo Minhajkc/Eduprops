@@ -92,7 +92,9 @@ const MentorDashboardPage = () => {
       <Layout>
         <Header style={{ padding: 0, background: colorBgContainer }}>
           {/* Logout Button in Header */}
-         
+          <div style={{ paddingLeft: '16px', textAlign: 'left' }} className='text-center'>
+            <h1>Helo, Teacher</h1>
+          </div>
         </Header>
 
         <Content style={{ margin: '0 16px' }}>
@@ -117,7 +119,7 @@ const MentorDashboardPage = () => {
 
         {/* Footer */}
         <Footer style={{ textAlign: 'center' }}>
-          Ant Design ©{new Date().getFullYear()} Created by Ant UED
+        EduProps©{new Date().getFullYear()} Created by Minhaj Kc
         </Footer>
       </Layout>
     </Layout>

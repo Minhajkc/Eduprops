@@ -42,6 +42,7 @@ const CartPage = () => {
   }, []);
 
   const handleRemove = async (itemToRemoveId) => {
+    setLoading(true);
     try {
       await removeFromCart(itemToRemoveId);
       const response = await getCartItems();
@@ -49,6 +50,8 @@ const CartPage = () => {
       setCartData({ items: courses, subtotal, discount, tax, total });
     } catch (error) {
       console.log('Failed to remove course:', error);
+    }finally {
+      setLoading(false); // Set loading to false after the operation completes
     }
   };
 
@@ -116,7 +119,7 @@ const CartPage = () => {
   };
   
   if (loading) {
-    return <div className="flex items-center justify-center h-screen bg-gray-100">
+    return <div className="flex items-center justify-center h-screen ">
     <Spin  size='large'/>;
 </div>;
   }

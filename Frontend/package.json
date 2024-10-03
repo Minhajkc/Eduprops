@@ -35,6 +35,7 @@
     "react-spinners": "^0.14.1",
     "react-toastify": "^10.0.5",
     "slick-carousel": "^1.8.1",
+    "socket.io-client": "^4.8.0",
     "swiper": "^11.1.14"
   },
   "devDependencies": {

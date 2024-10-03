@@ -369,3 +369,28 @@ export const updateSubscriptionRates = async (rates) => {
     await AdminInstance.delete(`${'/ads'}/${id}`);
     showToastSuccess('Deleted successfully!');
   };
+
+  export const setCourseInstructor = async (courseId, mentorId) => {
+    try {
+      const response = await AdminInstance.put(`/courses/${courseId}/instructor`, {
+        mentorId,
+      });
+      showToastSuccess('Instructor assigned successfully and mentor updated');
+      return response.data;
+    } catch (error) {
+      // Handle different types of errors
+      if (error.response) {
+        // Server responded with a status other than 2xx
+        const errorMessage = error.response.data.message || 'Error updating course instructor';
+        showToastError(errorMessage);
+      } else if (error.request) {
+        // Request was made but no response received
+        showToastError('No response received from the server');
+      } else {
+        // Something else happened while setting up the request
+        showToastError('Error updating course instructor: ' + error.message);
+      }
+      throw error; // Re-throw the error for further handling if needed
+    }
+  };
+  

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { ApproveMentor, GetMentors, RejectMentor,coursedetailsmentor } from '../../Services/adminService';
+import { ApproveMentor, GetMentors, RejectMentor,coursedetailsmentor, setCourseInstructor } from '../../Services/adminService';
 import Sidebar from '../Components/Layout/Sidebar';
 import { FaDownload } from 'react-icons/fa'; 
 import Modal from 'react-modal';
-import axios from 'axios';
+import { Spin } from 'antd';
 
 
 const MentorListPage = () => {
@@ -14,39 +14,53 @@ const MentorListPage = () => {
     const [showPending, setShowPending] = useState(false); 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedCourse, setSelectedCourse] = useState(null);
-  
-    const openModal = () => setIsModalOpen(true);
+
+    const [selectedMentorId, setSelectedMentorId] = useState(null);
+
+    const openModal = (mentorId) => {
+      setSelectedMentorId(mentorId);
+      setIsModalOpen(true);
+    };
     const closeModal = () => setIsModalOpen(false);
   
     const handleCourseSelect = (course) => {
       setSelectedCourse(course);
     };
   
-    const handleSubmit = () => {
-      if (selectedCourse) {
-        // Submit logic here
-        console.log('Selected course:', selectedCourse);
-        closeModal();
-      }
-    };
+    const handleSubmit = async () => {
+        if (selectedCourse) {
+          try {
+            await setCourseInstructor(selectedCourse.courseId, selectedMentorId); // Assign the course to the mentor
+            await fetchMentors();
+            closeModal(); 
+            setSelectedCourse('');
+          } catch (error) {
+            console.error('Error assigning instructor:', error);
+          }
+        }
+      };
+      
 
-    useEffect(() => {
-        const fetchMentors = async () => {
-            try {
-                const response = await GetMentors();
-                setMentors(response.data);
-                const courseResponse = await coursedetailsmentor()
-                setCourses(courseResponse);
-            } catch (err) {
-                setError('Failed to load mentors');
-                console.error('Error fetching mentors:', err);
-            } finally {
-                setLoading(false);
-            }
-        };
-
+      const fetchMentors = async () => {
+        try {
+          setLoading(true); 
+          const response = await GetMentors();
+          setMentors(response.data); // Update mentors in state
+      
+          const courseResponse = await coursedetailsmentor(); // Fetch course details
+          setCourses(courseResponse); 
+        } catch (err) {
+          setError('Failed to load mentors');
+          console.error('Error fetching mentors:', err);
+        } finally {
+          setLoading(false); // Hide loading spinner after fetching
+        }
+      };
+      
+      useEffect(() => {
+  
         fetchMentors();
-    }, []);
+      }, [])
 
     const handleApprove = async (mentorId) => {
         try {
@@ -88,7 +102,11 @@ const MentorListPage = () => {
         }
     };
 
-    if (loading) return <p>Loading...</p>;
+    if (loading) {
+        return <div className="flex items-center justify-center h-screen">
+            <Spin  size='large'/>;
+        </div>;
+    }
     if (error) return <p>{error}</p>;
 
     const pendingMentors = mentors.filter(mentor => mentor.isActive === 'pending');
@@ -168,7 +186,6 @@ const MentorListPage = () => {
                     </div>
                 )}
 
-                {/* Table for Active Mentors */}
                 <div>
                     <h2 className="text-xl font-semibold mb-4">Active Mentors</h2>
                     {activeMentors.length > 0 ? (
@@ -179,7 +196,7 @@ const MentorListPage = () => {
                                         <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Username</th>
                                         <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                                         <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">First Name</th>
-                                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Name</th>
+                                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mentor For</th>
                                         <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Degree</th>
                                         <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mentor For</th>
                                         <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Enroll</th>
@@ -191,11 +208,20 @@ const MentorListPage = () => {
                                             <td className="px-4 py-4 text-sm font-medium text-gray-900">{mentor.username}</td>
                                             <td className="px-4 py-4 text-sm text-gray-500">{mentor.email}</td>
                                             <td className="px-4 py-4 text-sm text-gray-500">{mentor.firstName}</td>
-                                            <td className="px-4 py-4 text-sm text-gray-500">{mentor.lastName}</td>
+                                            <td className="px-4 py-4 text-sm text-gray-500">
+          {mentor.assignedCourses.length > 0
+            ? mentor.assignedCourses.map((course) => course.title).join(', ')
+            : 'No course assigned'}
+        </td>
                                             <td className="px-4 py-4 text-sm text-gray-500">{mentor.degree}</td>
                                             <td className="px-4 py-4 text-sm text-gray-500">{mentor.degree}</td>
                                             <td>
-        <button className="bg-custom-cyan text-white px-4 py-2 rounded" onClick={openModal}>Enroll a Course</button>
+        <button
+              className="bg-custom-cyan text-white px-4 py-2 rounded"
+              onClick={() => openModal(mentor._id)} // Pass the mentor._id to the handler
+            >
+              Enroll a Course
+            </button>
       </td>
                                         </tr>
                                     ))}
@@ -223,7 +249,7 @@ const MentorListPage = () => {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
-        <h2 className="text-xl font-semibold mb-4 text-center text-gray-800">Select a Course</h2>
+        <h2 className="text-xl font-semibold mb-4 text-center text-gray-800">Select an Available Course</h2>
 
         <div className="mb-4 max-h-60 overflow-y-auto">
           {loading ? (
