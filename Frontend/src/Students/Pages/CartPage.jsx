@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import { getCartItems, removeFromCart,handleRazorpayPayment,verifyRazorPayPayment,savePurchase} from '../../Services/studentService'; 
 import { showToastSuccess, showToastError } from '../../utils/toastify';
 import { Trash2 } from 'lucide-react';
@@ -6,7 +6,7 @@ import { useNavigate,Link } from 'react-router-dom';
 import { CiClock2 } from "react-icons/ci";
 import { Modal, Button } from 'antd';
 import Footer from '../Components/Layout/Footer';
-import { Flex, Spin } from 'antd';
+import {  Spin } from 'antd';
 
 
 
@@ -119,6 +119,7 @@ const CartPage = () => {
   };
   
   if (loading) {
+    
     return <div className="flex items-center justify-center h-screen ">
     <Spin  size='large'/>;
 </div>;

@@ -1,8 +1,7 @@
-import { React, useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useState, useEffect } from 'react';
+import { useSelector, } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import SubscriptionModal from '../Specific/SubscriptionModal';
-import axios from 'axios'; // Assuming you're using axios for API requests
 import { fetchSubscriptionRates } from '../../../Services/adminService';
 
 

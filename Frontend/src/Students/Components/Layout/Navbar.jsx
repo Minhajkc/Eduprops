@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link,useNavigate } from 'react-router-dom';
 import { FaUserGraduate } from "react-icons/fa";
 import { ImCart } from "react-icons/im";
@@ -6,6 +6,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { logoutStudentRedux } from '../../../Redux/studentSlice';
 import { logoutStudent } from '../../../Services/studentService';
 import { StudentInstance } from '../../../Services/apiInstances';
+import SearchBarWithSuggestions from './SearchBarWithSuggestions';
 import { Modal } from 'antd';
 
 
@@ -84,14 +85,7 @@ status()
             <img src="src/assets/images/Logoblack2.png" alt="Logo" className="w-15 h-12" />
           </div>
           <div className="hidden md:block relative flex-grow max-w-md mx-4">
-            <input
-              type="text"
-              placeholder="Want to learn?"
-              className="w-full p-2 pr-10 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-cyan-500"
-            />
-            <button className="absolute right-2 top-1/2 transform -translate-y-1/2 text-sm bg-custom-cyan text-white px-3 py-1 rounded-full hover:bg-cyan-600">
-              Explore
-            </button>
+           <SearchBarWithSuggestions/>
           </div>
 
           <div className="hidden lg:flex lg:items-center lg:w-auto">
@@ -139,20 +133,13 @@ status()
         {isMenuOpen && (
           <div className="lg:hidden mt-4">
             <div className="mb-4 md:hidden">
-              <input
-                type="text"
-                placeholder="Want to learn?"
-                className="w-full p-2 pr-10 text-sm border border-gray-300 rounded-full focus:outline-none focus:ring-1 focus:ring-cyan-500"
-              />
-              <button className="mt-2 w-full bg-custom-cyan text-white px-3 py-1 rounded-full hover:bg-cyan-600 text-sm">
-                Explore
-              </button>
+            <SearchBarWithSuggestions/>
             </div>
             <Link to="/" className="block text-gray-700 hover:text-cyan-500 py-2" onClick={() => setIsMenuOpen(false)}>Home</Link>
             <Link to="/about" className="block text-gray-700 hover:text-cyan-500 py-2" onClick={() => setIsMenuOpen(false)}>About us</Link>
             <Link to="/courses" className="block text-gray-700 hover:text-cyan-500 py-2" onClick={() => setIsMenuOpen(false)}>Courses</Link>
             <Link to="/contact" className="block text-gray-700 hover:text-cyan-500 py-2" onClick={() => setIsMenuOpen(false)}>Contact us</Link>
-            <Link to="/#faqsection" className="block text-gray-700 hover:text-cyan-500 py-2" onClick={() => setIsMenuOpen(false)}>FAQ's</Link>
+            <Link to="/#faqsection" className="block text-gray-700 hover:text-cyan-500 py-2" onClick={() => setIsMenuOpen(false)}>FAQs</Link>
             {isToken && studentId ? (
               <div className="mt-4 flex flex-col space-y-2">
                 <Link to="/profile" className="bg-transparent text-custom-cyan px-4 py-2 rounded-lg text-center hover:bg-cyan-500 hover:text-white border border-cyan-500" onClick={() => setIsMenuOpen(false)}>Profile</Link>

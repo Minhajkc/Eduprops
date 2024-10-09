@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { fetchStudentProfile, logoutStudent } from '../../Services/studentService';
-import { useNavigate } from 'react-router-dom';
-import { logoutStudentRedux } from '../../Redux/studentSlice';
-import { useDispatch } from 'react-redux';
+import  { useEffect, useState } from 'react';
+import { fetchStudentProfile} from '../../Services/studentService';
 import Footer from '../Components/Layout/Footer'
-import { Flex, Spin } from 'antd';
+import {  Spin,Select } from 'antd';
+import GroupChat from '../Components/Layout/GroupChat';
+
+
+const { Option } = Select;
 
 
 
@@ -13,8 +14,14 @@ const StudentPortal = () => {
     const [mentors,setMentors] = useState(null)
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('profile');
-    const navigate = useNavigate();
-    const dispatch = useDispatch();
+    const [selectedCourseId, setSelectedCourseId] = useState(null);
+
+    const handleCourseChange = (value) => {
+        setSelectedCourseId(value);
+
+        console.log("Selected Course ID:", value);
+    }
+
 
     useEffect(() => {
         const getProfile = async () => {
@@ -34,11 +41,7 @@ const StudentPortal = () => {
     }, []);
 
 
-    const handleLogout = () => {
-        dispatch(logoutStudentRedux());
-        logoutStudent();
-        navigate('/login');
-    };
+ 
 
     if (loading) {
         return <div className="flex items-center justify-center h-screen bg-gray-100">
@@ -222,11 +225,6 @@ const StudentPortal = () => {
                                     <span className="ml-3">Email</span>
                                 </a>
                             </div>
-                            {/* <div className="-ml-px w-0 flex-1 flex">
-                                <a href="#" className="relative w-0 flex-1 inline-flex items-center justify-center py-4 text-sm text-gray-700 font-medium border border-transparent rounded-br-lg hover:text-gray-500">
-                                    <span className="ml-3">Message</span>
-                                </a>
-                            </div> */}
                         </div>
                     </div>
                 </li>
@@ -236,28 +234,27 @@ const StudentPortal = () => {
 )}
 
                         {activeTab === 'chat' && (
-                            <div className="px-4 py-5 sm:p-6">
-                                <div className="flex flex-col h-[600px]">
-                                    <div className="flex-1 overflow-y-auto px-4 py-6">
-                                        <div className="space-y-4">
-                                            <div className="flex items-end">
-                                                <div className="flex flex-col space-y-2 text-sm max-w-xs mx-2 order-2 items-start">
-                                                    <div><span className="px-4 py-2 rounded-lg inline-block rounded-bl-none bg-gray-200 text-gray-600">Welcome to the student chat! How can we help you today?</span></div>
-                                                </div>
-                                                <img src="/support-avatar.png" alt="Support" className="w-6 h-6 rounded-full order-1" />
-                                            </div>
+                            <div className='p-5  '>
+                                <div  className='border-b w-full'>
+                            <Select
+                           
+                                placeholder="Select a course"
+                                onChange={handleCourseChange}
+                                style={{ width: 200, marginBottom: 20 }}
+                                
+                            >
+                                {profile.purchasedCourses.map((course) => (
+                                    <Option key={course._id} value={course._id}>
+                                        <div className="flex items-center">
+                                            <img className="object-cover w-8 h-8 rounded-full" src={course.image} alt="Course" />
+                                            <span className="ml-2">{course.title}</span>
                                         </div>
-                                    </div>
-                                    <div className="px-4 py-4 bg-white border-t">
-                                        <div className="flex space-x-4">
-                                            <input type="text" placeholder="Type a message..." className="flex-1 border rounded-full py-2 px-4 focus:outline-none focus:border-blue-500" />
-                                            <button className="bg-blue-500 text-white rounded-full px-4 py-2 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
-                                                Send
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
+                                    </Option>
+                                ))}
+                            </Select>
                             </div>
+                            <GroupChat courseId={selectedCourseId}userName={profile.username} />
+                        </div>
                         )}
                     </div>
                 </div>

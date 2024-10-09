@@ -289,6 +289,7 @@ export const savePurchase = async ({ cartData}) => {
   }
 
   export const getCategoryCoursesByIdSort = async (categoryId, searchTerm = '', sortOption = 'price-asc') => {
+    console.log(searchTerm,'search')
     try {
       const response = await StudentInstance.get(`/category/${categoryId}/courses`, {
         params: {
@@ -380,3 +381,25 @@ export const savePurchaseSubscription = async ({ subscriptionPlan}) => {
       throw error;
     }
   };
+
+
+
+  export const sendChatMessage = async (courseId, message) => {
+    try {
+        const response = await StudentInstance.post(`/courses/${courseId}/chat`, { message }, { withCredentials: true });
+        return response.data; // Return response data
+    } catch (error) {
+        console.error('Error sending chat message:', error);
+        throw error; // Propagate the error
+    }
+};
+
+export const retrieveChatMessages = async (courseId) => {
+    try {
+        const response = await StudentInstance.get(`/courses/${courseId}/chat`, { withCredentials: true });
+        return response.data; // Return response data
+    } catch (error) {
+        console.error('Error retrieving chat messages:', error);
+        throw error; // Propagate the error
+    }
+};

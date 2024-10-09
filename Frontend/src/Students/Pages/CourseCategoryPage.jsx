@@ -1,41 +1,77 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { addCourseToCart, getCategoryCoursesByIdSort } from '../../Services/studentService';
-import { FaSearch, FaFilter, FaCartArrowDown, FaArrowLeft } from 'react-icons/fa';
+import { FaFilter, FaCartArrowDown, FaArrowLeft } from 'react-icons/fa';
 import { CiClock2 } from "react-icons/ci";
 import Footer from '../Components/Layout/Footer';
 import { useSelector } from 'react-redux';
-import { Pagination } from 'antd';
-import { Flex, Spin } from 'antd';
+import { Pagination, Input,  Spin } from 'antd';
 
-
+const { Search } = Input;
 
 const CourseCategoryPage = () => {
   const { id } = useParams();
-  const navigate = useNavigate(); // For navigation
+  const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
+  const [filteredCourses, setFilteredCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
-  const [sortOption, setSortOption] = useState('price-asc'); // Sort by price ascending by default
-  const [isModalOpen, setIsModalOpen] = useState(false); // Modal open/close state
+  const [sortOption, setSortOption] = useState('price-asc');
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const ads = useSelector((state) => state.student.ads);
   const [currentPage, setCurrentPage] = useState(1);
-  const coursesPerPage = 4; // Number of courses per page
+  const coursesPerPage = 4;
 
-  // Calculate the indexes for slicing the courses array
-  const startIndex = (currentPage - 1) * coursesPerPage;
-  const endIndex = startIndex + coursesPerPage;
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await getCategoryCoursesByIdSort(id, '', sortOption);
+        setCourses(response);
+        setFilteredCourses(response);
+      } catch (err) {
+        setError('Failed to fetch courses');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Slice courses to display only the current page courses
-  const currentCourses = courses.slice(startIndex, endIndex);
+    fetchCourses();
+  }, [id, sortOption]);
 
-  // Handle page change
+  useEffect(() => {
+    const filtered = courses.filter(course =>
+      course.title.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredCourses(filtered);
+    setCurrentPage(1);
+  }, [searchTerm, courses]);
+
+  const handleSearch = (value) => {
+    setSearchTerm(value);
+  };
+
+  const handleSort = (option) => {
+    setSortOption(option);
+    setIsModalOpen(false);
+  };
+
+  const handleCardClick = (courseId) => {
+    navigate(`/courses/category/selectedcourse/${courseId}`);
+  };
+
+  const handleCart = async (id) => {
+    try {
+      await addCourseToCart(id);
+    } catch (e) {
+      setError('Failed to add course to cart');
+    }
+  };
+
   const handlePaginationChange = (page) => {
     setCurrentPage(page);
   };
 
-  // Function to get an ad by its position
   const getAdByPosition = (position) => {
     return ads.find(ad => ad.position === position) || { 
       title: 'No Ad Available',
@@ -45,76 +81,42 @@ const CourseCategoryPage = () => {
     };
   };
 
-  // Retrieve ad for 'homepage3'
   const homepageAd3 = getAdByPosition('coursecategorypage');
 
-  useEffect(() => {
-    const fetchCourses = async () => {
-      try {
-        // Make the API call with searchTerm and sortOption as query parameters
-        const response = await getCategoryCoursesByIdSort(id, searchTerm, sortOption);
-        setCourses(response);
-      } catch (err) {
-        setError('Failed to fetch courses');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCourses();
-  }, [id, searchTerm, sortOption]);
-
-  const handleSearch = (e) => {
-    setSearchTerm(e.target.value);
-  };
-
-  const handleSort = (option) => {
-    setSortOption(option);
-    setIsModalOpen(false); // Close the modal after sorting
-  };
-
-  const handleCardClick = (courseId) => {
-    navigate(`/courses/category/selectedcourse/${courseId}`); 
-  };
-
-  const handleCart = async(id)=>{
-       try{
-         await addCourseToCart(id);
-       }catch(e){
-        setError('Failed to add course to cart');
-       }
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-gray-100">
+        <Spin size='large' />
+      </div>
+    );
   }
 
-  if (loading) {
-    return <div className="flex items-center justify-center h-screen bg-gray-100">
-        <Spin  size='large'/>;
-    </div>;
-}
   if (error) return <div>Error: {error}</div>;
+
+  const paginatedCourses = filteredCourses.slice(
+    (currentPage - 1) * coursesPerPage,
+    currentPage * coursesPerPage
+  );
 
   return (
     <div className="bg-white p-6 font-roboto">
-      <div className="flex flex-col sm:flex-row justify-between items-center  mb-6">
-      <button
-                    onClick={() => navigate('/courses')}
-                    className="text-white hover:bg-cyan-900 mb-2 duration-300 flex items-center px-4 py-2 rounded-3xl border  bordercustom-cyan2 bg-custom-cyan2  "
-                >
-                    <FaArrowLeft className="mr-2" /> Back
-                </button>
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
+        <button
+          onClick={() => navigate('/courses')}
+          className="text-white hover:bg-cyan-900 mb-2 duration-300 flex items-center px-4 py-2 rounded-3xl border bordercustom-cyan2 bg-custom-cyan2"
+        >
+          <FaArrowLeft className="mr-2" /> Back
+        </button>
         <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4">
-          <div className="flex items-center bg-gray-100 rounded-full p-2">
-            <FaSearch className="text-gray-500 ml-2" />
-            <input
-              type="text"
-              placeholder="Search courses"
-              value={searchTerm}
-              onChange={handleSearch}
-              className="bg-transparent outline-none px-3 text-gray-700 flex-grow"
-            />
-          </div>
+          <Search
+            placeholder="Search courses"
+            allowClear
+            onChange={(e) => handleSearch(e.target.value)}
+            style={{ width: 200 }}
+          />
           <button
             onClick={() => setIsModalOpen(true)}
-            className="bg-[#00b8d4] text-white px-4 py-2 rounded-full inline-flex items-center space-x-2 hover:bg-[#0099b3] transition-colors duration-300"
+            className="bg-[#00b8d4] text-white px-4 py-2 text-sm rounded-full inline-flex items-center space-x-2 hover:bg-[#0099b3] transition-colors duration-300"
           >
             <FaFilter />
             <span>Sort By</span>
@@ -161,9 +163,9 @@ const CourseCategoryPage = () => {
         </div>
       )}
 
-    {/* Courses Grid Section */}
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {currentCourses.map((course) => (
+      {/* Courses Grid Section */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {paginatedCourses.map((course) => (
           <div key={course._id} className="bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl">
             <img src={course.image} alt={course.title} className="w-full h-48 object-cover" />
             <div className="p-4">
@@ -193,30 +195,32 @@ const CourseCategoryPage = () => {
       <div className="flex justify-center mt-6">
         <Pagination
           current={currentPage}
-          pageSize={coursesPerPage} // Number of courses per page
-          total={courses.length} // Total number of courses
+          pageSize={coursesPerPage}
+          total={filteredCourses.length}
           onChange={handlePaginationChange}
         />
       </div>
 
+      {/* Advertisement Section */}
       <div className="bg-[#00b8d4] h-auto lg:h-30 rounded-lg mt-5 flex flex-col lg:flex-row justify-between items-center p-4">
-  {/* Left Section: Advertisement */}
-  <div className="w-full lg:w-1/2 flex flex-col items-center justify-center text-black">
-    <p className='text-xs mb-2'>Ads</p>
-    <a href={homepageAd3.link} target="_blank" rel="noopener noreferrer" className="w-full">
-      <img src={homepageAd3.image} alt={homepageAd3.title} className="w-full h-20 lg:h-35 object-cover rounded-lg" />
-      <h3 className="text-sm font-bold mt-2 text-center">{homepageAd3.title}</h3>
-      <a className="text-xs text-blue-800 hover:border-b-2 border-blue-500 font-bold block text-center">{homepageAd3.link}</a>
-    </a>
-  </div>
+        {/* Left Section: Advertisement */}
+        <div className="w-full lg:w-1/2 flex flex-col items-center justify-center text-black">
+          <p className='text-xs mb-2'>Ads</p>
+          <a href={homepageAd3.link} target="_blank" rel="noopener noreferrer" className="w-full">
+            <img src={homepageAd3.image} alt={homepageAd3.title} className="w-full h-20 lg:h-35 object-cover rounded-lg" />
+            <h3 className="text-sm font-bold mt-2 text-center">{homepageAd3.title}</h3>
+            <a className="text-xs text-blue-800 hover:border-b-2 border-blue-500 font-bold block text-center">{homepageAd3.link}</a>
+          </a>
+        </div>
 
-  {/* Right Section: Contact Info */}
-  <div className="w-full lg:w-1/2 pl-5 text-center lg:text-left mt-4 lg:mt-0 flex flex-col justify-center items-center lg:items-start">
-    <h3 className="text-lg font-bold text-white">Make Your Advertisement Here</h3>
-    <p className="text-sm text-white">Contact us to showcase your advertisement. Reach thousands of potential customers!</p>
-    <p className="text-sm text-white font-bold mt-2">Call: 703-493-6080</p>
-  </div>
-</div>
+        {/* Right Section: Contact Info */}
+        <div className="w-full lg:w-1/2 pl-5 text-center lg:text-left mt-4 lg:mt-0 flex flex-col justify-center items-center lg:items-start">
+          <h3 className="text-lg font-bold text-white">Make Your Advertisement Here</h3>
+          <p className="text-sm text-white">Contact us to showcase your advertisement. Reach thousands of potential customers!</p>
+          <p className="text-sm text-white font-bold mt-2">Call: 703-493-6080</p>
+        </div>
+      </div>
+
       <Footer/>
     </div>
   );
