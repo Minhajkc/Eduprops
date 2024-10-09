@@ -1,6 +1,7 @@
 import  { useEffect, useState } from 'react';
 import { fetchStudentProfile} from '../../Services/studentService';
 import Footer from '../Components/Layout/Footer'
+import { FaComments } from 'react-icons/fa';
 import {  Spin,Select } from 'antd';
 import GroupChat from '../Components/Layout/GroupChat';
 
@@ -15,9 +16,12 @@ const StudentPortal = () => {
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('profile');
     const [selectedCourseId, setSelectedCourseId] = useState(null);
+    const [selectedCourseTitle, setSelectedCourseTitle] = useState('');
 
     const handleCourseChange = (value) => {
         setSelectedCourseId(value);
+        const selectedCourse = profile.purchasedCourses.find((course) => course._id === value);
+        setSelectedCourseTitle(selectedCourse.title);
 
         console.log("Selected Course ID:", value);
     }
@@ -56,7 +60,7 @@ const StudentPortal = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gray-100">
+        <div className="min-h-screen bg-gray-100 font-roboto">
             
 
             <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
@@ -233,29 +237,46 @@ const StudentPortal = () => {
     </div>
 )}
 
-                        {activeTab === 'chat' && (
-                            <div className='p-5  '>
-                                <div  className='border-b w-full'>
-                            <Select
-                           
-                                placeholder="Select a course"
-                                onChange={handleCourseChange}
-                                style={{ width: 200, marginBottom: 20 }}
-                                
-                            >
-                                {profile.purchasedCourses.map((course) => (
-                                    <Option key={course._id} value={course._id}>
-                                        <div className="flex items-center">
-                                            <img className="object-cover w-8 h-8 rounded-full" src={course.image} alt="Course" />
-                                            <span className="ml-2">{course.title}</span>
-                                        </div>
-                                    </Option>
-                                ))}
-                            </Select>
-                            </div>
-                            <GroupChat courseId={selectedCourseId}userName={profile.username} />
-                        </div>
-                        )}
+{activeTab === 'chat' && (
+        <div className='p-5'>
+          {selectedCourseId ? (
+            <div className='flex items-center justify-center mb-4'>
+              <FaComments className='text-custom-cyan text-3xl mr-2' />
+              <h2 className='text-2xl text-center font-bold'>
+                <span className='text-black'>Community Chat: </span>
+                <span className='text-custom-cyan'>{selectedCourseTitle}</span>
+              </h2>
+            </div>
+          ) : null}
+          <div className='border-b w-full mb-4 text-center'>
+            <Select
+              placeholder="Select a course"
+              onChange={(value) => handleCourseChange(value)}
+              style={{ width: '100%', maxWidth: 300, marginBottom: 20 }}
+            >
+              {profile.purchasedCourses.map((course) => (
+                <Option key={course._id} value={course._id}>
+                  <div className="flex items-center">
+                    <img className="object-cover w-8 h-8 rounded-full" src={course.image} alt="Course" />
+                    <span className="ml-2">{course.title}</span>
+                  </div>
+                </Option>
+              ))}
+            </Select>
+          </div>
+         
+          {selectedCourseId ? (
+            <div>
+              <GroupChat courseId={selectedCourseId} userName={profile.username} />
+            </div>
+          ) : (
+            <p className='p-2 text-center text-gray-600'>
+              <FaComments className='inline-block mr-2 text-xl' />
+              Please select a course to start the community chat.
+            </p>
+          )}
+        </div>
+      )}
                     </div>
                 </div>
                 
