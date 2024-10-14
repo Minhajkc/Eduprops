@@ -87,16 +87,19 @@ const GroupChat = ({ courseId, userName }) => {
                       <span className="text-xs text-gray-500 mb-1">{msg.sender}</span>
                     )}
                     <div className={`relative px-4 py-2 rounded-lg inline-block 
-                      ${msg.sender === userName
-                        ? 'bg-custom-cyan text-white'
-                        : 'bg-white text-gray-700 border border-gray-200'
-                      }`}
-                    >
+          ${msg.sender === userName
+            ? 'bg-custom-cyan text-white' // User's messages
+            : msg.sender === 'Mentor'
+              ? ' text-black border-2 border-green-500' // Mentor's messages in green
+              : 'bg-white text-gray-700 border border-gray-200' // Other messages
+          }`}
+        >
                       {msg.message}
                       <div 
                         className={`absolute top-1/2 -mt-2 w-0 h-0 border-4 
                           ${msg.sender === userName
-                            ? 'right-0 -mr-2 border-l-custom-cyan border-t-custom-cyan border-b-transparent border-r-transparent'
+                            ? 'right-0 -mr-2 border-l-custom-cyan border-t-custom-cyan border-b-transparent border-r-transparent':msg.sender === 'Mentor'
+                            ? 'border-r-green-500 left-0 -ml-2  border-t-white border-b-transparent border-l-transparent' 
                             : 'left-0 -ml-2 border-r-gray-800 border-t-white border-b-transparent border-l-transparent'
                           }`}
                       ></div>

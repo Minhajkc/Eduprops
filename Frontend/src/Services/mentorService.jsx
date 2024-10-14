@@ -139,7 +139,11 @@ export const getProfile = async () => {
 
   export const sendChatMessage = async (message) => {
     try {
-      const response = await MentorInstance.post('/chat', message, { withCredentials: true });
+    const response = await MentorInstance.post('/mentorchat', message, {
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
       return response.data; // Return response data
     } catch (error) {
       console.error('Error sending chat message:', error);

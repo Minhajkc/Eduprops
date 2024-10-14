@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import io from 'socket.io-client';
 import { FaPaperPlane } from 'react-icons/fa';
-import { retrieveMentorChats,sendChatMessage } from '../../../Services/mentorService';
+import { retrieveMentorChats, sendChatMessage } from '../../../Services/mentorService';
 
 const MentorChat = () => {
   const [socket, setSocket] = useState(null);
@@ -15,7 +15,9 @@ const MentorChat = () => {
 
     // Listen for incoming chat messages
     socketIo.on('chat message', (msg) => {
-      setMessages((prevMessages) => [...prevMessages, msg]);
+        if (msg.sender !== 'Mentor') {
+            setMessages((prevMessages) => [...prevMessages, msg]);
+        }
     });
 
     // Cleanup the connection on component unmount
@@ -28,8 +30,8 @@ const MentorChat = () => {
     // Fetch mentor's chats from the server
     const fetchMessages = async () => {
       try {
-        const data = await retrieveMentorChats(); 
-        setMessages(data.allChats); 
+        const data = await retrieveMentorChats();
+        setMessages(data.allChats);
       } catch (error) {
         console.error('Failed to retrieve chat messages:', error);
       }
@@ -41,23 +43,29 @@ const MentorChat = () => {
   const sendMessage = async () => {
     if (messageInput) {
       const newMessage = { message: messageInput }; // Only send the message object
-      setMessages((prevMessages) => [...prevMessages, { ...newMessage, sender: 'Mentor' }]);
+      setMessages((prevMessages) => [...prevMessages, { ...newMessage, sender: 'Mentor', createdAt: new Date() }]); // Add createdAt
       try {
+        setMessageInput('');
         await sendChatMessage(newMessage); // Pass the entire message object
         socket.emit('chat message', { ...newMessage, sender: 'Mentor' }); // Emit the message via Socket.io
-        setMessageInput(''); // Clear input after sending message
+       // Clear input after sending message
       } catch (error) {
         console.error('Failed to send message:', error);
       }
     }
   };
-  
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
       sendMessage();
     }
+  };
+
+  // Function to get formatted time or fallback to current time
+  const getFormattedTime = (dateString) => {
+    const date = new Date(dateString);
+    return isNaN(date.getTime()) ? new Date().toLocaleTimeString() : date.toLocaleTimeString();
   };
 
   return (
@@ -67,16 +75,29 @@ const MentorChat = () => {
         <div className="flex-1 overflow-y-auto px-4 py-6">
           <div className="space-y-4">
             {messages.map((msg, index) => (
-              <div key={index} className="flex justify-start items-end">
-                <div className="flex flex-col space-y-2 text-sm max-w-xs mx-2">
+              <div
+                key={index}
+                className={`flex ${msg.sender === 'Mentor' ? 'justify-end' : 'justify-start'} items-end`}
+              >
+                <div className={`flex flex-col space-y-2 text-sm max-w-xs mx-2 ${
+                  msg.sender === 'Mentor' ? 'items-end' : 'items-start'
+                }`}>
                   <div className="flex flex-col">
                     <span className="text-xs text-gray-500 mb-1">{msg.sender}</span>
-                    <div className="relative px-4 py-2 rounded-lg inline-block bg-white text-gray-700 border border-gray-200">
+                    <div className={`relative px-4 py-2 rounded-lg inline-block ${
+                      msg.sender === 'Mentor'
+                        ? 'bg-custom-cyan text-white' // Mentor's message
+                        : 'bg-white text-gray-700 border border-gray-200' // Other messages
+                    }`}>
                       {msg.message}
-                      <div className="absolute top-1/2 -mt-2 w-0 h-0 border-4 border-r-gray-800 border-t-white border-b-transparent border-l-transparent left-0 -ml-2"></div>
+                      <div className={`absolute top-1/2 -mt-2 w-0 h-0 border-4 ${
+                        msg.sender === 'Mentor'
+                          ? 'right-0 -mr-2 border-l-custom-cyan border-t-custom-cyan border-b-transparent border-r-transparent' // Mentor's arrow
+                          : 'left-0 -ml-2 border-r-gray-800 border-t-white border-b-transparent border-l-transparent' // Other's arrow
+                      }`}></div>
                     </div>
-                    {/* Display the createdAt timestamp */}
-                    <span className="text-xs text-gray-400 mt-1">{new Date(msg.createdAt).toLocaleTimeString()}</span>
+                    {/* Display the createdAt timestamp or current time if invalid */}
+                    <span className="text-xs text-gray-400 mt-1">{getFormattedTime(msg.createdAt)}</span>
                   </div>
                 </div>
               </div>
