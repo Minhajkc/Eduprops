@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import {
   DesktopOutlined,
   FileOutlined,
@@ -7,9 +7,10 @@ import {
   UserOutlined,
   LogoutOutlined,
 } from '@ant-design/icons';
-import { Breadcrumb, Layout, Menu, theme, Button, Modal } from 'antd';
+import { Breadcrumb, Layout, Menu, theme, Modal } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { logoutMentor } from '../../Services/mentorService';
+import MentorChat from '../Components/Layout/MentorChat'; // Import the MentorChat component
 
 const { Header, Content, Footer, Sider } = Layout;
 const { confirm } = Modal;
@@ -31,16 +32,14 @@ const items = [
     getItem('Bill', '4'),
     getItem('Alex', '5'),
   ]),
-  getItem('Team', 'sub2', <TeamOutlined />, [
-    getItem('Team 1', '6'),
-    getItem('Team 2', '8'),
-  ]),
+  getItem('Chat', 'chat', <TeamOutlined />), // Chat key set as 'chat'
   getItem('Files', '9', <FileOutlined />),
   getItem('Logout', '10', <LogoutOutlined />), // Logout Menu Item
 ];
 
 const MentorDashboardPage = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const [selectedMenuKey, setSelectedMenuKey] = useState('1'); // Track selected menu key
   const navigate = useNavigate();
   
   const {
@@ -70,6 +69,14 @@ const MentorDashboardPage = () => {
     });
   };
 
+  const handleMenuClick = (e) => {
+    if (e.key === '10') {
+      showLogoutConfirm(); // Show confirmation before logging out
+    } else {
+      setSelectedMenuKey(e.key); // Set selected menu key for rendering content
+    }
+  };
+
   return (
     <Layout style={{ minHeight: '100vh' }}>
       {/* Sidebar (Sider) */}
@@ -80,11 +87,7 @@ const MentorDashboardPage = () => {
           defaultSelectedKeys={['1']}
           mode="inline"
           items={items}
-          onClick={(e) => {
-            if (e.key === '10') {
-              showLogoutConfirm(); // Show confirmation before logging out
-            }
-          }}
+          onClick={handleMenuClick} // Handle menu clicks
         />
       </Sider>
 
@@ -93,7 +96,7 @@ const MentorDashboardPage = () => {
         <Header style={{ padding: 0, background: colorBgContainer }}>
           {/* Logout Button in Header */}
           <div style={{ paddingLeft: '16px', textAlign: 'left' }} className='text-center'>
-            <h1>Helo, Teacher</h1>
+            <h1>Hello, Teacher</h1>
           </div>
         </Header>
 
@@ -101,7 +104,7 @@ const MentorDashboardPage = () => {
           {/* Breadcrumb Navigation */}
           <Breadcrumb style={{ margin: '16px 0' }}>
             <Breadcrumb.Item>Mentor Dashboard</Breadcrumb.Item>
-            <Breadcrumb.Item>Bill</Breadcrumb.Item>
+            <Breadcrumb.Item>{selectedMenuKey === 'chat' ? 'Chat' : 'Bill'}</Breadcrumb.Item>
           </Breadcrumb>
 
           {/* Main Content */}
@@ -113,13 +116,18 @@ const MentorDashboardPage = () => {
               borderRadius: borderRadiusLG,
             }}
           >
-            Bill is a cat.
+            {/* Render Chat Component when "Chat" is selected */}
+            {selectedMenuKey === 'chat' ? (
+              <MentorChat courseId="12345" userName="mentorName" /> // Pass necessary props
+            ) : (
+              'Bill is a cat.'
+            )}
           </div>
         </Content>
 
         {/* Footer */}
         <Footer style={{ textAlign: 'center' }}>
-        EduProps©{new Date().getFullYear()} Created by Minhaj Kc
+          EduProps©{new Date().getFullYear()} Created by Minhaj Kc
         </Footer>
       </Layout>
     </Layout>

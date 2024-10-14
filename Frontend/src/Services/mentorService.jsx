@@ -137,4 +137,29 @@ export const getProfile = async () => {
     }
   };
 
+  export const sendChatMessage = async (message) => {
+    try {
+      const response = await MentorInstance.post('/chat', message, { withCredentials: true });
+      return response.data; // Return response data
+    } catch (error) {
+      console.error('Error sending chat message:', error);
+      throw error; // Propagate the error
+    }
+  };
+  
+
+export const retrieveMentorChats = async () => {
+    try {
+        const response = await MentorInstance.get(`/chats`, { withCredentials: true });
+        return response.data; // Return response data
+    } catch (error) {
+        console.error('Error retrieving chat messages:', error);
+        throw error; // Propagate the error
+    }
+};
+
+// export const retrieveMentorChats = async () => {
+//   const response = await axios.get('http://localhost:3000/api/mentor/chats');
+//   return response.data;
+// };
 

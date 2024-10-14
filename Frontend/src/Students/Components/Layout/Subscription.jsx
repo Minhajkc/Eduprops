@@ -142,6 +142,7 @@ const Subscription = () => {
         </li>
       </ul>
     </div>
+    <h1 className='text-center font-bold pt-5 text-2xl bg-'>₹{currentRates.goldRate}/-</h1>
     <div className="mt-6 text-center">
       {membershipType === 'gold' ? (
         <p className="text-md font-bold bg-yellow-500 p-2 rounded-md text-white">You are in Gold membership</p>
@@ -196,6 +197,7 @@ const Subscription = () => {
         </li>
       </ul>
     </div>
+    <h1 className='text-center font-bold pt-5 text-2xl'>₹{currentRates.platinumRate}/-</h1>
     <div className="mt-6 text-center">
       {membershipType === 'platinum' ? (
         <p className="text-md font-bold bg-purple-600 p-2 rounded-md text-white">You are in Platinum membership</p>

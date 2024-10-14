@@ -9,7 +9,7 @@ const SearchBarWithSuggestions = () => {
     const [suggestions, setSuggestions] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const navigate = useNavigate(); // Initialize useNavigate
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchCategories = async () => {
@@ -39,6 +39,11 @@ const SearchBarWithSuggestions = () => {
     };
 
     const handleSelect = (value, option) => {
+        // Clear search input and suggestions first
+        setSearchValue('');  // Reset the search input value
+        setSuggestions([]);  // Clear suggestions
+
+        // Navigate to the selected category
         navigate(`/courses/category/${option._id}`);
     };
 
@@ -48,14 +53,16 @@ const SearchBarWithSuggestions = () => {
                 style={{ width: '100%' }}
                 options={suggestions}
                 onSearch={handleSearch}
-                value={searchValue}
+                value={searchValue}  // Controlled value for the input
                 onChange={setSearchValue}
                 onSelect={handleSelect} // Trigger navigation on select
                 notFoundContent={loading ? 'Loading...' : error ? error : null}
             >
                 <div className="relative w-full">
                     <Input
+                        value={searchValue}  // Tie input value to searchValue
                         placeholder="Want to learn?"
+                        onChange={(e) => handleSearch(e.target.value)}  // Update search input
                         className="w-full p-2 pr-12 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-cyan-500"
                     />
                     <button
