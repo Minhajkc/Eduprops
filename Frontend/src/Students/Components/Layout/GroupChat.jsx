@@ -75,7 +75,7 @@ const GroupChat = ({ courseId, userName }) => {
                 className={`flex ${msg.sender === userName ? 'justify-end' : 'justify-start'} items-end`}
               >
                 {msg.sender !== userName && (
-                  <FaUserCircle className="text-gray-400 w-8 h-8 mr-2" />
+                  <FaUserCircle className={msg.sender === 'Mentor'? "text-green-400 w-8 h-8 mr-2":"text-gray-400 w-8 h-8 mr-2"}/>
                 )}
                 <div
                   className={`flex flex-col space-y-2 text-sm max-w-xs mx-2 ${
@@ -90,7 +90,7 @@ const GroupChat = ({ courseId, userName }) => {
           ${msg.sender === userName
             ? 'bg-custom-cyan text-white' // User's messages
             : msg.sender === 'Mentor'
-              ? ' text-black border-2 border-green-500' // Mentor's messages in green
+              ? 'bg-green-50 text-bl border-2 border-green-500' // Mentor's messages in green
               : 'bg-white text-gray-700 border border-gray-200' // Other messages
           }`}
         >

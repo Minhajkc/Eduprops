@@ -162,8 +162,26 @@ export const retrieveMentorChats = async () => {
     }
 };
 
-// export const retrieveMentorChats = async () => {
-//   const response = await axios.get('http://localhost:3000/api/mentor/chats');
-//   return response.data;
+// export const scheduleGoogleMeet = async (meetingData) => {
+//   try {
+//     const response = await MentorInstance.post('/schedule-meeting', meetingData);
+//     return response.data;
+//   } catch (error) {
+//     console.error('Error scheduling Google Meet:', error);
+//     throw error;
+//   }
 // };
+
+export const scheduleGoogleMeet = async (meetingData) => {
+  try {
+    const response = await MentorInstance.post(`/schedule`, meetingData,{
+      headers: {
+          'Content-Type': 'application/json',
+      },
+  });
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response ? error.response.data.message : 'Error scheduling meeting');
+  }
+};
 

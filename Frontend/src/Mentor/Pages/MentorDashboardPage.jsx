@@ -1,4 +1,6 @@
-import  { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { Button } from 'antd';
+import ScheduleMeetingModal from '../Components/Layout/ScheduleMeetingModal';
 import {
   DesktopOutlined,
   FileOutlined,
@@ -10,6 +12,7 @@ import {
 import { Breadcrumb, Layout, Menu, theme, Modal } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { logoutMentor } from '../../Services/mentorService';
+import { getProfile } from '../../Services/mentorService'; // Import the getProfile function
 import MentorChat from '../Components/Layout/MentorChat'; // Import the MentorChat component
 
 const { Header, Content, Footer, Sider } = Layout;
@@ -40,8 +43,21 @@ const items = [
 const MentorDashboardPage = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [selectedMenuKey, setSelectedMenuKey] = useState('1'); // Track selected menu key
+  const [mentor, setMentor] = useState(null); // State to hold mentor profile data
+  const [assignedCourses, setAssignedCourses] = useState([]); // State to hold assigned courses
+  const [courseId, setCourseId] = useState(null)
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleClose = () => {
+    setIsModalVisible(false);
+  }
+
   const navigate = useNavigate();
-  
+
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
@@ -77,6 +93,23 @@ const MentorDashboardPage = () => {
     }
   };
 
+  // Fetch mentor profile when the component mounts
+  useEffect(() => {
+    const fetchMentorProfile = async () => {
+      try {
+        const data = await getProfile(); // Fetch profile data
+        setMentor(data.mentor); // Set mentor data
+        setAssignedCourses(data.mentor.assignedCourses); // Set assigned courses
+        setCourseId(data.mentor.assignedCourses[0]._id)
+        console.log(courseId,'aaaaaaaaaaaa')
+      } catch (error) {
+        console.error('Error fetching mentor profile:', error);
+      }
+    };
+
+    fetchMentorProfile(); // Call the fetch function when component mounts
+  }, []);
+
   return (
     <Layout style={{ minHeight: '100vh' }}>
       {/* Sidebar (Sider) */}
@@ -94,10 +127,23 @@ const MentorDashboardPage = () => {
       {/* Main Layout (Content Area) */}
       <Layout>
         <Header style={{ padding: 0, background: colorBgContainer }}>
-          {/* Logout Button in Header */}
-          <div style={{ paddingLeft: '16px', textAlign: 'left' }} className='text-center'>
-            <h1>Hello, Teacher</h1>
-          </div>
+          
+          {/* Header with Mentor's Name and Assigned Courses */}
+          <div style={{ paddingLeft: '16px', textAlign: 'left' }} className='text-center font-roboto'>
+  <h1>
+    Hello,{' '}
+    <span style={{ fontWeight: 'bold', color: '#007BFF' }}>
+      {mentor ? mentor.username : 'Loading...'}
+    </span>
+    , You are Assigned to Course:{' '}
+    <span style={{ fontWeight: 'bold', color: '#28A745' }}>
+      {assignedCourses && assignedCourses.length > 0
+        ? assignedCourses[0].title // Fetch the first course's title
+        : 'No assigned course.'}
+    </span>
+  </h1>
+</div>
+
         </Header>
 
         <Content style={{ margin: '0 16px' }}>
@@ -118,9 +164,14 @@ const MentorDashboardPage = () => {
           >
             {/* Render Chat Component when "Chat" is selected */}
             {selectedMenuKey === 'chat' ? (
-              <MentorChat courseId="12345" userName="mentorName" /> // Pass necessary props
+              <MentorChat courseId="12345" userName={mentor ? mentor.username : ''} /> // Pass necessary props
             ) : (
-              'Bill is a cat.'
+              <div>
+      <Button type="primary" onClick={showModal}>
+        Schedule Meeting
+      </Button>
+      <ScheduleMeetingModal isVisible={isModalVisible} onClose={handleClose} courseId={courseId} />
+    </div>
             )}
           </div>
         </Content>
