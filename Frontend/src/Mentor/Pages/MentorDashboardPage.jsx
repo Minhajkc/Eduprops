@@ -6,6 +6,8 @@ import { fetchScheduledMeets, logoutMentor, getProfile } from '../../Services/me
 import { useNavigate } from 'react-router-dom';
 import ScheduledMeetings from '../Components/Layout/ScheduledMeetings';
 import MentorChat from '../Components/Layout/MentorChat';
+import StudentCard from '../Components/Layout/StudentCard';
+
 
 const { Header, Content, Footer, Sider } = Layout;
 const { confirm } = Modal;
@@ -167,6 +169,7 @@ const MentorDashboardPage = () => {
                   onScheduleSuccess={handleScheduleSuccess}
                 />
                 <ScheduledMeetings scheduledMeets={scheduledMeets} loading={loading}  onEdit={handleEdit}  courseId={courseId}handleDeleteSuccess={handleDeleteSuccess}/>
+                <StudentCard/>
               </>
             )}
           </div>

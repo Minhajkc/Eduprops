@@ -221,3 +221,13 @@ export const deleteMeeting = async (courseId, meetingId) => {
     throw error;
   }
 };
+
+export const fetchStudentsByCourse = async () => {
+  try {
+    const response = await MentorInstance.get('/students/mystudents'); // Assuming the courseId is inferred from mentor
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching students:', error);
+    throw error; // Re-throw error for handling in the component
+  }
+};
