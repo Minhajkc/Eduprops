@@ -1,84 +1,75 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Button, Input, DatePicker, TimePicker, message, Spin } from 'antd';
+import { Modal, Button, Input, DatePicker, TimePicker, Spin } from 'antd';
+import { scheduleMeeting, updateMeeting } from '../../../Services/mentorService';
 import moment from 'moment';
 
-const ScheduleMeetingModal = ({ isVisible, onClose, courseId }) => {
+const ScheduleMeetingModal = ({ isVisible, onClose, courseId, meetingToEdit, onScheduleSuccess }) => {
   const [meetingName, setMeetingName] = useState('');
   const [meetingDate, setMeetingDate] = useState(null);
   const [startTime, setStartTime] = useState(null);
   const [endTime, setEndTime] = useState(null);
-  const [scheduledMeets, setScheduledMeets] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (courseId && isVisible) {
-      fetchScheduledMeets();
+    // Pre-fill the modal if editing an existing meeting
+    if (meetingToEdit) {
+      setMeetingName(meetingToEdit.name);
+      setMeetingDate(moment(meetingToEdit.date));
+      setStartTime(moment(meetingToEdit.startTime, 'HH:mm'));
+      setEndTime(moment(meetingToEdit.endTime, 'HH:mm'));
+    } else {
+      clearForm(); // Clear form if adding a new meeting
     }
-  }, [courseId, isVisible]);
+  }, [meetingToEdit]);
 
-  // Fetch the previously scheduled meets (optional, use your own logic)
-  const fetchScheduledMeets = () => {
-    // In a real-world app, you could fetch this from a server or database
-    setLoading(true);
-    setTimeout(() => {
-      // Simulating a fetch call
-      setLoading(false);
-    }, 1000);
-  };
-
-  // Function to generate a unique Jitsi meeting link
-  const generateJitsiMeetingLink = (meetingId) => {
-    const baseUrl = 'https://meet.jit.si/';
-    return `${baseUrl}${meetingId}`;
-  };
-
-  // Generate a unique meeting ID and schedule the meeting
-  const handleSchedule = () => {
+  const handleSchedule = async () => {
     if (!meetingName || !meetingDate || !startTime || !endTime) {
-      message.error('Please fill all fields');
       return;
     }
 
     setLoading(true);
-    setError(null);
-
-    // Generate a unique meeting ID using timestamp and courseId
-    const meetingId = `${courseId}-${Date.now()}`;
-    const meetingLink = generateJitsiMeetingLink(meetingId);
-
     const meetingData = {
       name: meetingName,
       date: meetingDate.format('YYYY-MM-DD'),
       startTime: startTime.format('HH:mm'),
       endTime: endTime.format('HH:mm'),
-      meetingLink: meetingLink,
     };
 
-    // Add the new meeting to the scheduled meetings list
-    setScheduledMeets((prevMeets) => [...prevMeets, meetingData]);
-    message.success('Meeting scheduled successfully');
-    onClose(); // Close modal after scheduling
-    setLoading(false);
+    try {
+      if (meetingToEdit) {
+        await updateMeeting(courseId, meetingToEdit._id, meetingData);
+      } else {
+        // Create a new meeting
+        const meetingId = `${courseId}-${Date.now()}`;
+        const meetingLink = `https://meet.jit.si/${meetingId}`;
+        meetingData.meetingLink = meetingLink;
+        await scheduleMeeting(courseId, meetingData);
+      }
+      onScheduleSuccess(); // Trigger the callback after success
+      onClose(); // Close the modal
+    } catch (error) {
+      console.error('Error scheduling meeting:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Function to delete a scheduled meeting
-  const handleDeleteMeet = (meetingIndex) => {
-    setScheduledMeets((prevMeets) => prevMeets.filter((_, index) => index !== meetingIndex));
-    message.success('Meeting deleted successfully');
+  const clearForm = () => {
+    setMeetingName('');
+    setMeetingDate(null);
+    setStartTime(null);
+    setEndTime(null);
   };
 
   return (
     <Modal
-      title="Schedule Jitsi Meet"
+      title={meetingToEdit ? "Edit Meeting" : "Schedule Jitsi Meet"}
       visible={isVisible}
       onCancel={onClose}
       footer={[
-        <Button key="back" onClick={onClose}>
-          Cancel
-        </Button>,
+        <Button key="back" onClick={onClose}>Cancel</Button>,
         <Button key="submit" type="primary" onClick={handleSchedule} loading={loading}>
-          Schedule
+          {meetingToEdit ? "Update" : "Schedule"}
         </Button>,
       ]}
     >
@@ -90,41 +81,25 @@ const ScheduleMeetingModal = ({ isVisible, onClose, courseId }) => {
         />
         <DatePicker
           placeholder="Select Date"
-          onChange={(date) => setMeetingDate(date)}
+          value={meetingDate}
+          onChange={setMeetingDate}
           style={{ width: '100%', marginTop: 10 }}
+          disabledDate={(current) => current && current < moment().startOf('day')} // Prevent past dates
         />
         <TimePicker
           placeholder="Start Time"
-          onChange={(time) => setStartTime(time)}
+          value={startTime}
+          onChange={setStartTime}
+          format="HH:mm" // Remove seconds
           style={{ width: '100%', marginTop: 10 }}
         />
         <TimePicker
           placeholder="End Time"
-          onChange={(time) => setEndTime(time)}
+          value={endTime}
+          onChange={setEndTime}
+          format="HH:mm" // Remove seconds
           style={{ width: '100%', marginTop: 10 }}
         />
-        {error && <div style={{ color: 'red', marginTop: 10 }}>{error}</div>}
-        <div style={{ marginTop: 20 }}>
-          <h3>Scheduled Meetings:</h3>
-          {scheduledMeets.length === 0 ? (
-            <p>No meetings scheduled yet.</p>
-          ) : (
-            <ul>
-              {scheduledMeets.map((meet, index) => (
-                <li key={index}>
-                  <strong>{meet.name}</strong> - {meet.date} {meet.startTime} - {meet.endTime}
-                  <br />
-                  <a href={meet.meetingLink} target="_blank" rel="noopener noreferrer">
-                    Join Meeting
-                  </a>
-                  <Button type="link" onClick={() => handleDeleteMeet(index)}>
-                    Delete
-                  </Button>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
       </Spin>
     </Modal>
   );

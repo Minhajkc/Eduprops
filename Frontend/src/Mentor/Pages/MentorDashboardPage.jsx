@@ -1,52 +1,47 @@
-import { useState, useEffect } from 'react';
-import { Button } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Button, Breadcrumb, Layout, Menu, Modal } from 'antd';
+import { DesktopOutlined, FileOutlined, PieChartOutlined, TeamOutlined, LogoutOutlined } from '@ant-design/icons';
 import ScheduleMeetingModal from '../Components/Layout/ScheduleMeetingModal';
-import {
-  DesktopOutlined,
-  FileOutlined,
-  PieChartOutlined,
-  TeamOutlined,
-  UserOutlined,
-  LogoutOutlined,
-} from '@ant-design/icons';
-import { Breadcrumb, Layout, Menu, theme, Modal } from 'antd';
+import { fetchScheduledMeets, logoutMentor, getProfile } from '../../Services/mentorService';
 import { useNavigate } from 'react-router-dom';
-import { logoutMentor } from '../../Services/mentorService';
-import { getProfile } from '../../Services/mentorService'; // Import the getProfile function
-import MentorChat from '../Components/Layout/MentorChat'; // Import the MentorChat component
+import ScheduledMeetings from '../Components/Layout/ScheduledMeetings';
+import MentorChat from '../Components/Layout/MentorChat';
 
 const { Header, Content, Footer, Sider } = Layout;
 const { confirm } = Modal;
 
-function getItem(label, key, icon, children) {
-  return {
-    key,
-    icon,
-    children,
-    label,
-  };
-}
-
-const items = [
-  getItem('Option 1', '1', <PieChartOutlined />),
-  getItem('Option 2', '2', <DesktopOutlined />),
-  getItem('User', 'sub1', <UserOutlined />, [
-    getItem('Tom', '3'),
-    getItem('Bill', '4'),
-    getItem('Alex', '5'),
-  ]),
-  getItem('Chat', 'chat', <TeamOutlined />), // Chat key set as 'chat'
-  getItem('Files', '9', <FileOutlined />),
-  getItem('Logout', '10', <LogoutOutlined />), // Logout Menu Item
-];
-
 const MentorDashboardPage = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const [selectedMenuKey, setSelectedMenuKey] = useState('1'); // Track selected menu key
-  const [mentor, setMentor] = useState(null); // State to hold mentor profile data
-  const [assignedCourses, setAssignedCourses] = useState([]); // State to hold assigned courses
-  const [courseId, setCourseId] = useState(null)
+  const [selectedMenuKey, setSelectedMenuKey] = useState('1');
+  const [mentor, setMentor] = useState(null);
+  const [assignedCourses, setAssignedCourses] = useState([]);
+  const [courseId, setCourseId] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [scheduledMeets, setScheduledMeets] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [meetingToEdit, setMeetingToEdit] = useState(null);
+
+  const navigate = useNavigate();
+
+  const handleEdit = (meeting) => {
+    setMeetingToEdit(meeting); // Set the meeting to be edited
+    setIsModalVisible(true);
+  }
+
+  useEffect(() => {
+    const loadScheduledMeets = async () => {
+      setLoading(true);
+      const result = await fetchScheduledMeets(courseId);
+      if (result.success) {
+        setScheduledMeets(result.meets);
+      }
+      setLoading(false);
+    };
+
+    if (courseId) {
+      loadScheduledMeets();
+    }
+  }, [courseId]);
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -54,27 +49,35 @@ const MentorDashboardPage = () => {
 
   const handleClose = () => {
     setIsModalVisible(false);
+    setMeetingToEdit(null)
+  };
+
+  const handleScheduleSuccess = async () => {
+    const result = await fetchScheduledMeets(courseId);
+    if (result.success) {
+      setScheduledMeets(result.meets);
+    }
+  };
+
+  const handleDeleteSuccess = async () => {
+    const result = await fetchScheduledMeets(courseId);
+    if (result.success) {
+      setScheduledMeets(result.meets);
+    }
   }
 
-  const navigate = useNavigate();
-
-  const {
-    token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken();
-
-  // Function to show confirmation modal before logout
   const showLogoutConfirm = () => {
     confirm({
-      title: 'Are you sure you want to log out?',
-      icon: <LogoutOutlined />,
-      content: 'You will be redirected to the login page after logging out.',
+      title: 'Are you sure you want to logout?',
+      icon: <LogoutOutlined style={{ color: '#ff4d4f' }} />,
+      content: 'You will need to log in again to access your account.',
       okText: 'Yes, Logout',
       okType: 'danger',
       cancelText: 'Cancel',
       onOk: async () => {
         try {
-          await logoutMentor(); // Call the logout service
-          navigate('/mentor'); // Redirect to login page after logout
+          await logoutMentor(); // Call logout service
+          navigate('/mentor');   // Redirect to login page
         } catch (error) {
           console.error('Error logging out:', error);
         }
@@ -85,100 +88,92 @@ const MentorDashboardPage = () => {
     });
   };
 
-  const handleMenuClick = (e) => {
-    if (e.key === '10') {
-      showLogoutConfirm(); // Show confirmation before logging out
-    } else {
-      setSelectedMenuKey(e.key); // Set selected menu key for rendering content
-    }
-  };
-
-  // Fetch mentor profile when the component mounts
   useEffect(() => {
     const fetchMentorProfile = async () => {
       try {
-        const data = await getProfile(); // Fetch profile data
-        setMentor(data.mentor); // Set mentor data
-        setAssignedCourses(data.mentor.assignedCourses); // Set assigned courses
-        setCourseId(data.mentor.assignedCourses[0]._id)
-        console.log(courseId,'aaaaaaaaaaaa')
+        const data = await getProfile();
+        setMentor(data.mentor);
+        setAssignedCourses(data.mentor.assignedCourses);
+        setCourseId(data.mentor.assignedCourses[0]._id);
       } catch (error) {
         console.error('Error fetching mentor profile:', error);
       }
     };
 
-    fetchMentorProfile(); // Call the fetch function when component mounts
+    fetchMentorProfile();
   }, []);
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      {/* Sidebar (Sider) */}
       <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
-        <div className="demo-logo-vertical" />
         <Menu
           theme="dark"
           defaultSelectedKeys={['1']}
           mode="inline"
-          items={items}
-          onClick={handleMenuClick} // Handle menu clicks
+          onClick={(e) => setSelectedMenuKey(e.key)}
+          items={[
+            { label: 'Dashboard', key: '1', icon: <PieChartOutlined /> },
+            { label: 'Chat', key: 'chat', icon: <TeamOutlined /> },
+            { label: 'Files', key: '9', icon: <FileOutlined /> },
+            {
+              label: 'Logout',
+              key: '10',
+              icon: <LogoutOutlined />,
+              onClick: showLogoutConfirm, // Show confirmation modal for logout
+            },
+          ]}
         />
       </Sider>
 
-      {/* Main Layout (Content Area) */}
       <Layout>
-        <Header style={{ padding: 0, background: colorBgContainer }}>
-          
-          {/* Header with Mentor's Name and Assigned Courses */}
-          <div style={{ paddingLeft: '16px', textAlign: 'left' }} className='text-center font-roboto'>
-  <h1>
-    Hello,{' '}
-    <span style={{ fontWeight: 'bold', color: '#007BFF' }}>
-      {mentor ? mentor.username : 'Loading...'}
-    </span>
-    , You are Assigned to Course:{' '}
-    <span style={{ fontWeight: 'bold', color: '#28A745' }}>
-      {assignedCourses && assignedCourses.length > 0
-        ? assignedCourses[0].title // Fetch the first course's title
-        : 'No assigned course.'}
-    </span>
-  </h1>
-</div>
-
+        <Header
+          style={{
+            background: '#fff',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            padding: '0 24px',
+            borderBottom: '1px solid #f0f0f0',
+          }}
+        >
+          <h1 style={{ margin: 0 }}>
+            Welcome, <span style={{ color: '#1890ff' }}>{mentor?.username}</span>{' '}
+            | Assigned Course: <span style={{ color: '#52c41a' }}>{assignedCourses[0]?.title}</span>
+          </h1>
+          <Button type="primary" icon={<LogoutOutlined />} onClick={showLogoutConfirm} danger>
+            Logout
+          </Button>
         </Header>
 
-        <Content style={{ margin: '0 16px' }}>
-          {/* Breadcrumb Navigation */}
-          <Breadcrumb style={{ margin: '16px 0' }}>
+        <Content style={{ padding: '24px', minHeight: '360px', background: '#fff' }}>
+          <Breadcrumb style={{ marginBottom: '16px' }}>
             <Breadcrumb.Item>Mentor Dashboard</Breadcrumb.Item>
-            <Breadcrumb.Item>{selectedMenuKey === 'chat' ? 'Chat' : 'Bill'}</Breadcrumb.Item>
+            <Breadcrumb.Item>{selectedMenuKey === 'chat' ? 'Chat' : 'Meetings'}</Breadcrumb.Item>
           </Breadcrumb>
 
-          {/* Main Content */}
-          <div
-            style={{
-              padding: 24,
-              minHeight: 360,
-              background: colorBgContainer,
-              borderRadius: borderRadiusLG,
-            }}
-          >
-            {/* Render Chat Component when "Chat" is selected */}
+          <div>
             {selectedMenuKey === 'chat' ? (
-              <MentorChat courseId="12345" userName={mentor ? mentor.username : ''} /> // Pass necessary props
+              <MentorChat courseId={courseId} userName={mentor?.username} />
             ) : (
-              <div>
-      <Button type="primary" onClick={showModal}>
-        Schedule Meeting
-      </Button>
-      <ScheduleMeetingModal isVisible={isModalVisible} onClose={handleClose} courseId={courseId} />
-    </div>
+              <>
+                <Button type="primary" onClick={showModal} style={{ marginBottom: '16px' }}>
+                  Schedule a Meeting
+                </Button>
+                <ScheduleMeetingModal
+                  isVisible={isModalVisible}
+                  onClose={handleClose}
+                  courseId={courseId}
+                  meetingToEdit={meetingToEdit}
+                  onScheduleSuccess={handleScheduleSuccess}
+                />
+                <ScheduledMeetings scheduledMeets={scheduledMeets} loading={loading}  onEdit={handleEdit}  courseId={courseId}handleDeleteSuccess={handleDeleteSuccess}/>
+              </>
             )}
           </div>
         </Content>
 
-        {/* Footer */}
         <Footer style={{ textAlign: 'center' }}>
-          EduProps©{new Date().getFullYear()} Created by Minhaj Kc
+          EduProps ©{new Date().getFullYear()} Created by Minhaj KC
         </Footer>
       </Layout>
     </Layout>

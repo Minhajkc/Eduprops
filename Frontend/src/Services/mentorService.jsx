@@ -162,26 +162,62 @@ export const retrieveMentorChats = async () => {
     }
 };
 
-// export const scheduleGoogleMeet = async (meetingData) => {
-//   try {
-//     const response = await MentorInstance.post('/schedule-meeting', meetingData);
-//     return response.data;
-//   } catch (error) {
-//     console.error('Error scheduling Google Meet:', error);
-//     throw error;
-//   }
-// };
 
-export const scheduleGoogleMeet = async (meetingData) => {
+
+export const scheduleMeeting = async (courseId, meetingData) => {
   try {
-    const response = await MentorInstance.post(`/schedule`, meetingData,{
+    const response = await MentorInstance.post(`/scheduleMeeting/${courseId}`, meetingData, {
       headers: {
-          'Content-Type': 'application/json',
+        'Content-Type': 'application/json',
       },
-  });
+    });
+    showToastSuccess(response.data.message)
     return response.data;
   } catch (error) {
+   
     throw new Error(error.response ? error.response.data.message : 'Error scheduling meeting');
   }
 };
 
+export const fetchScheduledMeets = async (courseId) => {
+  try {
+    const response = await MentorInstance.get(`/scheduledMeets/${courseId}`);
+    return {
+      success: true,
+      meets: response.data.meets, // Array of scheduled meetings
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: error.response ? error.response.data.message : 'Error fetching scheduled meetings',
+    };
+  }
+};
+export const updateMeeting = async (courseId, meetingId, updatedData) => {
+  try {
+    const response = await MentorInstance.put(`/course/${courseId}/meeting/${meetingId}`, updatedData, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    showToastSuccess(response.data.message)
+    return response.data;
+  } catch (error) {
+    showToastError(error);
+    console.error('Error updating meeting:', error);
+    throw error;
+  }
+};
+
+export const deleteMeeting = async (courseId, meetingId) => {
+
+  try {
+    const response = await MentorInstance.delete(`/course/${courseId}/meeting/${meetingId}`);
+    showToastSuccess(response.data.message)
+    return response.data;
+  } catch (error) {
+    showToastError(error);
+    console.error('Error deleting meeting:', error);
+    throw error;
+  }
+};
