@@ -50,7 +50,7 @@ if (loading) {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 font-roboto">
+    <div className="container mx-auto px-3 py-8 font-roboto">
       <div className="text-center mb-8">
         <h3 className="text-custom-cyan text-sm font-semibold mb-2">Our Courses</h3>
         <h2 className="text-3xl font-bold mb-4">Course Category</h2>

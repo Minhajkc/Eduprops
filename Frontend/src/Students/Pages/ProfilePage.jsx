@@ -2,8 +2,17 @@ import  { useEffect, useState } from 'react';
 import { fetchStudentProfile} from '../../Services/studentService';
 import Footer from '../Components/Layout/Footer'
 import { FaComments } from 'react-icons/fa';
-import {  Spin,Select } from 'antd';
+import {  Spin,Select, Modal, Badge } from 'antd';
 import GroupChat from '../Components/Layout/GroupChat';
+import { CalendarOutlined  } from '@ant-design/icons';
+import { Calendar, Clock, Video } from 'lucide-react';
+import dayjs from 'dayjs';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+
+// Extend dayjs with the isSameOrAfter plugin
+dayjs.extend(isSameOrAfter);
+
+
 
 
 const { Option } = Select;
@@ -17,6 +26,40 @@ const StudentPortal = () => {
     const [activeTab, setActiveTab] = useState('profile');
     const [selectedCourseId, setSelectedCourseId] = useState(null);
     const [selectedCourseTitle, setSelectedCourseTitle] = useState('');
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [scheduleMeets, setScheduleMeets] = useState([]);
+    const [currentTime, setCurrentTime] = useState(dayjs().format('HH:mm'));
+    useEffect(() => {
+      const timer = setInterval(() => {
+        setCurrentTime(dayjs().format('HH:mm')); // Update current time every minute
+      }, 60000); // Update every 1 minute
+      return () => clearInterval(timer);
+    }, []);
+  
+    const formatTime = (timeString) => {
+      return dayjs(timeString, 'HH:mm').format('HH:mm');
+    };
+  
+    const isTimeAfterOrEqual = (meetTime) => {
+      return dayjs(currentTime, 'HH:mm').isSameOrAfter(dayjs(meetTime, 'HH:mm'));
+    };
+
+
+    const formatDate = (date) => new Date(date).toISOString().split('T')[0];
+  
+    // Get today's date in 'YYYY-MM-DD' format
+    const today = formatDate(new Date());
+
+
+    // Function to show the modal
+    const showModal = () => {
+      setIsModalVisible(true);
+    };
+  
+    // Function to handle closing the modal
+    const handleCancel = () => {
+      setIsModalVisible(false);
+    }
 
     const handleCourseChange = (value) => {
         setSelectedCourseId(value);
@@ -31,7 +74,7 @@ const StudentPortal = () => {
         const getProfile = async () => {
             try {
                 const profileData = await fetchStudentProfile();
-                 console.log(profileData)
+                setScheduleMeets(profileData.scheduleMeets);
                 setProfile(profileData.student);
                 setMentors(profileData.mentors)
             } catch (error) {
@@ -58,6 +101,10 @@ const StudentPortal = () => {
             <div className="text-2xl font-semibold text-gray-700">No profile data available.</div>
         </div>;
     }
+
+    const handleAttendanceMark = (meetingId, userId) => {
+        console.log(`Attendance marked for ${userId} in meeting ${meetingId}`);
+      };
 
     return (
         <div className="min-h-screen bg-gray-100 font-roboto">
@@ -87,70 +134,170 @@ const StudentPortal = () => {
                     </div>
 
                     <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-                    {activeTab === 'profile' && (
-    <div className="px-4 py-5 sm:p-6">
-        <div className="flex items-center space-x-5 mb-5">
-            <div className="flex-shrink-0">
-                <div className="relative">
-                <div className="w-20 h-20 bg-custom-cyan rounded-full flex items-center justify-center text-custom-cyan2">
-          <span className="text-4xl font-bold">
-            {profile.username.charAt(0).toUpperCase()}
-            {profile.email.charAt(0).toUpperCase()}
+                    <div className="relative">
+      {/* Notification Icon in the top-right */}
+      <div className="absolute top-0 right-0 p-4">
+  <Badge count={scheduleMeets.length} size="small"> {/* Replace count with the actual number of meetings */}
+  
+    <CalendarOutlined 
+      className="text-2xl cursor-pointer text-gray-500" 
+      onClick={showModal} 
+    />
+  </Badge>
+ 
+</div>
 
-          </span>
-        </div>
-                  
+      {activeTab === 'profile' && (
+        <div className="px-4 py-5 sm:p-6">
+          <div className="flex items-center space-x-5 mb-5">
+            <div className="flex-shrink-0">
+              <div className="relative">
+                <div className="w-20 h-20 bg-custom-cyan rounded-full flex items-center justify-center text-custom-cyan2">
+                  <span className="text-4xl font-bold">
+                    {profile.username.charAt(0).toUpperCase()}
+                    {profile.email.charAt(0).toUpperCase()}
+                  </span>
                 </div>
+              </div>
             </div>
             <div className="flex-1 min-w-0">
-                <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
-                    {profile.firstName} {profile.lastName}
-                </h2>
-                <p className="text-sm font-medium text-gray-500">{profile.username}</p>
+              <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+                {profile.firstName} {profile.lastName}
+              </h2>
+              <p className="text-sm font-medium text-gray-500">{profile.username}</p>
             </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Email</label>
+              <input
+                type="text"
+                value={profile.email}
+                readOnly
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Membership Type</label>
+              <div
+                className={`flex items-center mt-1 block w-full border rounded-md shadow-sm py-2 px-3 sm:text-sm 
+                  ${profile.membershipType === 'gold' ? 'border-yellow-500 bg-yellow-100' :
+                  profile.membershipType === 'platinum' ? 'border-purple-500 bg-purple-100' :
+                  profile.membershipType === 'silver' ? 'border-gray-500 bg-gray-100' : 'border-gray-300'}`}>
+                {profile.membershipType === 'gold' && (
+                  <>
+                    <span className="text-yellow-500 mr-2">
+                      <i className="fas fa-crown"></i> {/* Crown icon for Gold */}
+                    </span>
+                    <span>Gold Membership</span>
+                  </>
+                )}
+                {profile.membershipType === 'platinum' && (
+                  <>
+                    <span className="text-purple-500 mr-2">
+                      <i className="fas fa-gem"></i> {/* Gem icon for Platinum */}
+                    </span>
+                    <span>Platinum Membership</span>
+                  </>
+                )}
+                {profile.membershipType === 'silver' && (
+                  <>
+                    <span className="text-gray-500 mr-2">
+                      <i className="fas fa-medal"></i> {/* Medal icon for Silver */}
+                    </span>
+                    <span>Silver Membership</span>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
+      )}
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-            <div>
-                <label className="block text-sm font-medium text-gray-700">Email</label>
-                <input type="text" value={profile.email} readOnly className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
-            </div>
-
-            <div>
-                <label className="block text-sm font-medium text-gray-700">Membership Type</label>
-                <div className={`flex items-center mt-1 block w-full border rounded-md shadow-sm py-2 px-3 sm:text-sm 
-                    ${profile.membershipType === 'gold' ? 'border-yellow-500 bg-yellow-100' :
-                        profile.membershipType === 'platinum' ? 'border-purple-500 bg-purple-100' :
-                        profile.membershipType === 'silver' ? 'border-gray-500 bg-gray-100' : 'border-gray-300'}`}>
-                    {profile.membershipType === 'gold' && (
-                        <>
-                            <span className="text-yellow-500 mr-2">
-                                <i className="fas fa-crown"></i> {/* Crown icon for Gold */}
-                            </span>
-                            <span>Gold Membership</span>
-                        </>
-                    )}
-                    {profile.membershipType === 'platinum' && (
-                        <>
-                            <span className="text-purple-500 mr-2">
-                                <i className="fas fa-gem"></i> {/* Gem icon for Platinum */}
-                            </span>
-                            <span>Platinum Membership</span>
-                        </>
-                    )}
-                    {profile.membershipType === 'silver' && (
-                        <>
-                            <span className="text-gray-500 mr-2">
-                                <i className="fas fa-medal"></i> {/* Medal icon for Silver */}
-                            </span>
-                            <span>Silver Membership</span>
-                        </>
-                    )}
+      {/* Ant Design Modal for Notifications */}
+      <Modal
+      title={<h2 className="text-2xl font-bold text-gray-800 font-roboto">Scheduled Meetings</h2>}
+      visible={isModalVisible}
+      onCancel={handleCancel}
+      footer={null}
+      width="100vw"
+      className="max-w-5xl"
+      centered
+    >
+      <div className="overflow-y-auto max-h-[70vh]">
+        {scheduleMeets.length > 0 ? (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {scheduleMeets.map((course, index) => (
+              <div key={index} className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow">
+                {/* Course Header */}
+                <div className="bg-custom-cyan2 p-4 rounded-t-lg">
+                  <h3 className="text-lg font-medium text-white text-center">
+                    {course.courseTitle}
+                  </h3>
                 </div>
-            </div>
-        </div>
+
+                {/* Meetings Container */}
+                <div className="p-4">
+                  {course.meetings.map((meet, idx) => (
+                    <div
+                      key={idx}
+                      className="mb-4 last:mb-0 bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors"
+                    >
+                      {/* Meeting Title */}
+                      <div className="flex items-center text-gray-700 mb-3">
+                        <Calendar className="w-4 h-4 mr-2 text-cyan-600" />
+                        <span className="font-medium">{meet.name}</span>
+                      </div>
+
+                      {/* Meeting Details Grid */}
+                      <div className="grid grid-cols-2 gap-3 mb-3">
+                        <div className="flex items-center text-gray-600 text-sm">
+                          <Calendar className="w-3 h-3 mr-2 text-cyan-600" />
+                          <span>{meet.date}</span>
+                        </div>
+                        
+                        <div className="flex items-center text-gray-600 text-sm">
+                          <Clock className="w-3 h-3 mr-2 text-cyan-600" />
+                          <span>{meet.startTime}</span>
+                        </div>
+                        
+                        <div className="flex items-center text-gray-600 text-sm">
+                          <Clock className="w-3 h-3 mr-2 text-cyan-600" />
+                          <span>{meet.endTime}</span>
+                        </div>
+                      </div>
+
+                      {/* Join Meeting Button or Message */}
+                      {today === formatDate(meet.date) && isTimeAfterOrEqual(meet.startTime) ? (
+                        <button
+                          onClick={() => window.open(meet.link, '_blank')}
+                          className="w-full mt-2 flex items-center justify-center gap-2 bg-custom-cyan text-white py-2 px-4 rounded-lg hover:bg-cyan-600 transition-colors"
+                        >
+                          <Video className="w-4 h-4" />
+                          Join Meeting
+                        </button>
+                      ) : (
+                        <div className="mt-2 text-orange-500 text-xs text-center bg-orange-50 p-2 rounded-lg">
+                          Link available at {meet.startTime} on meeting day
+                        </div>
+                      )}
+
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12 text-gray-500">
+            <p>No upcoming meetings scheduled for your Courses</p>
+          </div>
+        )}
+      </div>
+    </Modal>
     </div>
-)}
 
                         {activeTab === 'courses' && (
                             <div className="px-4 py-5 sm:p-6">
