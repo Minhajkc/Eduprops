@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
+import { Link } from 'react-router-dom';
 import { FaGraduationCap, FaLaptop, FaClock, FaBriefcase, FaUsers, FaPiggyBank } from 'react-icons/fa';
 import Footer from '../Components/Layout/Footer'
 
@@ -124,9 +125,11 @@ const AboutPage = () => {
         {/* Call to Action */}
         <section className="text-center bg-custom-cyan text-white py-16 rounded-xl">
           <h2 className="text-3xl font-bold mb-6">Ready to start your learning journey?</h2>
-          <button className="bg-white text-custom-cyan font-bold py-3 px-8 rounded-full text-xl hover:bg-gray-100 transition duration-300">
-            Explore Courses
-          </button>
+          <Link to='/courses'>
+          <button  className="bg-custom-cyan2 animate-bounce text-white font-bold py-2 px-4 md:py-3 md:px-6 lg:py-3 lg:px-8 rounded-full  hover:bg-cyan-500 transition duration-300 text-base md:text-lg">
+             Explore Courses
+            </button>
+          </Link>
         </section>
       </div>
       <Footer/>

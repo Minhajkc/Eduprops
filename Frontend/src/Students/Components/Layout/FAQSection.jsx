@@ -3,11 +3,14 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useSelector } from 'react-redux';
 
 const faqData = [
-  { id: '01', question: 'Apakah kursus ini benar-benar gratis?', answer: 'Kursus yang disediakan bisa diakses gratis untuk menunjang kebutuhan dalam bidang kependidikan.' },
-  { id: '02', question: 'Untuk siapa kursus ini?', answer: 'Kursus ini ditujukan untuk semua orang yang ingin belajar UI/UX design, baik pemula maupun yang sudah memiliki pengalaman.' },
-  { id: '03', question: 'Apakah kursus ini bersertifikat?', answer: 'Ya, setelah menyelesaikan kursus, Anda akan menerima sertifikat kelulusan yang dapat digunakan untuk meningkatkan CV Anda.' },
-  { id: '04', question: 'Sampai kapan kursus ini berakhir?', answer: 'Kursus ini bersifat self-paced, jadi Anda dapat menyelesaikannya sesuai dengan kecepatan belajar Anda sendiri.' },
-  { id: '05', question: 'Apakah ada penyaluran kerja setelah lulus?', answer: 'Kami memiliki program kerjasama dengan berbagai perusahaan untuk membantu lulusan kami mendapatkan pekerjaan, namun tidak ada jaminan penempatan kerja.' },
+  { id: '01', question: 'How do I register for a course?', answer: 'You can register for a course through our website by filling out the registration form available on the course page.' },
+  { id: '02', question: 'Is there an age limit for enrollment?', answer: 'There is no age limit for enrollment. We welcome learners of all ages.' },
+  { id: '03', question: 'Will course materials be available after completion?', answer: 'Yes, all course materials will remain accessible to you even after you complete the course.' },
+  { id: '04', question: 'What should I do if I encounter difficulties?', answer: 'If you encounter difficulties, you can contact our support team via email or use the live chat feature on our website.' },
+  { id: '05', question: 'How can I apply for financial aid?', answer: 'We offer various financial aid options. Please visit our financial aid page on the website for more information.' },
+  { id: '06', question: 'Can I access the course from any device?', answer: 'Yes, our courses are accessible on any device, including smartphones, tablets, and computers.' },
+  { id: '07', question: 'How long do I have to complete the course?', answer: 'The course is self-paced, so you can complete it according to your own schedule.' },
+  { id: '08', question: 'Is there a certificate of completion?', answer: 'Yes, you will receive a certificate of completion after successfully finishing the course.' },
 ];
 
 const FAQItem = ({ item, isOpen, toggleOpen }) => {
@@ -40,9 +43,9 @@ const FAQSection = () => {
   const homepageAd3 = getAdByPosition('homepage3');
 
   return (
-    <div className="mx-auto px-4 py-12 font-roboto" >
-      <h1 className="text-3xl font-bold text-center mb-2" >FAQ's</h1>
-      <p className="text-center text-gray-600 mb-8"  id="faqsection">
+    <div className="mx-auto px-4 py-12 font-roboto">
+      <h1 className="text-3xl font-bold text-center mb-2">FAQ's</h1>
+      <p className="text-center text-gray-600 mb-8" id="faqsection">
         On Weekend UX, instructors from all over the world instruct millions of students.
         <br />
         We offer the knowledge and abilities.
@@ -53,14 +56,14 @@ const FAQSection = () => {
         <div className="md:w-1/3">
           <h2 className="text-2xl font-semibold mb-4">Frequently Asked Questions</h2>
           <p className="text-gray-600 mb-4">
-            Masih bingung atau ragu? Hubungi kami di nomor +6288 999 222 333
+            If you have any questions or doubts, please contact us at +6288 999 222 333.
           </p>
           
           {/* Display Ad for Homepage3 */}
-          <div className=" h-64 w-full flex items-center justify-center text-black  p-4">
+          <div className="h-64 w-full flex items-center justify-center text-black p-4">
             <p className='text-xs'>Ads</p>
             <a href={homepageAd3.link} target="_blank" rel="noopener noreferrer">
-              <img src={homepageAd3.image} alt={homepageAd3.title} className="w-full h-40 object-cover " />
+              <img src={homepageAd3.image} alt={homepageAd3.title} className="w-full h-40 object-cover" />
               <h3 className="text-sm font-bold">{homepageAd3.title}</h3>
               <a className="text-xs text-blue-800 hover:border-b-2 border-blue-500 font-bold">{homepageAd3.link}</a>
             </a>

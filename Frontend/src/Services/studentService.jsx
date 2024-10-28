@@ -1,5 +1,5 @@
 import { StudentInstance } from '../Services/apiInstances';
-import { showToastSuccess, showToastError } from '../utils/toastify';
+import { showToastSuccess, showToastError, showToastInfo } from '../utils/toastify';
 import { setStudentId } from '../Redux/studentSlice';
 
 
@@ -363,7 +363,6 @@ export const savePurchaseSubscription = async ({ subscriptionPlan}) => {
       const response = await StudentInstance.post('/savePurchaseSubscription', {
         subscriptionPlan  
       });
-      console.log(response,'jisisis')
       return response.data;
     } catch (error) {
       console.error('Error saving purchase:', error);
@@ -402,4 +401,75 @@ export const retrieveChatMessages = async (courseId) => {
         console.error('Error retrieving chat messages:', error);
         throw error; // Propagate the error
     }
+};
+
+export const addReview = async (reviewdata) =>{
+  
+  try {
+   
+    const response = await StudentInstance.post('/review',{reviewdata})
+    showToastSuccess(response.data.message)
+    return response.data
+    } catch (error) {
+      showToastError(error.message)
+      console.error('Error adding review:', error);
+      throw error;
+      }
+}
+
+export const fetchReviews = async () => {
+  try {
+    const response = await StudentInstance.get('/reviews');
+
+    return response.data; // Assuming the API returns the data in the response
+  } catch (error) {
+    console.error('Error fetching reviews:', error);
+    throw error;
+  }
+};
+
+export const emailSubscription = async (email) => {
+  if (!email || !/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
+    showToastError('Invalid email format');
+    return;
+  }
+
+  try {
+    const response = await StudentInstance.post('/subscribe', { email });
+    
+    if (response.status === 200) {
+      showToastSuccess(response.data.message || 'Subscribed successfully!');
+    } else {
+      showToastError(response.data.message || 'Failed to subscribe.');
+    }
+    
+    return response;
+  } catch (error) {
+    showToastError(error.response?.data?.message || 'Error subscribing to email');
+    console.error('Error subscribing to email:', error);
+    throw error;
+  }
+};
+
+
+export const submitContactForm = async (formData) => {
+  try {
+    const response = await StudentInstance.post('/contact', formData); // Adjust the endpoint as needed
+
+    return response.data; // Assuming the API returns the data in the response
+  } catch (error) {
+    console.error('Error submitting contact form:', error);
+
+    // You can throw a custom error message or structure it based on the error response
+    if (error.response) {
+      // Server responded with a status other than 200 range
+      throw new Error(error.response.data.message || 'An error occurred while submitting the form.');
+    } else if (error.request) {
+      // Request was made but no response received
+      throw new Error('No response from the server. Please try again later.');
+    } else {
+      // Something else caused the error
+      throw new Error('An unexpected error occurred. Please try again.');
+    }
+  }
 };

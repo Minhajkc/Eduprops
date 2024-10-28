@@ -1,13 +1,16 @@
 import  { useEffect, useState } from 'react';
-import { fetchStudentProfile} from '../../Services/studentService';
+import { fetchStudentProfile,addReview} from '../../Services/studentService';
 import Footer from '../Components/Layout/Footer'
 import { FaComments } from 'react-icons/fa';
-import {  Spin,Select, Modal, Badge } from 'antd';
+import {  Spin,Select, Modal, Badge,Button, Rate, Input} from 'antd';
 import GroupChat from '../Components/Layout/GroupChat';
-import { CalendarOutlined  } from '@ant-design/icons';
-import { Calendar, Clock, Video } from 'lucide-react';
+import { CalendarOutlined,MessageOutlined   } from '@ant-design/icons';
+import { Calendar, Clock, Video, User } from 'lucide-react';
 import dayjs from 'dayjs';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+import CourseVideoModal from '../Components/Layout/CourseVideoModal';
+import {  showToastInfo } from '../../utils/toastify';
+
 
 // Extend dayjs with the isSameOrAfter plugin
 dayjs.extend(isSameOrAfter);
@@ -28,7 +31,57 @@ const StudentPortal = () => {
     const [selectedCourseTitle, setSelectedCourseTitle] = useState('');
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [scheduleMeets, setScheduleMeets] = useState([]);
-    const [currentTime, setCurrentTime] = useState(dayjs().format('HH:mm'));
+    const [currentTime, setCurrentTime] = useState(dayjs().format('HH:mm'))
+    const [isModalOpen, setModalOpen] = useState(false);
+    const [selectedCourse, setSelectedCourse] = useState(null);
+    const [isReviewModalVisible, setReviewModalVisible] = useState(false);
+    const [reviewRating, setReviewRating] = useState(0);
+    const [reviewText, setReviewText] = useState('');
+    const [reviewLoading, setReviewLoading] = useState(false);
+    console.log(mentors)
+  
+    const showReviewModal = () => {
+      setReviewModalVisible(true);
+  };
+
+  const handleReviewSubmit = async () => {
+  
+      setReviewLoading(true); // Set loading to true when submitting
+      try {
+          const reviewPayload = {
+              rating: reviewRating,
+              reviewText: reviewText,
+              userId: profile._id,
+              userName: profile.username,
+          };
+
+          if (reviewPayload.rating === 0  ) {
+            showToastInfo('Please provide a rating.');
+            return;
+          }
+
+          await addReview(reviewPayload); // Call your addReview function
+          setReviewRating(0); // Reset rating
+          setReviewText(''); // Clear text area
+          setReviewModalVisible(false); // Close the modal
+      } catch (e) {
+          console.error('Error submitting review:', e);
+      } finally {
+          setReviewLoading(false); // Reset loading state
+      }
+  };
+
+    const openModal = (course) => {
+        setSelectedCourse(course);
+        setModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setModalOpen(false);
+        setSelectedCourse(null);
+    };
+
+
     useEffect(() => {
       const timer = setInterval(() => {
         setCurrentTime(dayjs().format('HH:mm')); // Update current time every minute
@@ -74,6 +127,7 @@ const StudentPortal = () => {
         const getProfile = async () => {
             try {
                 const profileData = await fetchStudentProfile();
+                console.log(profileData.student,'studentdata')
                 setScheduleMeets(profileData.scheduleMeets);
                 setProfile(profileData.student);
                 setMentors(profileData.mentors)
@@ -136,16 +190,55 @@ const StudentPortal = () => {
                     <div className="bg-white shadow overflow-hidden sm:rounded-lg">
                     <div className="relative">
       {/* Notification Icon in the top-right */}
-      <div className="absolute top-0 right-0 p-4">
-  <Badge count={scheduleMeets.length} size="small"> {/* Replace count with the actual number of meetings */}
+      <div className="absolute top-0 right-0 p-4 flex items-center gap-4">
+            {/* Calendar Badge */}
+            <Badge count={scheduleMeets.length} size="small">
+                <CalendarOutlined 
+                    className="text-2xl cursor-pointer text-gray-500" 
+                    onClick={showModal} 
+                />
+            </Badge>
+            
+            {/* Review Icon */}
+            <MessageOutlined 
+                className="text-2xl cursor-pointer text-gray-500" 
+                onClick={showReviewModal} 
+            />
+
+            {/* Review Modal */}
+            <Modal
+    title="Leave a Review"
+    visible={isReviewModalVisible}
+    onCancel={() => setReviewModalVisible(false)}
+    footer={
+        <Button 
+            type="primary" 
+            onClick={handleReviewSubmit} 
+            loading={reviewLoading} // Use loading prop
+            className="bg-custom-cyan hover:bg-custom-cyan2 " // Custom classes for button color
+        >
+            Submit Review
+        </Button>
+    }
+    
+>
   
-    <CalendarOutlined 
-      className="text-2xl cursor-pointer text-gray-500" 
-      onClick={showModal} 
+    {/* Caution message */}
+    
+    
+    <Rate allowHalf value={reviewRating} onChange={setReviewRating}/>
+    <Input.TextArea 
+        rows={4} 
+        placeholder="Write your review here" 
+        value={reviewText} 
+        onChange={(e) => setReviewText(e.target.value)} 
+        className="mt-4" 
+        
     />
-  </Badge>
- 
-</div>
+    <p className="text-orange-500 text-xs py-2 text-center">Caution: If you have already left a review, you do not need to submit another.</p>
+</Modal>
+
+        </div>
 
       {activeTab === 'profile' && (
         <div className="px-4 py-5 sm:p-6">
@@ -218,7 +311,7 @@ const StudentPortal = () => {
 
       {/* Ant Design Modal for Notifications */}
       <Modal
-      title={<h2 className="text-2xl font-bold text-gray-800 font-roboto">Scheduled Meetings</h2>}
+      title={<h2 className="text-2xl font-bold text-gray-800 font-roboto">Scheduled Live Sections</h2>}
       visible={isModalVisible}
       onCancel={handleCancel}
       footer={null}
@@ -299,40 +392,49 @@ const StudentPortal = () => {
     </Modal>
     </div>
 
-                        {activeTab === 'courses' && (
-                            <div className="px-4 py-5 sm:p-6">
-                                <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">Purchased Courses</h3>
-                                <div className="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-3">
-                                    {profile.purchasedCourses.map((course) => (
-                                        <div key={course._id} className="flex flex-col p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
-                                            <div className="flex items-center justify-between mb-4">
-                                                <div className="flex items-center">
-                                                    <img className="object-cover w-8 h-8 rounded-full" src={course.image} alt="Course" />
-                                                    <div className="ml-3">
-                                                        <p className="text-sm font-medium text-gray-900 dark:text-white">{course.title}</p>
-                                                    </div>
-                                                </div>
-                                                <span className="px-2 py-1 text-xs font-medium text-green-600 bg-green-100 rounded-full">{course.completionRate}% Complete</span>
-                                            </div>
-                                            <p className="text-sm text-gray-600 dark:text-gray-400">{course.description}</p>
-                                            <div className="flex items-center justify-between mt-4">
-                                                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Rating: {course.rating}/5</span>
-                                                <button className="px-3 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-blue-600 border border-transparent rounded-md active:bg-blue-600 hover:bg-blue-700 focus:outline-none focus:shadow-outline-blue">
-                                                    Continue
-                                                </button>
-                                            </div>
+                          {activeTab === 'courses' && (
+                <div className="px-4 py-5 sm:p-6">
+                    <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">Purchased Courses</h3>
+                    <div className="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-3">
+                        {profile.purchasedCourses.map((course) => (
+                            <div key={course._id} className="flex flex-col p-4 bg-white rounded-lg shadow-xs dark:bg-custom-cyan2">
+                                <div className="flex items-center justify-between mb-4">
+                                    <div className="flex items-center">
+                                        <img className="object-cover w-8 h-8 rounded-full" src={course.image} alt="Course" />
+                                        <div className="ml-3">
+                                            <p className="text-sm font-medium text-gray-900 dark:text-white">{course.title}</p>
                                         </div>
-                                    ))}
+                                    </div>
+                                </div>
+                                <p className="text-sm text-gray-600 dark:text-gray-700 font-">{course.description}</p>
+                                <div className="flex items-center align-middle mt-4">
+                                 
+                                    <button
+                                        onClick={() => openModal(course)}
+                                        className="px-3 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-custom-cyan border border-transparent rounded-md  hover:bg-cyan-700 focus:outline-none focus:shadow-outline-blue"
+                                    >
+                                        Lessons
+                                    </button>
                                 </div>
                             </div>
-                        )}
+                        ))}
+                    </div>
+                </div>
+            )}
 
+            {isModalOpen && selectedCourse && (
+                <CourseVideoModal
+                    lessons={selectedCourse.lessons}
+                    courseTitle={selectedCourse.title}
+                    onClose={closeModal}
+                />
+            )}
 {activeTab === 'subscription'  && profile.subscription && profile.subscription.length > 0 && (
                             <div className="px-4 py-5 sm:p-6">
                                 <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">Subscribed Courses</h3>
                                 <div className="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-3">
                                     {profile.subscription.map((course) => (
-                                        <div key={course._id} className="flex flex-col p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
+                                        <div key={course._id} className="flex flex-col p-4 bg-white rounded-lg shadow-xs dark:bg-custom-cyan2">
                                             <div className="flex items-center justify-between mb-4">
                                                 <div className="flex items-center">
                                                     <img className="object-cover w-8 h-8 rounded-full" src={course.image} alt="Course" />
@@ -340,13 +442,14 @@ const StudentPortal = () => {
                                                         <p className="text-sm font-medium text-gray-900 dark:text-white">{course.title}</p>
                                                     </div>
                                                 </div>
-                                                <span className="px-2 py-1 text-xs font-medium text-green-600 bg-green-100 rounded-full">{course.completionRate}% Complete</span>
+   
                                             </div>
-                                            <p className="text-sm text-gray-600 dark:text-gray-400">{course.description}</p>
+                                            <p className="text-sm text-gray-600 dark:text-gray-800">{course.description}</p>
                                             <div className="flex items-center justify-between mt-4">
-                                                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Rating: {course.rating}/5</span>
-                                                <button className="px-3 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-blue-600 border border-transparent rounded-md active:bg-blue-600 hover:bg-blue-700 focus:outline-none focus:shadow-outline-blue">
-                                                    Continue
+                                           
+                                                <button className="px-3 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-custom-cyan border border-transparent rounded-md  hover:bg-cyan-800 focus:outline-none focus:shadow-outline-blue"      onClick={() => openModal(course)}>
+                                                  
+                                                    Lessons
                                                 </button>
                                             </div>
                                         </div>
@@ -355,25 +458,25 @@ const StudentPortal = () => {
                             </div>
                         )}
 
-                        {activeTab === 'teachers' && (
+{activeTab === 'teachers' && (
     <div className="px-4 py-5 sm:p-6">
         <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">Your Teachers</h3>
         <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            {mentors.map((mentor, index) => (
-                <li key={mentor._id} className="col-span-1 flex flex-col text-center bg-white rounded-lg shadow divide-y divide-gray-200">
-                    <div className="flex-1 flex flex-col p-8">
-                        <img className="w-32 h-32 flex-shrink-0 mx-auto rounded-full" src={`/placeholder-teacher-${index + 1}.jpg`} alt="" />
-                        <h3 className="mt-6 text-gray-900 text-sm font-medium">{mentor.username}</h3>
+            {mentors.map((mentor) => (
+                <li key={mentor._id} className="col-span-1 flex flex-col items-center text-center bg-white rounded-lg shadow divide-y divide-gray-200 p-4 pt-10">
+                    <div className="flex-1 flex flex-col items-center">
+                        <User size={60} className="text-custom-cyan bg-gray-100 p-2 rounded-full" />
+                        <h3 className="mt-4 text-gray-900 text-sm font-medium">{mentor.username}</h3>
                         <dl className="mt-1 flex-grow flex flex-col justify-between">
                             <dt className="sr-only">Title</dt>
-                            <dd className="text-gray-500 text-sm">Professor</dd>
+                            <dd className="text-gray-500 text-sm">{mentor.degree}</dd>
                         </dl>
                     </div>
-                    <div>
-                        <div className="-mt-px flex divide-x divide-gray-200">
-                            <div className="w-0 flex-1 flex">
-                                <a href={`mailto:${mentor.email}`} className="relative -mr-px w-0 flex-1 inline-flex items-center justify-center py-4 text-sm text-gray-700 font-medium border border-transparent rounded-bl-lg hover:text-gray-500">
-                                    <span className="ml-3">Email</span>
+                    <div className="w-full border-t border-gray-200 mt-4">
+                        <div className="flex divide-x divide-gray-200">
+                            <div className="w-full">
+                                <a href={`mailto:${mentor.email}`} className="inline-flex items-center justify-center w-full py-2 text-sm text-gray-700 font-medium hover:text-gray-500">
+                                    Email
                                 </a>
                             </div>
                         </div>
@@ -384,8 +487,10 @@ const StudentPortal = () => {
     </div>
 )}
 
+
 {activeTab === 'chat' && (
         <div className='p-5'>
+          <p className='text-xs  pb-5 '>Community Chat Will not Available for Subscribed Courses</p>
           {selectedCourseId ? (
             <div className='flex items-center justify-center mb-4'>
               <FaComments className='text-custom-cyan text-3xl mr-2' />
