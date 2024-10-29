@@ -246,6 +246,7 @@ export const addVideoToCourse = async (courseId, videoData) => {
 };
 
 export const deleteCourseLesson = async (courseId, lessonIndex) => {
+    console.log(courseId,lessonIndex,'dele')
     try {
         const response = await AdminInstance.delete(`/courses/${courseId}/lessons/${lessonIndex}`);
         showToastSuccess(response.message || 'Lesson deleted successfully');
@@ -391,6 +392,31 @@ export const updateSubscriptionRates = async (rates) => {
         showToastError('Error updating course instructor: ' + error.message);
       }
       throw error; // Re-throw the error for further handling if needed
+    }
+  };
+
+  export const editLessonVideos = async (courseId, lessonId, formData) => {
+    const response = await AdminInstance.put(`/editVideo/admin/${courseId}/${lessonId}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    showToastSuccess('Lesson updated successfully!');
+    return response.data; // Return the response data from the server
+  };
+
+  export const updateLesson = async (courseId, lessonId, updatedData) => {
+    try {
+      const response = await AdminInstance.put(`/courses/admin/${courseId}/lessons/${lessonId}`, updatedData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      showToastSuccess('Lesson updated successfully!');
+      return response.data; // Return the response data from the server
+    } catch (error) {
+      console.error('Error updating lesson:', error);
+      throw error; // Rethrow to handle it in the component
     }
   };
   

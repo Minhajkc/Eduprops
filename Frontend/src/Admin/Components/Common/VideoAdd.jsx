@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { addVideoToCourse, editLessonVideo } from '../../../Services/adminService'; // Ensure the correct service is imported
+import { addVideoToCourse, editLessonVideos, updateLesson } from '../../../Services/adminService'; // Ensure the correct service is imported
 
 const VideoAdd = ({ courseId, lesson, closeModal, lessonIndex, refreshCourses }) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [videoFiles, setVideoFiles] = useState([]); // State for video files
     const [loading, setLoading] = useState(false); // Loading state
+    const [titleLoading, setTitleLoading] = useState(false);
     const [editingVideoIndex, setEditingVideoIndex] = useState(null); // State to keep track of the editing video index
     const maxVideoCount = 3; // Maximum number of video inputs allowed
 
@@ -52,7 +53,7 @@ const VideoAdd = ({ courseId, lesson, closeModal, lessonIndex, refreshCourses })
 
             if (lesson) {
                 // Edit existing lesson
-                await editLessonVideo(courseId, lesson._id, formData);
+                await editLessonVideos(courseId, lesson._id, formData);
             } else {
                 // Add new video
                 await addVideoToCourse(courseId, formData);
@@ -69,6 +70,18 @@ const VideoAdd = ({ courseId, lesson, closeModal, lessonIndex, refreshCourses })
             console.error("Error submitting video form:", err.message);
         } finally {
             setLoading(false); // Set loading to false after submission is complete
+        }
+    };
+
+    const handleUpdateTitleDescription = async () => {
+        setTitleLoading(true);
+        try {
+            await updateLesson(courseId, lesson._id, { title, description, lessonIndex });
+            if (refreshCourses) refreshCourses();
+        } catch (err) {
+            console.error("Error updating title/description:", err.message);
+        } finally {
+            setTitleLoading(false);
         }
     };
 
@@ -94,20 +107,67 @@ const VideoAdd = ({ courseId, lesson, closeModal, lessonIndex, refreshCourses })
                         className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 h-24 resize-none"
                         disabled={loading} // Disable textarea while loading
                     />
+                     {lesson && (
+                        <button
+                            type="button"
+                            onClick={handleUpdateTitleDescription}
+                            className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+                            disabled={titleLoading}
+                        >
+                            {titleLoading ? "Updating..." : "Update Title and Description"}
+                        </button>
+                    )}
 
-                    {/* Video File Inputs */}
-                    {videoFiles.map((file, index) => (
-                        <div key={index}>
-                            <input
-                                type="file"
-                                onClick={() => handleFileClick(index)} // Track which file input is clicked
-                                onChange={(e) => handleFileChange(index, e.target.files[0])}
-                                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                                disabled={loading} // Disable file input while loading
-                            />
-                            {file?.url && <p className="text-sm text-gray-500">{file.name || `Existing Video ${index + 1}`}</p>}
-                        </div>
-                    ))}
+                    {/* Conditional Rendering for Video File Inputs */}
+                    {lesson ? (
+                        videoFiles.map((file, index) => (
+                            <div key={index}>
+                                <input
+                                    type="file"
+                                    onClick={() => handleFileClick(index)} // Track which file input is clicked
+                                    onChange={(e) => handleFileChange(index, e.target.files[0])}
+                                    className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                                    disabled={loading} // Disable file input while loading
+                                />
+                                <button
+                                    type="submit"
+                                    className="bg-custom-cyan text-white py-1 px-2 text-xs rounded-md hover:bg-custom-cyan2"
+                                    disabled={loading} // Disable button while loading
+                                >
+                                    {loading ? (
+                                        <span className="flex items-center">
+                                            <svg className="animate-spin h-5 w-5 mr-3 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 0116 0 8 8 0 01-16 0z"></path>
+                                            </svg>
+                                            Loading...
+                                        </span>
+                                    ) : 'Update Video'}
+                                </button>
+                                {file?.url && <p className="text-sm text-gray-500">{file.name || `Existing Video ${index + 1}`}</p>}
+                            </div>
+                        ))
+                    ) : (
+                        <>
+                            {videoFiles.map((_, index) => (
+                                <div key={index}>
+                                    <input
+                                        type="file"
+                                        onChange={(e) => handleFileChange(index, e.target.files[0])}
+                                        className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                                        disabled={loading} // Disable file input while loading
+                                    />
+                                </div>
+                            ))}
+                            <button
+                                type="submit"
+                                className="bg-green-500 text-white py-3 rounded-lg w-full hover:bg-green-600"
+                                disabled={loading} // Disable button while loading
+                            >
+                                {loading ? "Adding..." : "Add Videos"}
+                            </button>
+                        </>
+                    )}
 
                     <div className="flex justify-end gap-4">
                         <button
@@ -117,21 +177,6 @@ const VideoAdd = ({ courseId, lesson, closeModal, lessonIndex, refreshCourses })
                             disabled={loading} // Disable button while loading
                         >
                             Cancel
-                        </button>
-                        <button
-                            type="submit"
-                            className="bg-custom-cyan text-white py-2 px-4 rounded-md hover:bg-custom-cyan2"
-                            disabled={loading} // Disable button while loading
-                        >
-                            {loading ? (
-                                <span className="flex items-center">
-                                    <svg className="animate-spin h-5 w-5 mr-3 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 0116 0 8 8 0 01-16 0z"></path>
-                                    </svg>
-                                    Loading...
-                                </span>
-                            ) : lesson ? 'Update Video' : 'Add Video'}
                         </button>
                     </div>
                 </form>
