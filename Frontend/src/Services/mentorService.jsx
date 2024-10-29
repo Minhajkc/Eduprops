@@ -231,3 +231,75 @@ export const fetchStudentsByCourse = async () => {
     throw error; // Re-throw error for handling in the component
   }
 };
+
+export const fetchCourseDetails = async (courseId) => {
+  try {
+    const response = await MentorInstance.get(`/getCourseDetailsMentor`, {
+      params: { courseId }, 
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    return response.data;
+  } catch (e) {
+    console.error('Error fetching course details:', e);
+  }
+};
+
+
+export const addVideoToCourse = async (courseId, videoData) => {
+
+  try {
+      const response = await MentorInstance.put(`/addVideo/${courseId}`, videoData, {
+          headers: {
+              "Content-Type": "multipart/form-data",  
+          },
+      });
+      showToastSuccess(`Video added successfully!`);
+      return response.data;
+  } catch (error) {
+      const errorMessage = error.response?.data?.message || 'Error adding video';
+      showToastError(errorMessage);
+      throw new Error(errorMessage);
+  }
+};
+
+export const deleteCourseLesson = async (courseId, lessonIndex) => {
+  console.log(courseId,lessonIndex,'this is delete')
+  try {
+      const response = await MentorInstance.delete(`/courses/${courseId}/lessons/${lessonIndex}`);
+      showToastSuccess(response.message || 'Lesson deleted successfully');
+      return response.data;
+  } catch (error) {
+      const errorMessage = error.response?.data?.message || 'Error deleting lesson';
+      showToastError(errorMessage);
+      throw new Error(errorMessage);
+  }
+};
+
+
+export const updateLesson = async (courseId, lessonId, updatedData) => {
+  try {
+    const response = await MentorInstance.put(`/courses/${courseId}/lessons/${lessonId}`, updatedData, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    showToastSuccess('Lesson updated successfully!');
+    return response.data; // Return the response data from the server
+  } catch (error) {
+    console.error('Error updating lesson:', error);
+    throw error; // Rethrow to handle it in the component
+  }
+};
+
+
+export const editLessonVideo = async (courseId, lessonId, formData) => {
+  const response = await MentorInstance.put(`/editVideo/${courseId}/${lessonId}`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  showToastSuccess('Lesson updated successfully!');
+  return response.data; // Return the response data from the server
+};

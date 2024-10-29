@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import ScheduledMeetings from '../Components/Layout/ScheduledMeetings';
 import MentorChat from '../Components/Layout/MentorChat';
 import StudentCard from '../Components/Layout/StudentCard';
-
+import CoursePageMentor from '../Components/Layout/CoursePageMentor'; // Import Course component
 
 const { Header, Content, Footer, Sider } = Layout;
 const { confirm } = Modal;
@@ -26,9 +26,9 @@ const MentorDashboardPage = () => {
   const navigate = useNavigate();
 
   const handleEdit = (meeting) => {
-    setMeetingToEdit(meeting); // Set the meeting to be edited
+    setMeetingToEdit(meeting);
     setIsModalVisible(true);
-  }
+  };
 
   useEffect(() => {
     const loadScheduledMeets = async () => {
@@ -51,7 +51,7 @@ const MentorDashboardPage = () => {
 
   const handleClose = () => {
     setIsModalVisible(false);
-    setMeetingToEdit(null)
+    setMeetingToEdit(null);
   };
 
   const handleScheduleSuccess = async () => {
@@ -66,7 +66,7 @@ const MentorDashboardPage = () => {
     if (result.success) {
       setScheduledMeets(result.meets);
     }
-  }
+  };
 
   const showLogoutConfirm = () => {
     confirm({
@@ -78,8 +78,8 @@ const MentorDashboardPage = () => {
       cancelText: 'Cancel',
       onOk: async () => {
         try {
-          await logoutMentor(); // Call logout service
-          navigate('/mentor');   // Redirect to login page
+          await logoutMentor();
+          navigate('/mentor');
         } catch (error) {
           console.error('Error logging out:', error);
         }
@@ -116,12 +116,12 @@ const MentorDashboardPage = () => {
           items={[
             { label: 'Dashboard', key: '1', icon: <PieChartOutlined /> },
             { label: 'Chat', key: 'chat', icon: <TeamOutlined /> },
-            { label: 'Files', key: '9', icon: <FileOutlined /> },
+            { label: 'Course', key: '9', icon: <FileOutlined /> },
             {
               label: 'Logout',
               key: '10',
               icon: <LogoutOutlined />,
-              onClick: showLogoutConfirm, // Show confirmation modal for logout
+              onClick: showLogoutConfirm,
             },
           ]}
         />
@@ -150,12 +150,20 @@ const MentorDashboardPage = () => {
         <Content style={{ padding: '24px', minHeight: '360px', background: '#fff' }}>
           <Breadcrumb style={{ marginBottom: '16px' }}>
             <Breadcrumb.Item>Mentor Dashboard</Breadcrumb.Item>
-            <Breadcrumb.Item>{selectedMenuKey === 'chat' ? 'Chat' : 'Meetings'}</Breadcrumb.Item>
+            <Breadcrumb.Item>
+              {selectedMenuKey === 'chat'
+                ? 'Chat'
+                : selectedMenuKey === '9'
+                ? 'Course'
+                : 'Meetings'}
+            </Breadcrumb.Item>
           </Breadcrumb>
 
           <div>
             {selectedMenuKey === 'chat' ? (
               <MentorChat courseId={courseId} userName={mentor?.username} />
+            ) : selectedMenuKey === '9' ? (
+              <CoursePageMentor courseId={courseId} /> // Show Course component when selected
             ) : (
               <>
                 <Button type="primary" onClick={showModal} style={{ marginBottom: '16px' }}>
@@ -168,8 +176,14 @@ const MentorDashboardPage = () => {
                   meetingToEdit={meetingToEdit}
                   onScheduleSuccess={handleScheduleSuccess}
                 />
-                <ScheduledMeetings scheduledMeets={scheduledMeets} loading={loading}  onEdit={handleEdit}  courseId={courseId}handleDeleteSuccess={handleDeleteSuccess}/>
-                <StudentCard/>
+                <ScheduledMeetings
+                  scheduledMeets={scheduledMeets}
+                  loading={loading}
+                  onEdit={handleEdit}
+                  courseId={courseId}
+                  handleDeleteSuccess={handleDeleteSuccess}
+                />
+                <StudentCard />
               </>
             )}
           </div>
