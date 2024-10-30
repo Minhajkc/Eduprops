@@ -246,7 +246,7 @@ export const addVideoToCourse = async (courseId, videoData) => {
 };
 
 export const deleteCourseLesson = async (courseId, lessonIndex) => {
-    console.log(courseId,lessonIndex,'dele')
+  
     try {
         const response = await AdminInstance.delete(`/courses/${courseId}/lessons/${lessonIndex}`);
         showToastSuccess(response.message || 'Lesson deleted successfully');
@@ -417,6 +417,16 @@ export const updateSubscriptionRates = async (rates) => {
     } catch (error) {
       console.error('Error updating lesson:', error);
       throw error; // Rethrow to handle it in the component
+    }
+  };
+
+  export const getDashboardMetrics = async () => {
+    try {
+      const response = await AdminInstance.get('/dashboard-metrics');
+      return response; 
+    } catch (error) {
+      console.error('Error fetching dashboard metrics:', error);
+      throw error; // Re-throw to handle it in the component
     }
   };
   

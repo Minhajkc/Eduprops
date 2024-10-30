@@ -131,7 +131,7 @@ const VideoAdd = ({ courseId, lesson, closeModal, lessonIndex, refreshCourses })
                                 />
                                 <button
                                     type="submit"
-                                    className="bg-custom-cyan text-white py-1 px-2 text-xs rounded-md hover:bg-custom-cyan2"
+                                    className="bg-custom-cyan text-white py-1 px-2 m-1  text-xs rounded-md hover:bg-custom-cyan2"
                                     disabled={loading} // Disable button while loading
                                 >
                                     {loading ? (
