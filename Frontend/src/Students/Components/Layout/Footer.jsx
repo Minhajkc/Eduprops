@@ -1,23 +1,42 @@
 import React from 'react';
 import { Facebook, Twitter, Linkedin, Github, Dribbble } from 'lucide-react';
+import { Link } from 'react-router-dom'; // Import Link from react-router-dom
 
 const Footer = () => {
   const footerSections = [
     {
       title: 'Courses',
-      items: ['Classroom courses', 'Virtual classroom courses', 'E-learning courses', 'Video Courses', 'Offline Courses'],
+      items: [
+        { name: 'Classroom courses', path: '/courses' },
+        { name: 'Virtual classroom courses', path: '/courses' },
+        { name: 'E-learning courses', path: '/courses' },
+        { name: 'Video Courses', path: '/courses' },
+        { name: 'Offline Courses', path: '/courses' },
+      ],
     },
     {
       title: 'Community',
-      items: ['Learners', 'Partners', 'Developers', 'Transactions', 'Blog', 'Teaching Center'],
+      items: [
+       
+        { name: 'Teaching Center', path: '/MentorApply' },
+      ],
     },
     {
       title: 'Quick links',
-      items: ['Home', 'Professional Education', 'Courses', 'Admissions', 'Testimonial', 'Programs'],
+      items: [
+        { name: 'Home', path: '/' },
+        { name: 'Professional Education', path: '/courses' },
+        { name: 'Courses', path: '/courses' },
+        { name: 'Programs', path: '/courses' },
+      ],
     },
     {
       title: 'More',
-      items: ['Press', 'Investors', 'Terms', 'Privacy', 'Help', 'Contact'],
+      items: [
+   ,
+        { name: 'Help', path: '/About' },
+        { name: 'Contact', path: '/contact' },
+      ],
     },
   ];
 
@@ -26,12 +45,10 @@ const Footer = () => {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
           <div className="col-span-2 md:col-span-1">
-            <img src="/path-to-your-logo.png" alt="Eduprops" className="mb-4 h-8" />
-            <p className="text-sm mb-4">Eduvi is a registered trademark of Eduvi.co</p>
+            <img src="src/assets/images/Logoblack2.png" alt="Eduprops" className="mb-4 h-8" />
+            <p className="text-sm mb-4">Eduprops is a registered trademark of Eduprops.com</p>
             <div className="flex space-x-4">
-              <Facebook size={20} />
-              <Twitter size={20} />
-              <Linkedin size={20} />
+        
             </div>
           </div>
           {footerSections.map((section) => (
@@ -39,10 +56,10 @@ const Footer = () => {
               <h3 className="font-semibold mb-4">{section.title}</h3>
               <ul className="space-y-2">
                 {section.items.map((item) => (
-                  <li key={item} className="text-sm">
-                    <a href="#" className="hover:text-teal-500 transition duration-300">
-                      {item}
-                    </a>
+                  <li key={item.name} className="text-sm">
+                    <Link to={item.path} className="hover:text-teal-500 transition duration-300">
+                      {item.name}
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -50,13 +67,9 @@ const Footer = () => {
           ))}
         </div>
         <div className="border-t border-gray-200 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-sm">&copy; 2022 Ed-circle. All rights reserved.</p>
+          <p className="text-sm">&copy; 2022 Eduprops. All rights reserved.</p>
           <div className="flex space-x-4 mt-4 md:mt-0">
-            <Twitter size={20} />
-            <Linkedin size={20} />
-            <Facebook size={20} />
-            <Github size={20} />
-            <Dribbble size={20} />
+            <img src="src/assets/images/Logoblack2.png" alt="Eduprops" className="mb-4 h-8" />
           </div>
         </div>
       </div>
